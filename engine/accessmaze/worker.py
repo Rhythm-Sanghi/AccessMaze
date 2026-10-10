@@ -15,8 +15,10 @@ from pydantic import ValidationError
 from accessmaze.fixtures import FixtureServer
 from accessmaze.inputs import RunInputs
 from accessmaze.maintenance import backup, prune
-from accessmaze.models import Journey, ProjectInput, Request
+from accessmaze.models import Journey, ProfileInput, ProjectInput, Request
+from accessmaze.profiles import apply_conditions
 from accessmaze.recorder import Recorder
+from accessmaze.replay import prepare_replay, replay_verdict
 from accessmaze.reports import export_report
 from accessmaze.retests import compare_runs
 from accessmaze.runner import RunControl, execute
@@ -137,6 +139,19 @@ class Worker:
             elif method == "recorder.assert":
                 self.recorder.recording.capture.set()
             return self.recorder.recording.snapshot()
+        if method == "profile.list":
+            return self.store.profiles()
+        if method == "profile.save":
+            profile_id = params.get("id")
+            if profile_id:
+                UUID(profile_id)
+            return self.store.save_profile(
+                ProfileInput.model_validate(params["profile"]), profile_id
+            )
+        if method == "profile.delete":
+            UUID(params["id"])
+            self.store.delete_profile(params["id"])
+            return {"ok": True}
         if method == "project.list":
             return self.store.projects()
         if method in {"storage.backup", "storage.prune"}:
@@ -171,6 +186,16 @@ class Worker:
             if params["id"] == self.active and self.control and self.control.pending():
                 # Raw proposed names exist only in this response, not SQLite/reports.
                 run["approval"] = self.control.pending()
+            if run.get("replay") and run["status"] not in {
+                "preparing",
+                "running",
+                "paused",
+                "awaiting_approval",
+            }:
+                original = self.store.run(run["replay"]["source_id"])
+                run["replay"]["verdict"] = replay_verdict(
+                    original, run, run["replay"]["finding_id"]
+                )
             return run
         if method == "run.approve":
             if params["id"] != self.active or not self.control:
@@ -185,6 +210,10 @@ class Worker:
             )
             self.store.save_retest(comparison)
             return comparison
+        if method == "run.replay.prepare":
+            UUID(params["id"])
+            original = self.store.run(params["id"])
+            return {"journey": prepare_replay(original, params["finding_id"]).model_dump()}
         if method == "run.start":
             if self.recorder and self.recorder.thread.is_alive():
                 raise ValueError("Stop the recording browser before analysis")
@@ -194,6 +223,14 @@ class Worker:
                 raise ValueError("Confirm that you are authorized to test this target")
             project = self.store.project(params["project_id"])
             journey = Journey.model_validate(project["journey"])
+            replay = None
+            if params.get("replay_source_id"):
+                UUID(params["replay_source_id"])
+                original = self.store.run(params["replay_source_id"])
+                if original["project_id"] != project["id"]:
+                    raise ValueError("Replay must belong to the original project")
+                journey = prepare_replay(original, params["replay_finding_id"])
+                replay = {"source_id": original["id"], "finding_id": params["replay_finding_id"]}
             inputs = RunInputs(journey, params.get("inputs"), self.input_key)
             if (
                 any(step.effect for step in journey.steps) or journey.exploration.enabled
@@ -201,6 +238,7 @@ class Worker:
                 raise ValueError(
                     "Explicit authorization is required for state-changing interactions"
                 )
+            apply_conditions(journey)  # Validate reserved IDs before starting a worker thread.
             self.active = run_id = str(uuid4())
             self.control = RunControl()
             ready = threading.Event()
@@ -218,6 +256,7 @@ class Worker:
                             run_id,
                             inputs,
                             on_ready=ready.set,
+                            replay=replay,
                         )
                     )
                 except Exception:

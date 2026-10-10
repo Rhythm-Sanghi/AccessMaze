@@ -106,6 +106,55 @@
           "minimum": 0,
           "title": "Network Latency Ms",
           "type": "integer"
+        },
+        "layout_zoom_percent": {
+          "default": 100,
+          "maximum": 200,
+          "minimum": 50,
+          "title": "Layout Zoom Percent",
+          "type": "integer"
+        },
+        "audit_semantics": {
+          "default": false,
+          "title": "Audit Semantics",
+          "type": "boolean"
+        },
+        "focus_target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Target"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "disconnect_after_step": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disconnect After Step"
+        },
+        "reconnect_after_step": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reconnect After Step"
         }
       },
       "title": "Profile",

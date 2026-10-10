@@ -122,6 +122,22 @@ class Profile(StrictModel):
     viewport_width: int = Field(default=1280, ge=320, le=3840)
     viewport_height: int = Field(default=800, ge=240, le=2160)
     network_latency_ms: int = Field(default=0, ge=0, le=3000)
+    layout_zoom_percent: int = Field(default=100, ge=50, le=200)
+    audit_semantics: bool = False
+    focus_target: Target | None = None
+    disconnect_after_step: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,64}$")
+    reconnect_after_step: str | None = Field(default=None, pattern=r"^[a-zA-Z0-9_-]{1,64}$")
+
+    @model_validator(mode="after")
+    def validate_connection(self):
+        if bool(self.disconnect_after_step) != bool(self.reconnect_after_step):
+            raise ValueError("Connection interruption requires both disconnect and recovery steps")
+        return self
+
+
+class ProfileInput(StrictModel):
+    name: str = Field(min_length=1, max_length=120)
+    profile: Profile
 
 
 class Exploration(StrictModel):
@@ -195,6 +211,17 @@ class Journey(StrictModel):
             raise ValueError("The first step must navigate to the configured target")
         if not any(step.action.startswith("assert_") and not step.optional for step in self.steps):
             raise ValueError("A journey requires at least one mandatory completion assertion")
+        ids = [step.id for step in self.steps]
+        if self.profile.disconnect_after_step:
+            if (
+                self.profile.disconnect_after_step not in ids
+                or self.profile.reconnect_after_step not in ids
+            ):
+                raise ValueError("Profile connection steps must exist in this journey")
+            if ids.index(self.profile.disconnect_after_step) >= ids.index(
+                self.profile.reconnect_after_step
+            ):
+                raise ValueError("Profile recovery must follow interruption")
         for step in self.steps:
             if step.action == "navigate" and step.value not in {"", "/"}:
                 raise ValueError(
@@ -213,11 +240,15 @@ class Request(StrictModel):
     id: str = Field(min_length=1, max_length=64)
     method: Literal[
         "health",
+        "profile.list",
+        "profile.save",
+        "profile.delete",
         "project.list",
         "project.save",
         "project.delete",
         "project.archive",
         "run.start",
+        "run.replay.prepare",
         "run.get",
         "run.list",
         "run.cancel",

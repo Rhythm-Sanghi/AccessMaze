@@ -4,6 +4,43 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Remaining-feature milestones 2–3 — implementation and browser verification
+
+Historical/live failure reproduction now selects an actual stored finding, displays the
+original step/state/focus trace, prepares the historical authored definition with fresh
+runtime bindings, and requires new target/action authorization before real re-execution.
+Original evidence is immutable; new runs retain source/finding provenance and conservative
+observed-again/not-reproduced/inconclusive verdicts, with old/live step and focus comparison.
+Private discovery targets cannot be reconstructed; those findings require an authored journey.
+
+A persistent editable profile library now reuses condition snapshots across journeys.
+SQLite schema 3 preserves older projects, runs and retests; backups include profiles.
+Actual execution supports keyboard/pointer, viewport, motion, request delay, recorded
+scheduled offline/recovery, final semantics audits and exact completion-focus assertions.
+Layout zoom is explicitly viewport/device-scale **emulation**, not browser chrome zoom.
+Run-history comparison shows both profile snapshots and actual outcomes; changed profiles
+cannot verify a repair. Recovery marks interrupted discovery actions, clears stale proposals
+and keeps the observed graph/frontier. Selecting a graph state no longer falls back to an
+unrelated finding's screenshot.
+
+Verification to this point:
+
+- Full Python suite: **108 passed in 180.54 s** before the final migration/authorization regressions.
+- Focused final replay/profile/lifecycle/storage checks: **15 passed in 24.18 s**, including
+  genuine Chromium replay/correction/cancellation, input redaction, profile-dependent
+  blocked/completed outcomes, actual offline/motion/zoom/audit/focus evidence, schema 1/2
+  migration, stale crash approval cleanup, and cross-project/effect authorization rejection.
+- Discovery checks after recovery deduplication: **5 passed in 16.31 s**.
+- React: **9 passed in 16.60 s**, including recorded-state screenshot selection; TypeScript/ESLint, Ruff, contracts/format and **1 Rust Windows Job test** passed.
+- Native feature acceptance script implemented against an owned HTTP target; latest packaged
+  runtime, crash regression and native execution are **pending**, not inferred from development tests.
+
+A simulated version-1 migration test initially retained the new profiles table and failed.
+The test now constructs the genuine old schema; separate version-2 migration is covered.
+No external target, authorization policy or distribution dependency was relaxed. This work
+is workstation continuation after 8e074e7; no onsite/NVDA/independent qualification is claimed.
+See ../hackyard/remaining-features.md for exact usage and current limits.
+
 ### Remaining-feature milestone 1 — approved branch recovery
 
 Continuation baseline is **8e074e7**. Website discovery now uses deterministically

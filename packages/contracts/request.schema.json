@@ -15,11 +15,15 @@
     "method": {
       "enum": [
         "health",
+        "profile.list",
+        "profile.save",
+        "profile.delete",
         "project.list",
         "project.save",
         "project.delete",
         "project.archive",
         "run.start",
+        "run.replay.prepare",
         "run.get",
         "run.list",
         "run.cancel",

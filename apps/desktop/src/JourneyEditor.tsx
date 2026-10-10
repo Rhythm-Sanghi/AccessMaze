@@ -1,4 +1,5 @@
 import type { Action, Journey, Role, Step } from "../../../packages/contracts";
+import ProfileLibrary from "./ProfileLibrary";
 import NetworkPermissions from "./NetworkPermissions";
 
 const actions: Action[] = [
@@ -307,7 +308,115 @@ export default function JourneyEditor({
         <h2>Concrete test conditions</h2>
         <span className="mono">PROFILE</span>
       </div>
+      <ProfileLibrary
+        profile={journey.profile}
+        onApply={(profile) => onChange({ ...journey, profile })}
+      />
       <div className="fields">
+        <label>
+          Layout zoom emulation (%)
+          <input
+            type="number"
+            min="50"
+            max="200"
+            value={journey.profile.layout_zoom_percent ?? 100}
+            onChange={(e) =>
+              onChange({
+                ...journey,
+                profile: {
+                  ...journey.profile,
+                  layout_zoom_percent: Number(e.target.value),
+                },
+              })
+            }
+          />
+        </label>
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={journey.profile.audit_semantics ?? false}
+            onChange={(e) =>
+              onChange({
+                ...journey,
+                profile: {
+                  ...journey.profile,
+                  audit_semantics: e.target.checked,
+                },
+              })
+            }
+          />
+          Audit accessible semantics after authored completion
+        </label>
+        <label>
+          Completion focus target (exact accessible name)
+          <input
+            value={journey.profile.focus_target?.name ?? ""}
+            onChange={(e) =>
+              onChange({
+                ...journey,
+                profile: {
+                  ...journey.profile,
+                  focus_target: e.target.value
+                    ? { role: "button", name: e.target.value }
+                    : null,
+                },
+              })
+            }
+          />
+        </label>
+        <label>
+          Focus target role
+          <select
+            value={journey.profile.focus_target?.role ?? "button"}
+            disabled={!journey.profile.focus_target}
+            onChange={(e) =>
+              onChange({
+                ...journey,
+                profile: {
+                  ...journey.profile,
+                  focus_target: journey.profile.focus_target
+                    ? {
+                        ...journey.profile.focus_target,
+                        role: e.target.value as Role,
+                      }
+                    : null,
+                },
+              })
+            }
+          >
+            {roles.map((r) => (
+              <option key={r}>{r}</option>
+            ))}
+          </select>
+        </label>
+        {(["disconnect_after_step", "reconnect_after_step"] as const).map(
+          (key) => (
+            <label key={key}>
+              {key === "disconnect_after_step"
+                ? "Disconnect after step"
+                : "Reconnect after step"}
+              <select
+                value={journey.profile[key] ?? ""}
+                onChange={(e) =>
+                  onChange({
+                    ...journey,
+                    profile: {
+                      ...journey.profile,
+                      [key]: e.target.value || null,
+                    },
+                  })
+                }
+              >
+                <option value="">No transition</option>
+                {journey.steps.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.id}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ),
+        )}
         <label>
           Action timeout (milliseconds)
           <input

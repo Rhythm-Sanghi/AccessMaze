@@ -72,6 +72,7 @@ async def explore_website(
     frontier = {}
     root = None
     depth = 0
+    recovery_states = set()
     try:
         while len(progress["actions"]) < journey.exploration.max_actions:
             if control.cancel.is_set():
@@ -103,7 +104,11 @@ async def explore_website(
                     choices.append(choice)
             # Recovery navigates only to the original configured URL, with no automatic replay.
             # It is separately approved even though GET is normally considered read-only.
-            if journey.exploration.recover_navigation and normalized != root:
+            if (
+                journey.exploration.recover_navigation
+                and normalized != root
+                and normalized not in recovery_states
+            ):
                 choices.append(
                     {
                         "id": str(uuid4()),
@@ -253,6 +258,8 @@ async def explore_website(
                 progress["stop_reason"] = "action-failed"
                 save()
                 break
+            if recovery:
+                recovery_states.add(state_key(observation))
             depth = 0 if recovery else depth + 1
             save()
         else:

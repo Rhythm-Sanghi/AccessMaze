@@ -1,7 +1,12 @@
 # Remaining qualification actions
 
 AccessMaze remains an unsigned readiness preview. Local evidence is in engineering
-status; none of the following is implicitly passed by the browser regression suite.
+status. The 8e074e7 continuation implements approved root-branch recovery, historical/live
+failure replay and a reusable profile library. Their limits and local acceptance are
+in ../hackyard/remaining-features.md and status. True browser chrome/text zoom,
+replay of withheld discovery targets and exhaustive external graph coverage remain
+outside this implemented scope; independent manual zoom testing is still required.
+None of the following is implicitly passed by the browser regression suite.
 
 | Gate | Exact required action |
 | --- | --- |

@@ -55,6 +55,11 @@ export interface Journey {
     viewport_width: number;
     viewport_height: number;
     network_latency_ms: number;
+    layout_zoom_percent?: number;
+    audit_semantics?: boolean;
+    focus_target?: Step["target"];
+    disconnect_after_step?: string | null;
+    reconnect_after_step?: string | null;
   };
   max_seconds: number;
   tab_budget: number;
@@ -87,6 +92,7 @@ export interface Finding {
   screenshot?: string;
 }
 export interface Observation {
+  viewport?: { width: number; height: number; device_pixel_ratio: number };
   text_withheld?: boolean;
   ax_tree?: {
     source: string;
@@ -111,6 +117,7 @@ export interface Observation {
   reduced_motion: boolean;
 }
 export interface Run {
+  replay?: { source_id: string; finding_id: string; verdict?: string };
   outcome?: TaskOutcome;
   approval?: {
     id: string;
@@ -122,6 +129,9 @@ export interface Run {
     mode?: "approved-walk" | "approved-branches";
     actions: {
       step_id: string;
+      reachability?: string;
+      state_id?: string;
+      interaction?: Record<string, unknown>;
       kind: string;
       action: string;
       status: string;
@@ -147,6 +157,7 @@ export interface Run {
     timestamp: string;
     index: number;
     state_id?: string;
+    interaction?: Record<string, unknown>;
   }[];
   findings: Finding[];
   nodes: { id: string; observation: Observation; first_step: string }[];
@@ -200,11 +211,15 @@ export interface RunComparison {
 }
 export type Method =
   | "health"
+  | "profile.list"
+  | "profile.save"
+  | "profile.delete"
   | "project.list"
   | "project.save"
   | "project.delete"
   | "project.archive"
   | "run.start"
+  | "run.replay.prepare"
   | "run.get"
   | "run.list"
   | "run.cancel"
@@ -226,4 +241,11 @@ export interface Recording {
   origin: string;
   steps: Step[];
   warnings: string[];
+}
+
+export interface SavedProfile {
+  id: string;
+  name: string;
+  profile: Journey["profile"];
+  updated_at: string;
 }

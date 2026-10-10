@@ -20,7 +20,7 @@ class Store:
         (self.root / "artifacts").mkdir(exist_ok=True)
         with self.connect() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version > 2:
+            if version > 3:
                 raise RuntimeError("Database was created by a newer AccessMaze version")
             if version == 0:
                 db.executescript("""
@@ -52,6 +52,36 @@ class Store:
                     COMMIT;
                 """)
 
+            if version < 3:
+                db.executescript("""
+                    BEGIN IMMEDIATE;
+                    CREATE TABLE profiles (
+                        id TEXT PRIMARY KEY, name TEXT NOT NULL,
+                        profile TEXT NOT NULL, updated_at TEXT NOT NULL
+                    );
+                    PRAGMA user_version=3;
+                    COMMIT;
+                """)
+
+    def profiles(self):
+        with self.connect() as db:
+            rows = db.execute("SELECT * FROM profiles ORDER BY name COLLATE NOCASE, id").fetchall()
+        return [{**dict(row), "profile": json.loads(row["profile"])} for row in rows]
+
+    def save_profile(self, data, profile_id=None):
+        profile_id = profile_id or str(uuid4())
+        with self.connect() as db:
+            db.execute(
+                "INSERT INTO profiles VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET "
+                "name=excluded.name,profile=excluded.profile,updated_at=excluded.updated_at",
+                (profile_id, data.name, data.profile.model_dump_json(), now()),
+            )
+        return next(p for p in self.profiles() if p["id"] == profile_id)
+
+    def delete_profile(self, profile_id):
+        with self.connect() as db:
+            db.execute("DELETE FROM profiles WHERE id=?", (profile_id,))
+
     @contextmanager
     def connect(self):
         db = sqlite3.connect(self.root / "accessmaze.sqlite", timeout=10)
@@ -77,6 +107,17 @@ class Store:
                 for step in result.get("steps", []):
                     if step["status"] == "running":
                         step["status"] = "interrupted"
+                result.pop("approval", None)
+                exploration = result.get("exploration")
+                if exploration:
+                    exploration["stop_reason"] = "interrupted"
+                    for action in exploration.get("actions", []):
+                        if action["status"] == "running":
+                            action["status"] = "interrupted"
+                from accessmaze.outcomes import task_outcome
+
+                if result.get("journey"):
+                    result["outcome"] = task_outcome(result)
                 db.execute(
                     "UPDATE runs SET status=?, result=? WHERE id=?",
                     ("interrupted", json.dumps(result), row["id"]),

@@ -29,14 +29,19 @@ for actual verification and remaining release gates.
   DNS pinning, redirect guards and private page-text evidence by default.
 - Run-only credential/text bindings and user-selected file uploads; saved definitions
   contain binding names and field labels, never credentials or file paths.
+- Reusable named condition profiles, layout zoom emulation, scheduled connectivity,
+  semantics/focus assertions and descriptive outcome comparisons across profiles.
+- Dedicated historical evidence/live browser failure replay with fresh input and authorization.
+- Opt-in approved root navigation for additional semantic website branches, with saved frontier.
 - A manual browser recorder produces editable semantic steps and runtime bindings,
   with explicit completion capture and review before replay.
 
 ## Limits
 
 Authored paths are bounded by step, Tab and wall-clock budgets. Fixture discovery can
-reset and replay bundled scenarios. Website exploration follows one path with a fresh
-approval for each proposed action, without resetting or replaying external state.
+reset and replay bundled scenarios. Website exploration requires fresh
+approval for each activation and optional navigation to the configured start. Recovery
+does not undo effects or automatically replay inputs.
 Graphs show observed states only; neither mode proves exhaustive coverage.
 Keyboard findings describe the actual bounded attempt; they cannot establish that every
 possible keyboard path is unavailable. DOM semantics and axe-core do not simulate a

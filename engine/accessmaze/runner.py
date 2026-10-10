@@ -17,6 +17,8 @@ from accessmaze.exploration import explore
 from accessmaze.inputs import RunInputs
 from accessmaze.network import BrowserPolicy, resolve_host
 from accessmaze.outcomes import task_outcome
+from accessmaze.profiles import apply_conditions
+from accessmaze.replay import replay_verdict
 from accessmaze.storage import now
 from accessmaze.website_exploration import explore_website
 
@@ -76,7 +78,9 @@ async def execute(
     inputs=None,
     input_key=None,
     on_ready=None,
+    replay=None,
 ):
+    journey = apply_conditions(journey)
     run_id = run_id or str(uuid4())
     inputs = inputs or RunInputs(journey, key=input_key)
     secrets = [
@@ -111,6 +115,8 @@ async def execute(
             "Screenshots are captured only for bundled synthetic fixtures.",
         ],
     }
+    if replay:
+        result["replay"] = replay
     graph = nx.MultiDiGraph()
     previous = None
     started = time.monotonic()
@@ -160,13 +166,27 @@ async def execute(
             try:
                 context = await browser.new_context(
                     viewport={
-                        "width": journey.profile.viewport_width,
-                        "height": journey.profile.viewport_height,
+                        "width": round(
+                            journey.profile.viewport_width
+                            * 100
+                            / journey.profile.layout_zoom_percent
+                        ),
+                        "height": round(
+                            journey.profile.viewport_height
+                            * 100
+                            / journey.profile.layout_zoom_percent
+                        ),
                     },
+                    device_scale_factor=journey.profile.layout_zoom_percent / 100,
                     reduced_motion="reduce" if journey.profile.reduced_motion else "no-preference",
                     service_workers="block",
                     accept_downloads=False,
                 )
+                if journey.profile.layout_zoom_percent != 100:
+                    result["limitations"].append(
+                        "Layout zoom emulation changes CSS viewport and device scale; "
+                        "it does not operate browser chrome zoom or verify OS magnification."
+                    )
                 context.set_default_timeout(journey.profile.action_timeout_ms)
                 context.set_default_navigation_timeout(min(30000, journey.max_seconds * 1000))
                 context._accessmaze_inputs = inputs
@@ -359,6 +379,8 @@ async def execute(
     except asyncio.CancelledError:
         result["status"] = "cancelled"
     except TimeoutError:
+        if result.get("exploration"):
+            result["exploration"]["stop_reason"] = "time-budget"
         result.update(status="failed", error="Configured execution time budget exceeded")
     except (BrowserError, ValueError, OSError) as exc:
         result.update(
@@ -373,6 +395,10 @@ async def execute(
         if blocked:
             for finding in result["findings"]:
                 finding["verification"] = "inconclusive"
+        if replay:
+            result["replay"]["verdict"] = replay_verdict(
+                store.run(replay["source_id"]), result, replay["finding_id"]
+            )
         result["finished_at"] = now()
         result["duration_seconds"] = round(time.monotonic() - started, 3)
         save()

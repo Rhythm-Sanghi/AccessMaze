@@ -179,6 +179,21 @@ export default function RunHistory({
                 ) : (
                   <p>No new matchable finding identities.</p>
                 )}
+                <details>
+                  <summary>Compare concrete profile conditions</summary>
+                  <pre>
+                    {JSON.stringify(
+                      {
+                        baseline: history.find(
+                          (r) => r.id === comparison.previous_id,
+                        )?.journey.profile,
+                        candidate: run.journey.profile,
+                      },
+                      null,
+                      2,
+                    )}
+                  </pre>
+                </details>
                 <h3>Step evidence and observed transitions</h3>
                 <div className="toolbar">
                   <button

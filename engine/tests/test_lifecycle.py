@@ -68,11 +68,12 @@ def test_schema_migration_preserves_projects(store, project):
     p = project()
     with store.connect() as db:
         db.execute("DROP TABLE retests")
+        db.execute("DROP TABLE profiles")
         db.execute("PRAGMA user_version=1")
     from accessmaze.storage import Store
 
     migrated = Store(store.root)
     assert Journey.model_validate(migrated.project(p["id"])["journey"]).name == template().name
     with migrated.connect() as db:
-        assert db.execute("PRAGMA user_version").fetchone()[0] == 2
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 3
         assert db.execute("SELECT count(*) FROM retests").fetchone()[0] == 0

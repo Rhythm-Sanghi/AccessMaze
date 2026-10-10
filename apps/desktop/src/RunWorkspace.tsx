@@ -20,8 +20,9 @@ export default function RunWorkspace({
   const [error, setError] = useState("");
   const node = run.nodes.find((n) => n.id === selected) ?? run.nodes.at(-1);
   const finding =
-    run.findings.find((f) => f.step_id === node?.first_step) ??
-    run.findings.at(-1);
+    run.findings.find((f) =>
+      run.steps.some((s) => s.id === f.step_id && s.state_id === node?.id),
+    ) ?? run.findings.find((f) => f.step_id === node?.first_step);
   useEffect(() => {
     let disposed = false;
     setImage("");
@@ -179,7 +180,8 @@ export default function RunWorkspace({
                 <ul>
                   {run.exploration.pending_branches.map((b, i) => (
                     <li key={i}>
-                      {b.state_id.slice(0, 8)} / {b.path.join(" → ") || "root"}
+                      {b.state_id.slice(0, 8)} / {b.path.join(" → ") || "root"}{" "}
+                      / {b.reason ?? "untested"}
                     </li>
                   ))}
                 </ul>

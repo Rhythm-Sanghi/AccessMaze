@@ -150,6 +150,7 @@ async def observe(page):
         focused:e===document.activeElement
       }));
       return {title:document.title.slice(0,160),controls,
+        viewport:{width:innerWidth,height:innerHeight,device_pixel_ratio:devicePixelRatio},
         headings:[...document.querySelectorAll('h1,h2,h3')].slice(0,30)
           .map(e=>e.textContent.trim().slice(0,160)),
         online:navigator.onLine,

@@ -32,7 +32,7 @@ def backup(store):
                 "manifest.json",
                 json.dumps(
                     {
-                        "schema_version": 2,
+                        "schema_version": 3,
                         "created_at": now(),
                         "contains_plaintext_journey_inputs": True,
                     }

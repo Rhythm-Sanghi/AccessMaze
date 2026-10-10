@@ -1,5 +1,11 @@
 # Technical evidence index
 
+Current continuation: see [discovery, replay and reusable conditions](remaining-features.md)
+for the implemented workflow, approvals and explicit limits. Baseline **8e074e7**;
+workstation development, not claimed onsite. Native/package acceptance is recorded
+in [engineering status](../development/status.md), separately from older evidence below.
+
+
 The source of truth is ../development/status.md, with actual commands, results and limits.
 Baseline verification belongs to 9f3222a and its earlier package source 228ad9c; it is not
 proof that later UI or engine changes passed native tests.

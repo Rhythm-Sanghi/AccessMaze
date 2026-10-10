@@ -1,5 +1,13 @@
 # Targeted mission gap assessment / 2026-10-10
 
+Current continuation after **8e074e7** implements approved semantic branching/root recovery,
+a finding-specific historical/live replay workspace and persistent condition profiles.
+See [exact capabilities and limits](remaining-features.md) and current engineering status.
+The table below preserves the earlier baseline assessment; it is not the current feature inventory.
+Browser chrome zoom, exhaustive external coverage and replay of withheld private discovery
+names remain outside the implemented scope. Layout zoom is explicitly emulation.
+
+
 Inspected clean 9f3222a: README, architecture ADRs, authoritative status, release actions,
 Hackyard procedure, models, runner, actions/evidence, both explorers, recorder, retests,
 reports, storage, React journey/workspace/history/settings, browser regressions, contracts

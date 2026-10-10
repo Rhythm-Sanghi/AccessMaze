@@ -1,5 +1,33 @@
 # Three cases, real browser evidence
 
+## New-feature live sequence
+
+1. Create/record and review an authorized journey; save named keyboard conditions.
+2. Enable discovery and optional approved root recovery; approve a branch, recovery,
+   and another branch. Show observed graph/frontier and the budget stop.
+3. Run an authored journey against the owned broken Continue control. Select its
+   stored finding in Failure reproduction; expand original trace/focus.
+4. Review target/steps and authorize actual replay. Show the observed-again result.
+5. Change the owned application to its native-button correction; authorize replay
+   again. Show not-reproduced, completion and old/live step/focus evidence.
+6. Apply another saved profile to the same journey; run with fresh authorization.
+   Compare actual outcomes and both condition snapshots. Explain why changed-profile
+   success cannot certify a keyboard repair.
+7. Run a normal unchanged-condition retest and compare it under the existing stricter
+   rules. Show the exact stored result, including limitations.
+
+`desktop_features.py` is an automated native acceptance sequence against an owned HTTP
+application. It requires a launched preview/CDP harness; it is not evidence of human
+recording, NVDA use or onsite work. The existing reproducible engine demonstration below
+continues to use actual findings rather than hardcoded result objects.
+
+
+Current continuation: see [discovery, replay and reusable conditions](remaining-features.md)
+for the implemented workflow, approvals and explicit limits. Baseline **8e074e7**;
+workstation development, not claimed onsite. Native/package acceptance is recorded
+in [engineering status](../development/status.md), separately from older evidence below.
+
+
 Prepare locked dependencies and bundled Chromium, then run from the repository root:
 
 ```powershell

@@ -1,5 +1,11 @@
 # AccessMaze / Hackyard engineering workspace
 
+Current continuation: see [discovery, replay and reusable conditions](remaining-features.md)
+for the implemented workflow, approvals and explicit limits. Baseline **8e074e7**;
+workstation development, not claimed onsite. Native/package acceptance is recorded
+in [engineering status](../development/status.md), separately from older evidence below.
+
+
 AccessMaze investigates whether an authored browser task reaches explicit assertions
 under concrete interaction constraints. Its Windows desktop keeps projects, browser
 observations and retests locally. The central demonstration is an unfocusable Continue

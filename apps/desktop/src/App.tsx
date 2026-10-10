@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Journey, Project, Run } from "../../../packages/contracts";
 import { desktopAvailable, download, request } from "./api";
+import FailureReplay from "./FailureReplay";
 import JourneyEditor from "./JourneyEditor";
 import RunInputs, { emptyInputs, type Inputs } from "./RunInputs";
 import RecorderPanel from "./RecorderPanel";
@@ -26,6 +27,7 @@ export default function App() {
   const [templates, setTemplates] = useState<Record<string, Journey>>({});
   const [name, setName] = useState("Untitled investigation");
   const [run, setRun] = useState<Run | null>(null);
+  const [replaySource, setReplaySource] = useState<Run | null>(null);
   const [history, setHistory] = useState<Run[]>([]);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -131,6 +133,7 @@ export default function App() {
     setAuthorized(false);
     setEffects(false);
     setRun(null);
+    setReplaySource(null);
     setPage("journey");
     void perform(async () =>
       setHistory(await request<Run[]>("run.list", { project_id: project.id })),
@@ -162,6 +165,7 @@ export default function App() {
       kind === "website" ? "Website investigation" : `Scholarship · ${kind}`,
     );
     setRun(null);
+    setReplaySource(null);
     setHistory([]);
     setAuthorized(false);
     setEffects(false);
@@ -191,6 +195,7 @@ export default function App() {
       inputs,
     });
     setInputs(emptyInputs());
+    setReplaySource(null);
     setRun(await request<Run>("run.get", { id: started.id }));
     setPage("analysis");
   }
@@ -514,12 +519,27 @@ export default function App() {
                 <p>Run the configured journey or open a previous run below.</p>
               </div>
             ))}
+          {page === "analysis" &&
+            run &&
+            (replaySource ?? run).findings.length > 0 && (
+              <FailureReplay
+                key={(replaySource ?? run).id}
+                original={replaySource ?? run}
+                current={run}
+                onStarted={(next) => {
+                  setInputs(emptyInputs());
+                  setReplaySource(replaySource ?? run);
+                  setRun(next);
+                }}
+              />
+            )}
           {(page === "analysis" || page === "reports") && (
             <RunHistory
               history={history}
               run={run}
               onSelect={(r) => {
                 setRun(r);
+                setReplaySource(null);
                 setPage("analysis");
               }}
             />
@@ -544,6 +564,7 @@ export default function App() {
                   setHistory(remaining);
                   if (run && !remaining.some((r) => r.id === run.id))
                     setRun(null);
+                  setReplaySource(null);
                 }
               }}
             />
@@ -576,6 +597,7 @@ export default function App() {
                   setSelected(null);
                   setJourney(null);
                   setRun(null);
+                  setReplaySource(null);
                   setHistory([]);
                 }
                 setConfirmation(null);
