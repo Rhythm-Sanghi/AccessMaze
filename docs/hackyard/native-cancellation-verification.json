@@ -1,0 +1,11 @@
+{
+  "scope": "Packaged WebView2/private IPC/actual Chromium on development laptop",
+  "executable": "dist\\AccessMaze-hackyard-preview\\AccessMaze.exe",
+  "emergency_stop": "passed",
+  "persisted_status": "cancelled",
+  "task_outcome": "cancelled",
+  "retained_graph_nodes": 1,
+  "chromium_processes_cleaned": 4,
+  "owned_project_removed": true,
+  "application_source_commit": "746eaca94fae91a7749c1ce293ac721bc03f95a4"
+}

@@ -63,7 +63,7 @@ async def main():
             await page.get_by_label(
                 "Authorize private and loopback network target access"
             ).check()
-            await page.get_by_label(re.compile("Propose website buttons")).check()
+            await page.get_by_label(re.compile("Propose semantic buttons")).check()
             await page.get_by_label("Time budget (seconds)").fill("120")
             gate = page.locator(".run-gate")
             await gate.get_by_label(re.compile("I am authorized")).check()

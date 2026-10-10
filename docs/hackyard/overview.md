@@ -19,3 +19,10 @@ Start with [demo script](demo-script.md), [architecture](architecture.md),
 [technical evidence](technical-evidence.md) and [gap assessment](gap-assessment.md).
 Competition demonstration readiness and independent release qualification are separate.
 The authoritative qualification record remains ../development/status.md.
+
+Local acceptance of the three-feature continuation passed in the actual packaged Windows
+application at **746eaca**: separately approved branches/root recovery, persistent profile
+reuse, finding-specific reproduction and corrected replay. Strict comparable retest,
+cancellation, worker-crash recovery and frozen portable execution also passed. The latest
+unsigned ZIP/hash and exact evidence are recorded in engineering status. Independent
+release qualification remains open; layout zoom is explicitly emulation.

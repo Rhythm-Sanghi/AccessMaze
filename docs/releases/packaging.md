@@ -104,3 +104,18 @@ Latest local ZIP: `dist/AccessMaze-release-validation-final.zip`, clean applicat
 Actual systems-only PowerShell checks passed on the built folder and a freshly extracted ZIP copy. Actual frozen fixtures plus the complex owned SPA/upload passed through a Unicode package alias and Unicode temporary storage. Three native startups inherited systems-only PATH. Native approval/recording/focus/errors and three worker crashes/recovery passed. Extracted application and its synthetic test storage were removed; actual user AppData/history preserved. These are developer-workstation checks, not an independent installation/removal/fresh-user/offline qualification. Subsequent commits change verification tooling/records, not the tested application runtime.
 
 [Remaining actions](remaining-actions.md) identify human, independent-machine, rights, CI and signing gates. Do not distribute this unsigned preview as release-qualified.
+
+## Remaining Hackyard features (746eaca)
+
+Current local unsigned artifact: `dist/AccessMaze-hackyard-preview-746eaca.zip`, clean
+application source **746eaca94fae91a7749c1ce293ac721bc03f95a4**, source_dirty=false,
+**389,996,150 bytes / 1,703 entries**. SHA-256
+**6165c5693f9e57803cfa88d93c0525c59c3830527331e3aa7c0a3bb1b0ec1a53**;
+CRC passed. The manifest covers 1,702 files including bundled Python/Chromium, notices
+and existing MPL sources. Local native feature/replay/profile/comparison/cancel/crash,
+frozen complex SPA/upload and System32-only worker checks passed. Exact commands and
+limitations: ../development/status.md and ../hackyard/final-feature-verification.json.
+These results supersede earlier artifacts for this feature source, while preserving
+older evidence. No signing, independent fresh-user/clean-machine or complete distribution
+rights clearance is implied. Verification-tool/doc changes after packaging do not change
+this artifact's application source.

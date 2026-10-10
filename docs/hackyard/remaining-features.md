@@ -86,3 +86,10 @@ redaction/history immutability, profile-dependent outcomes, offline/recovery, mo
 layout zoom metrics, actual semantic audits and completion focus assertions.
 Native acceptance and package results are recorded separately in engineering status;
 no pending native check or independent release gate is implicitly passed here.
+
+Final packaged native acceptance at **746eaca** passed branching/root approval, profile
+reuse, observed-again reproduction and corrected replay. Separate native strict retest,
+keyboard/error/dialog focus, headed recording, cancellation with partial persistence and
+worker-crash Chromium cleanup passed. Final frozen complex execution and ZIP CRC/hash
+passed locally. See final-feature-verification.json and engineering status for actual
+commands, measurements, preserved failed attempts and open independent qualification.

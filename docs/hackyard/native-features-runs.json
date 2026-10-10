@@ -1,21 +1,21 @@
 [
   {
     "coverage_compromised": false,
-    "duration_seconds": 1.336,
+    "duration_seconds": 1.692,
     "edges": [
       {
         "cycle": false,
-        "source": "ab567fd7a130b1fd",
+        "source": "796ee64b098b6b57",
         "status": "passed",
         "step_id": "continue",
-        "target": "e15f017f371898b2"
+        "target": "2b91a855d07265a1"
       },
       {
         "cycle": true,
-        "source": "e15f017f371898b2",
+        "source": "2b91a855d07265a1",
         "status": "passed",
         "step_id": "done",
-        "target": "e15f017f371898b2"
+        "target": "2b91a855d07265a1"
       }
     ],
     "environment": {
@@ -27,8 +27,8 @@
       "python": "3.13.9"
     },
     "findings": [],
-    "finished_at": "2026-10-10T15:40:49.676904+00:00",
-    "id": "40affab9-cdb5-4538-858e-0eaead9a82d9",
+    "finished_at": "2026-10-10T15:59:14.178136+00:00",
+    "id": "13c2ddc6-f4d0-4f65-93d0-e3f19d79f22b",
     "input_signature": null,
     "journey": {
       "allow_local": true,
@@ -39,7 +39,7 @@
         "recover_navigation": false
       },
       "max_seconds": 60,
-      "name": "Native features replay a4bf617c",
+      "name": "Native features replay 4880d71c",
       "network": {
         "navigation_origins": [],
         "resource_origins": []
@@ -102,7 +102,7 @@
         }
       ],
       "tab_budget": 8,
-      "target": "http://127.0.0.1:59656"
+      "target": "http://127.0.0.1:56157"
     },
     "limitations": [
       "Authored path only; unvisited branches are not covered.",
@@ -116,7 +116,7 @@
     "nodes": [
       {
         "first_step": "open",
-        "id": "ab567fd7a130b1fd",
+        "id": "796ee64b098b6b57",
         "observation": {
           "ax_tree": {
             "max_depth": 8,
@@ -170,7 +170,7 @@
           "online": true,
           "reduced_motion": false,
           "title": "Owned replay",
-          "url": "http://127.0.0.1:59656/",
+          "url": "http://127.0.0.1:56157/",
           "viewport": {
             "device_pixel_ratio": 1.25,
             "height": 640,
@@ -180,7 +180,7 @@
       },
       {
         "first_step": "continue",
-        "id": "e15f017f371898b2",
+        "id": "2b91a855d07265a1",
         "observation": {
           "ax_tree": {
             "max_depth": 8,
@@ -234,7 +234,7 @@
           "online": true,
           "reduced_motion": false,
           "title": "Owned replay",
-          "url": "http://127.0.0.1:59656/",
+          "url": "http://127.0.0.1:56157/",
           "viewport": {
             "device_pixel_ratio": 1.25,
             "height": 640,
@@ -255,13 +255,13 @@
       "reason": "All mandatory assertions passed in this execution.",
       "status": "completed"
     },
-    "project_id": "5d14f2ab-cd91-4da5-ac89-20919d4a85b8",
+    "project_id": "0d288026-7c0a-4f67-83d2-fc6bf25858c1",
     "replay": {
-      "finding_id": "74ba770c-0048-49ac-b174-849de6b1ba30",
-      "source_id": "7e236ba0-42b7-482d-b064-ea2d94218d2b",
+      "finding_id": "502cf2c8-8679-4f8a-bbff-2ffc576f136d",
+      "source_id": "3d5799ae-fb69-448d-92f3-1c0448449c2b",
       "verdict": "not-reproduced-in-this-run"
     },
-    "started_at": "2026-10-10T15:40:48.341013+00:00",
+    "started_at": "2026-10-10T15:59:12.486049+00:00",
     "status": "completed_with_limitations",
     "steps": [
       {
@@ -271,9 +271,9 @@
         "interaction": {
           "http_status": 200
         },
-        "state_id": "ab567fd7a130b1fd",
+        "state_id": "796ee64b098b6b57",
         "status": "passed",
-        "timestamp": "2026-10-10T15:40:49.011760+00:00"
+        "timestamp": "2026-10-10T15:59:13.379189+00:00"
       },
       {
         "action": "activate",
@@ -294,30 +294,30 @@
           ],
           "tab_presses": 1
         },
-        "state_id": "e15f017f371898b2",
+        "state_id": "2b91a855d07265a1",
         "status": "passed",
-        "timestamp": "2026-10-10T15:40:49.091728+00:00"
+        "timestamp": "2026-10-10T15:59:13.478658+00:00"
       },
       {
         "action": "assert_visible",
         "id": "done",
         "index": 2,
-        "state_id": "e15f017f371898b2",
+        "state_id": "2b91a855d07265a1",
         "status": "passed",
-        "timestamp": "2026-10-10T15:40:49.535423+00:00"
+        "timestamp": "2026-10-10T15:59:13.877038+00:00"
       }
     ]
   },
   {
     "coverage_compromised": false,
-    "duration_seconds": 0.974,
+    "duration_seconds": 1.809,
     "edges": [
       {
         "cycle": false,
-        "source": "db3f24ba3e2e0100",
+        "source": "dbb10a050f0c5031",
         "status": "failed",
         "step_id": "continue",
-        "target": "f92bb43a86fd8860"
+        "target": "46809dfb969f3309"
       }
     ],
     "environment": {
@@ -332,7 +332,7 @@
       {
         "actual": "Target not reached within 8 Tab presses",
         "expected": "Target reachable through sequential keyboard navigation",
-        "id": "103f76d8-0d72-4f74-b018-c15a842d27ae",
+        "id": "5154918b-0b95-41f8-bcd0-806b84396012",
         "remediation": "Inspect the step and target; rerun after repair.",
         "reproduction": [
           "open",
@@ -341,13 +341,13 @@
         "rule": "keyboard-unreachable",
         "severity": "serious",
         "step_id": "continue",
-        "timestamp": "2026-10-10T15:40:47.746234+00:00",
+        "timestamp": "2026-10-10T15:59:11.326407+00:00",
         "title": "Target not reached within 8 Tab presses",
         "verification": "confirmed-automated"
       }
     ],
-    "finished_at": "2026-10-10T15:40:47.857341+00:00",
-    "id": "5ad2f835-98c2-4d04-921b-3e2efcb4bf92",
+    "finished_at": "2026-10-10T15:59:11.616366+00:00",
+    "id": "82d41351-fec0-447d-9932-8fef6d724f25",
     "input_signature": null,
     "journey": {
       "allow_local": true,
@@ -358,7 +358,7 @@
         "recover_navigation": false
       },
       "max_seconds": 60,
-      "name": "Native features replay a4bf617c",
+      "name": "Native features replay 4880d71c",
       "network": {
         "navigation_origins": [],
         "resource_origins": []
@@ -421,7 +421,7 @@
         }
       ],
       "tab_budget": 8,
-      "target": "http://127.0.0.1:59656"
+      "target": "http://127.0.0.1:56157"
     },
     "limitations": [
       "Authored path only; unvisited branches are not covered.",
@@ -435,7 +435,7 @@
     "nodes": [
       {
         "first_step": "open",
-        "id": "db3f24ba3e2e0100",
+        "id": "dbb10a050f0c5031",
         "observation": {
           "ax_tree": {
             "max_depth": 8,
@@ -489,7 +489,7 @@
           "online": true,
           "reduced_motion": false,
           "title": "Owned replay",
-          "url": "http://127.0.0.1:59656/",
+          "url": "http://127.0.0.1:56157/",
           "viewport": {
             "device_pixel_ratio": 1.25,
             "height": 640,
@@ -499,7 +499,7 @@
       },
       {
         "first_step": "continue",
-        "id": "f92bb43a86fd8860",
+        "id": "46809dfb969f3309",
         "observation": {
           "ax_tree": {
             "max_depth": 8,
@@ -553,7 +553,7 @@
           "online": true,
           "reduced_motion": false,
           "title": "Owned replay",
-          "url": "http://127.0.0.1:59656/",
+          "url": "http://127.0.0.1:56157/",
           "viewport": {
             "device_pixel_ratio": 1.25,
             "height": 640,
@@ -574,13 +574,13 @@
       "reason": "A required interaction or assertion failed in this bounded attempt.",
       "status": "blocked"
     },
-    "project_id": "5d14f2ab-cd91-4da5-ac89-20919d4a85b8",
+    "project_id": "0d288026-7c0a-4f67-83d2-fc6bf25858c1",
     "replay": {
-      "finding_id": "74ba770c-0048-49ac-b174-849de6b1ba30",
-      "source_id": "7e236ba0-42b7-482d-b064-ea2d94218d2b",
+      "finding_id": "502cf2c8-8679-4f8a-bbff-2ffc576f136d",
+      "source_id": "3d5799ae-fb69-448d-92f3-1c0448449c2b",
       "verdict": "observed-again"
     },
-    "started_at": "2026-10-10T15:40:46.883789+00:00",
+    "started_at": "2026-10-10T15:59:09.806951+00:00",
     "status": "failed",
     "steps": [
       {
@@ -590,9 +590,9 @@
         "interaction": {
           "http_status": 200
         },
-        "state_id": "db3f24ba3e2e0100",
+        "state_id": "dbb10a050f0c5031",
         "status": "passed",
-        "timestamp": "2026-10-10T15:40:47.442972+00:00"
+        "timestamp": "2026-10-10T15:59:10.878439+00:00"
       },
       {
         "action": "activate",
@@ -648,22 +648,22 @@
           ],
           "tab_presses": 8
         },
-        "state_id": "f92bb43a86fd8860",
+        "state_id": "46809dfb969f3309",
         "status": "failed",
-        "timestamp": "2026-10-10T15:40:47.530093+00:00"
+        "timestamp": "2026-10-10T15:59:10.992180+00:00"
       }
     ]
   },
   {
     "coverage_compromised": false,
-    "duration_seconds": 1.385,
+    "duration_seconds": 1.63,
     "edges": [
       {
         "cycle": false,
-        "source": "db3f24ba3e2e0100",
+        "source": "dbb10a050f0c5031",
         "status": "failed",
         "step_id": "continue",
-        "target": "f92bb43a86fd8860"
+        "target": "46809dfb969f3309"
       }
     ],
     "environment": {
@@ -678,7 +678,7 @@
       {
         "actual": "Target not reached within 8 Tab presses",
         "expected": "Target reachable through sequential keyboard navigation",
-        "id": "74ba770c-0048-49ac-b174-849de6b1ba30",
+        "id": "502cf2c8-8679-4f8a-bbff-2ffc576f136d",
         "remediation": "Inspect the step and target; rerun after repair.",
         "reproduction": [
           "open",
@@ -687,13 +687,13 @@
         "rule": "keyboard-unreachable",
         "severity": "serious",
         "step_id": "continue",
-        "timestamp": "2026-10-10T15:40:46.004793+00:00",
+        "timestamp": "2026-10-10T15:59:09.023899+00:00",
         "title": "Target not reached within 8 Tab presses",
         "verification": "confirmed-automated"
       }
     ],
-    "finished_at": "2026-10-10T15:40:46.127710+00:00",
-    "id": "7e236ba0-42b7-482d-b064-ea2d94218d2b",
+    "finished_at": "2026-10-10T15:59:09.188223+00:00",
+    "id": "3d5799ae-fb69-448d-92f3-1c0448449c2b",
     "input_signature": null,
     "journey": {
       "allow_local": true,
@@ -704,7 +704,7 @@
         "recover_navigation": false
       },
       "max_seconds": 60,
-      "name": "Native features replay a4bf617c",
+      "name": "Native features replay 4880d71c",
       "network": {
         "navigation_origins": [],
         "resource_origins": []
@@ -767,7 +767,7 @@
         }
       ],
       "tab_budget": 8,
-      "target": "http://127.0.0.1:59656"
+      "target": "http://127.0.0.1:56157"
     },
     "limitations": [
       "Authored path only; unvisited branches are not covered.",
@@ -781,7 +781,7 @@
     "nodes": [
       {
         "first_step": "open",
-        "id": "db3f24ba3e2e0100",
+        "id": "dbb10a050f0c5031",
         "observation": {
           "ax_tree": {
             "max_depth": 8,
@@ -835,7 +835,7 @@
           "online": true,
           "reduced_motion": false,
           "title": "Owned replay",
-          "url": "http://127.0.0.1:59656/",
+          "url": "http://127.0.0.1:56157/",
           "viewport": {
             "device_pixel_ratio": 1.25,
             "height": 640,
@@ -845,7 +845,7 @@
       },
       {
         "first_step": "continue",
-        "id": "f92bb43a86fd8860",
+        "id": "46809dfb969f3309",
         "observation": {
           "ax_tree": {
             "max_depth": 8,
@@ -899,7 +899,7 @@
           "online": true,
           "reduced_motion": false,
           "title": "Owned replay",
-          "url": "http://127.0.0.1:59656/",
+          "url": "http://127.0.0.1:56157/",
           "viewport": {
             "device_pixel_ratio": 1.25,
             "height": 640,
@@ -920,8 +920,8 @@
       "reason": "A required interaction or assertion failed in this bounded attempt.",
       "status": "blocked"
     },
-    "project_id": "5d14f2ab-cd91-4da5-ac89-20919d4a85b8",
-    "started_at": "2026-10-10T15:40:44.742234+00:00",
+    "project_id": "0d288026-7c0a-4f67-83d2-fc6bf25858c1",
+    "started_at": "2026-10-10T15:59:07.557751+00:00",
     "status": "failed",
     "steps": [
       {
@@ -931,9 +931,9 @@
         "interaction": {
           "http_status": 200
         },
-        "state_id": "db3f24ba3e2e0100",
+        "state_id": "dbb10a050f0c5031",
         "status": "passed",
-        "timestamp": "2026-10-10T15:40:45.510631+00:00"
+        "timestamp": "2026-10-10T15:59:08.385013+00:00"
       },
       {
         "action": "activate",
@@ -989,43 +989,43 @@
           ],
           "tab_presses": 8
         },
-        "state_id": "f92bb43a86fd8860",
+        "state_id": "46809dfb969f3309",
         "status": "failed",
-        "timestamp": "2026-10-10T15:40:45.618320+00:00"
+        "timestamp": "2026-10-10T15:59:08.495527+00:00"
       }
     ]
   },
   {
     "coverage_compromised": false,
-    "duration_seconds": 8.798,
+    "duration_seconds": 6.008,
     "edges": [
       {
         "cycle": true,
-        "source": "e3c139a18d7b1c0c",
+        "source": "aee6bca73aedfa02",
         "status": "passed",
         "step_id": "base",
-        "target": "e3c139a18d7b1c0c"
+        "target": "aee6bca73aedfa02"
       },
       {
         "cycle": false,
-        "source": "e3c139a18d7b1c0c",
+        "source": "aee6bca73aedfa02",
         "status": "passed",
         "step_id": "explore-1",
-        "target": "feb8f7d54909b100"
+        "target": "144a78ee1b0303b3"
       },
       {
         "cycle": false,
-        "source": "e3c139a18d7b1c0c",
+        "source": "aee6bca73aedfa02",
         "status": "passed",
         "step_id": "explore-3",
-        "target": "de356d6536c18c84"
+        "target": "05ed3a0294a366ea"
       },
       {
         "cycle": true,
-        "source": "feb8f7d54909b100",
+        "source": "144a78ee1b0303b3",
         "status": "passed",
         "step_id": "explore-2",
-        "target": "e3c139a18d7b1c0c"
+        "target": "aee6bca73aedfa02"
       }
     ],
     "environment": {
@@ -1040,7 +1040,7 @@
       "actions": [
         {
           "action": "activate",
-          "approval_id": "e376211c-09ed-4307-8e0d-049536c87e58",
+          "approval_id": "76b38288-0267-43f3-b84d-6f7fc6fe68a5",
           "interaction": {
             "focus_history": [
               {
@@ -1058,8 +1058,8 @@
           },
           "kind": "approved-explore",
           "reachability": "reached",
-          "source": "e3c139a18d7b1c0c",
-          "state_id": "feb8f7d54909b100",
+          "source": "aee6bca73aedfa02",
+          "state_id": "144a78ee1b0303b3",
           "status": "passed",
           "step_id": "explore-1",
           "target": {
@@ -1067,26 +1067,26 @@
             "name": "Alpha",
             "role": "button"
           },
-          "timestamp": "2026-10-10T15:40:39.661175+00:00"
+          "timestamp": "2026-10-10T15:59:02.337665+00:00"
         },
         {
           "action": "navigate",
-          "approval_id": "53207825-cb32-452b-a7bf-9fb968b3c0be",
+          "approval_id": "6942f610-193d-40bc-a71b-9f0864b10870",
           "interaction": {
             "http_status": 200
           },
           "kind": "approved-recovery",
           "reachability": "inconclusive",
-          "source": "feb8f7d54909b100",
-          "state_id": "e3c139a18d7b1c0c",
+          "source": "144a78ee1b0303b3",
+          "state_id": "aee6bca73aedfa02",
           "status": "passed",
           "step_id": "explore-2",
           "target": null,
-          "timestamp": "2026-10-10T15:40:40.549822+00:00"
+          "timestamp": "2026-10-10T15:59:03.347150+00:00"
         },
         {
           "action": "activate",
-          "approval_id": "1958defd-30a5-43f1-aec2-f883fa97dcdd",
+          "approval_id": "9c84f6fd-599f-42fa-8833-40575c526688",
           "interaction": {
             "focus_history": [
               {
@@ -1109,8 +1109,8 @@
           },
           "kind": "approved-explore",
           "reachability": "reached",
-          "source": "e3c139a18d7b1c0c",
-          "state_id": "de356d6536c18c84",
+          "source": "aee6bca73aedfa02",
+          "state_id": "05ed3a0294a366ea",
           "status": "passed",
           "step_id": "explore-3",
           "target": {
@@ -1118,53 +1118,53 @@
             "name": "Beta",
             "role": "button"
           },
-          "timestamp": "2026-10-10T15:40:42.358927+00:00"
+          "timestamp": "2026-10-10T15:59:04.295330+00:00"
         }
       ],
       "discovered_states": 3,
       "mode": "approved-branches",
       "pending_branches": [
         {
-          "normalized_state_id": "c5ddcf739820aac1",
+          "normalized_state_id": "e187fd9221f1eef7",
           "path": [
             "Beta"
           ],
           "reason": "depth-bound",
-          "state_id": "feb8f7d54909b100"
+          "state_id": "144a78ee1b0303b3"
         },
         {
           "path": [
             "Alpha"
           ],
           "reason": "action-budget",
-          "state_id": "de356d6536c18c84"
+          "state_id": "05ed3a0294a366ea"
         }
       ],
       "reachability": [
         {
-          "source": "e3c139a18d7b1c0c",
+          "source": "aee6bca73aedfa02",
           "status": "reached",
           "step_id": "explore-1",
-          "target": "feb8f7d54909b100"
+          "target": "144a78ee1b0303b3"
         },
         {
-          "source": "feb8f7d54909b100",
+          "source": "144a78ee1b0303b3",
           "status": "inconclusive",
           "step_id": "explore-2",
-          "target": "e3c139a18d7b1c0c"
+          "target": "aee6bca73aedfa02"
         },
         {
-          "source": "e3c139a18d7b1c0c",
+          "source": "aee6bca73aedfa02",
           "status": "reached",
           "step_id": "explore-3",
-          "target": "de356d6536c18c84"
+          "target": "05ed3a0294a366ea"
         }
       ],
       "stop_reason": "action-budget"
     },
     "findings": [],
-    "finished_at": "2026-10-10T15:40:42.991413+00:00",
-    "id": "ba14563e-f3e6-475c-90bc-cb2a14a94d30",
+    "finished_at": "2026-10-10T15:59:05.005037+00:00",
+    "id": "224fea5c-2861-40b4-8ef1-1dfc482c8daa",
     "input_signature": null,
     "journey": {
       "allow_local": true,
@@ -1175,7 +1175,7 @@
         "recover_navigation": true
       },
       "max_seconds": 60,
-      "name": "Native features branches a4bf617c",
+      "name": "Native features branches 4880d71c",
       "network": {
         "navigation_origins": [],
         "resource_origins": []
@@ -1224,7 +1224,7 @@
         }
       ],
       "tab_budget": 8,
-      "target": "http://127.0.0.1:59656"
+      "target": "http://127.0.0.1:56157"
     },
     "limitations": [
       "Website exploration requires approval for each action; unvisited branches are not covered.",
@@ -1239,7 +1239,7 @@
     "nodes": [
       {
         "first_step": "open",
-        "id": "e3c139a18d7b1c0c",
+        "id": "aee6bca73aedfa02",
         "observation": {
           "ax_tree": {
             "max_depth": 8,
@@ -1312,7 +1312,7 @@
           "online": true,
           "reduced_motion": false,
           "title": "Owned branches",
-          "url": "http://127.0.0.1:59656/",
+          "url": "http://127.0.0.1:56157/",
           "viewport": {
             "device_pixel_ratio": 1.25,
             "height": 640,
@@ -1322,7 +1322,7 @@
       },
       {
         "first_step": "explore-1",
-        "id": "feb8f7d54909b100",
+        "id": "144a78ee1b0303b3",
         "observation": {
           "ax_tree": {
             "max_depth": 8,
@@ -1376,7 +1376,7 @@
           "online": true,
           "reduced_motion": false,
           "title": "Owned branches",
-          "url": "http://127.0.0.1:59656/",
+          "url": "http://127.0.0.1:56157/",
           "viewport": {
             "device_pixel_ratio": 1.25,
             "height": 640,
@@ -1386,7 +1386,7 @@
       },
       {
         "first_step": "explore-3",
-        "id": "de356d6536c18c84",
+        "id": "05ed3a0294a366ea",
         "observation": {
           "ax_tree": {
             "max_depth": 8,
@@ -1440,7 +1440,7 @@
           "online": true,
           "reduced_motion": false,
           "title": "Owned branches",
-          "url": "http://127.0.0.1:59656/",
+          "url": "http://127.0.0.1:56157/",
           "viewport": {
             "device_pixel_ratio": 1.25,
             "height": 640,
@@ -1461,8 +1461,8 @@
       "reason": "All mandatory assertions passed in this execution.",
       "status": "completed"
     },
-    "project_id": "d99e95cb-f0a3-4899-a996-88514c9b5e61",
-    "started_at": "2026-10-10T15:40:34.192728+00:00",
+    "project_id": "fee679da-997d-4973-9b25-21ee0242520b",
+    "started_at": "2026-10-10T15:58:58.996669+00:00",
     "status": "completed_with_limitations",
     "steps": [
       {
@@ -1472,17 +1472,17 @@
         "interaction": {
           "http_status": 200
         },
-        "state_id": "e3c139a18d7b1c0c",
+        "state_id": "aee6bca73aedfa02",
         "status": "passed",
-        "timestamp": "2026-10-10T15:40:38.650734+00:00"
+        "timestamp": "2026-10-10T15:59:01.313728+00:00"
       },
       {
         "action": "assert_visible",
         "id": "base",
         "index": 1,
-        "state_id": "e3c139a18d7b1c0c",
+        "state_id": "aee6bca73aedfa02",
         "status": "passed",
-        "timestamp": "2026-10-10T15:40:38.897840+00:00"
+        "timestamp": "2026-10-10T15:59:01.426172+00:00"
       }
     ]
   }

@@ -1,0 +1,10 @@
+{
+  "artifact": "AccessMaze-hackyard-preview-746eaca.zip",
+  "bytes": 389996150,
+  "sha256": "6165c5693f9e57803cfa88d93c0525c59c3830527331e3aa7c0a3bb1b0ec1a53",
+  "zip_crc": "passed",
+  "files": 1703,
+  "source_commit": "746eaca94fae91a7749c1ce293ac721bc03f95a4",
+  "source_dirty": false,
+  "scope": "Unsigned local preview. ZIP timestamps clamp to supported range; file hashes remain authoritative. No bit-for-bit build or independent qualification claim."
+}

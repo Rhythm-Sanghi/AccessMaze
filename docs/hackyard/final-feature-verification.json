@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-10",
+  "application_source_commit": "746eaca94fae91a7749c1ce293ac721bc03f95a4",
+  "package_source_dirty": false,
+  "engine_regression": {
+    "source_commit": "7628688",
+    "passed": 112,
+    "seconds": 151.64,
+    "source_changed_since": false
+  },
+  "react_regression": {
+    "passed": 9,
+    "seconds": 5.32
+  },
+  "commands": [
+    "uv run --project engine python scripts/package_windows.py --name AccessMaze-hackyard-preview",
+    "uv run --project engine python scripts/launch_preview.py --package AccessMaze-hackyard-preview",
+    "uv run --project engine python scripts/desktop_features.py --endpoint http://127.0.0.1:9224",
+    "uv run --project engine python scripts/desktop_comparison.py --endpoint http://127.0.0.1:9224",
+    "uv run --project engine python scripts/desktop_readiness.py --endpoint http://127.0.0.1:9224",
+    "uv run --project engine python scripts/desktop_website_smoke.py --endpoint http://127.0.0.1:9224",
+    "uv run --project engine python scripts/desktop_crash.py --endpoint http://127.0.0.1:9224 --exe dist/AccessMaze-hackyard-preview/AccessMaze.exe",
+    "uv run --project engine python scripts/desktop_cancel.py --endpoint http://127.0.0.1:9224 --exe dist/AccessMaze-hackyard-preview/AccessMaze.exe",
+    "uv run --project engine python scripts/portable_smoke.py --package AccessMaze-hackyard-preview --complex --report docs/hackyard/final-complex-portable-verification.json",
+    "uv run --project engine python scripts/desktop_startup.py --package AccessMaze-hackyard-preview",
+    "powershell -NoProfile -File scripts/Test-AccessMazePortable.ps1 -Package ./dist/AccessMaze-hackyard-preview -Report docs/hackyard/final-portable-integrity-verification.json",
+    "uv run --project engine python scripts/hackyard_demo.py --output dist/Hackyard-final-feature-evidence",
+    "uv run --project engine python scripts/archive_preview.py --package dist/AccessMaze-hackyard-preview --archive dist/AccessMaze-hackyard-preview-746eaca.zip --report docs/hackyard/final-preview-artifact-verification.json"
+  ],
+  "failed_attempts": [
+    {
+      "harness": "desktop_website_smoke.py",
+      "result": "Timeout waiting for previous Propose website buttons label",
+      "resolution": "Use current Propose semantic buttons accessible label; same package rerun passed"
+    },
+    {
+      "harness": "desktop_cancel.py",
+      "result": "Strict locator resolved two Emergency stop buttons",
+      "resolution": "Scope to Analysis workspace; owned partial test cleaned up; same package rerun passed"
+    },
+    {
+      "harness": "Ad hoc ZIP extraction",
+      "result": "Extraction completed; final Unicode path print raised cp1252 UnicodeEncodeError",
+      "resolution": "Independent PowerShell check passed against extracted Unicode path; later native startup also passed"
+    },
+    {
+      "harness": "Ad hoc extracted native startup",
+      "result": "KeyError SystemRoot before starting process after conversion to case-sensitive env dict",
+      "resolution": "Read SystemRoot from os.environ; rerun reached connected UI and closed all children"
+    }
+  ],
+  "native_result_files": [
+    "native-features-verification.json",
+    "native-comparison-verification.json",
+    "native-cancellation-verification.json",
+    "final-native-startup-verification.json",
+    "native-final-shutdown.json",
+    "native-final-nondebug-shutdown.json",
+    "../testing/desktop-crash.json",
+    "../testing/desktop-readiness.json",
+    "../testing/desktop-website.json",
+    "final-extracted-native-verification.json"
+  ],
+  "first_native_provenance": "native-features-first-{runs,verification}.json are 7628688; latest native-features-{runs,verification}.json are 746eaca",
+  "limitations": [
+    "Same existing Windows development laptop; no independent clean-machine result",
+    "Layout zoom is viewport/device-scale emulation",
+    "No NVDA, WCAG certification, independent security/legal review, signing or remote CI claim",
+    "Startup polling and CDP add overhead; summed RSS double-counts shared pages; no overnight or leak conclusion",
+    "Earlier instrumented 7628688 shutdown retained WebView2; final repeats passed but root cause remains unknown"
+  ],
+  "disposable_cleanup": {
+    "result": "NOT COMPLETED: automatic approval review rejected guarded Remove-Item with blocked by policy",
+    "retained_paths": [
+      "C:\\Users\\Test\\Documents\\Projects\\AccessMaze\\dist\\Final portable verification \u03a9",
+      "C:\\Users\\Test\\AppData\\Local\\Temp\\AccessMaze portable check cc5c10c8-a0bc-49b2-bb18-14d6df9751a6",
+      "C:\\Users\\Test\\AppData\\Local\\Temp\\AccessMaze portable check 7cfd4b55-6ce7-49d1-9827-187f6845c5cb"
+    ],
+    "all_paths_still_exist": true,
+    "required_action": "Manually remove only these disposable test directories after reviewing the evidence; retain final ZIP/package and real AppData history"
+  },
+  "owned_desktops_remaining": []
+}

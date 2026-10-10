@@ -6,12 +6,12 @@
   "profile_reused_across_projects": true,
   "layout_zoom_percent": 125,
   "owned_records_removed": true,
-  "duration_seconds": 19.413,
+  "duration_seconds": 22.365,
   "run_durations_seconds": [
-    1.336,
-    0.974,
-    1.385,
-    8.798
+    1.692,
+    1.809,
+    1.63,
+    6.008
   ],
   "observed_graph_nodes": [
     2,
@@ -24,5 +24,6 @@
     "incomplete": [
       "color-contrast"
     ]
-  }
+  },
+  "application_source_commit": "746eaca94fae91a7749c1ce293ac721bc03f95a4"
 }

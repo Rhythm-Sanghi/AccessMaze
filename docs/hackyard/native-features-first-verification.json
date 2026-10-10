@@ -1,0 +1,29 @@
+{
+  "scope": "Packaged native WebView2/private IPC/owned Chromium HTTP target on development laptop",
+  "approved_branch_actions": 3,
+  "replay_before_correction": "observed-again",
+  "replay_after_correction": "not-reproduced-in-this-run",
+  "profile_reused_across_projects": true,
+  "layout_zoom_percent": 125,
+  "owned_records_removed": true,
+  "duration_seconds": 19.413,
+  "run_durations_seconds": [
+    1.336,
+    0.974,
+    1.385,
+    8.798
+  ],
+  "observed_graph_nodes": [
+    2,
+    2,
+    2,
+    3
+  ],
+  "axe": {
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  "application_source_commit": "7628688eecf387804c106fcd5998aed285781668"
+}

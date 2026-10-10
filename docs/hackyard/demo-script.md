@@ -60,6 +60,9 @@ expired URLs. Generated reports remain viewable offline. Identify stored evidenc
 historical execution, including its timestamp, whenever it replaces a live demonstration.
 A failed run must remain visible rather than being replaced with fabricated findings.
 
-Latest standalone evidence: `demo-competition-verification.json`; generated local artifacts
-are in `dist/Hackyard-competition-evidence`. Native comparison evidence is in
-`native-comparison-verification.json`, against clean application source 504774a.
+Latest standalone evidence: `final-demo-verification.json`; generated local reports are in
+`dist/Hackyard-final-feature-evidence`. Regenerate with that directory replaced by a new
+name. Final native feature sequence is `native-features-verification.json`; native strict
+comparison is `native-comparison-verification.json`, both against clean application source
+**746eaca**. First feature acceptance at 7628688 is preserved under
+`native-features-first-{runs,verification}.json`. Test automation is not an onsite human demo.

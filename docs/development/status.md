@@ -1,8 +1,110 @@
 # Engineering status
 
 Updated 2026-10-10. Verification below records actual local execution.
+The first acceptance section is current. Older milestone entries preserve their
+point-in-time pending checks; later completed verification supersedes those entries.
 
 ## Implemented
+
+### Final remaining-feature acceptance — clean application source 746eaca
+
+The approved branching/recovery, finding-specific replay and reusable profile milestones
+are implemented and locally verified. Final package `dist/AccessMaze-hackyard-preview`
+was built from **746eaca94fae91a7749c1ce293ac721bc03f95a4**, **source_dirty=false**,
+with **1,702 hashed files**, frozen Python and bundled Chromium. Later changes are
+verification tools/documentation/evidence only. No application source changed after this build.
+
+Actual native WebView2 → private Rust IPC → frozen worker → Chromium checks:
+
+- `desktop_features.py`: **passed in 22.365 s**, three separately approved actions,
+  root recovery, saved 125% layout-zoom profile reused across two projects, blocked
+  keyboard run, observed-again replay, native-button correction and successful replay.
+  Actual browser durations **1.692 / 1.809 / 1.630 / 6.008 s**, graph nodes **2 / 2 / 2 / 3**.
+  Historical/live focus shows **8 failed Tab presses versus 1 successful press**.
+  Owned feature projects/profile removed through the UI; screenshots visually inspected.
+- `desktop_comparison.py`: actual blocked → completed journey, **passed-retest**,
+  first divergent step `continue`, stale comparison hidden and owned project removed.
+- `desktop_readiness.py`: actual Tab/Enter navigation/heading focus, private actionable
+  schema error/input retention, native dialog initial/restored focus; all passed.
+- `desktop_website_smoke.py`: actual per-action approval, **one POST**, no automatic
+  external reset/replay, headed recorder H1 capture; passed after correcting an obsolete
+  checkbox selector. The failed selector attempt is retained in the verification ledger.
+- `desktop_crash.py --exe dist/AccessMaze-hackyard-preview/AccessMaze.exe`: actual worker
+  kill during execution; replacement worker restored **interrupted** run/step evidence;
+  **4 Chromium processes exited** through the Windows Job object.
+- New `desktop_cancel.py` with the same executable guard: actual Emergency stop,
+  persisted **cancelled** execution/task outcome, **1 retained graph node**, **4 Chromium
+  processes exited**, owned project removed. First attempt had an ambiguous two-button
+  test selector; scoping to Analysis workspace fixed the harness, without an app change.
+
+Axe on the tested replay/comparison views: **0 violations**, **color-contrast incomplete**.
+This is bounded automated evidence, not exhaustive UI accessibility or NVDA verification.
+Raw records: ../hackyard/final-feature-verification.json and the files it indexes.
+First native records at 7628688 are retained separately as native-features-first-{runs,verification}.json.
+
+Portable verification commands actually executed:
+
+```powershell
+uv run --project engine python scripts/portable_smoke.py --package AccessMaze-hackyard-preview --complex --report docs/hackyard/final-complex-portable-verification.json
+powershell -NoProfile -File scripts/Test-AccessMazePortable.ps1 -Package ./dist/AccessMaze-hackyard-preview -Report docs/hackyard/final-portable-integrity-verification.json
+uv run --project engine python scripts/desktop_startup.py --package AccessMaze-hackyard-preview
+uv run --project engine python scripts/hackyard_demo.py --output dist/Hackyard-final-feature-evidence
+```
+
+The frozen worker passed with **System32-only PATH**, working directory with spaces,
+portable Chromium, JSON/HTML exports and clean EOF exit. Startup **0.612 s**; actual
+accessible/broken/conditional/owned-SPA runs **2.483 / 2.487 / 3.032 / 7.013 s**, expected
+statuses and findings **0 / 1 / 0 / 0**; actual multipart bytes and single POST asserted.
+PowerShell independently rehashed the manifest on this laptop and ran the three fixtures:
+**passed**, startup **0.585 s**. Neither check is independent clean-machine verification.
+
+Three sequential native launches reached connected UI in **4.746 / 4.028 / 3.720 s**,
+summed ready RSS **448.97 / 446.24 / 441.50 MiB**, **8 children** each, all exited normally.
+Final instrumented sequence close and separate ordinary non-CDP launch also exited all
+children. Final idle sample: **493.88 MiB summed RSS / 3,687 handles / 8 children**.
+Polling/CDP overhead, uncontrolled caches and shared pages limit these measurements;
+no peak/leak/performance-budget/overnight claim. The earlier 7628688 instrumented retention
+remains documented; subsequent passes do not establish its cause.
+
+The fresh standalone Hackyard demo produced actual JSON/HTML/CSV, correction diff,
+blocked keyboard → completed same-condition retest, **one 25-byte upload**, recorder replay
+and separate blocked offline draft-loss assertion. Initial isolated axe findings **0**
+do not contradict the later keyboard failure. Raw ../hackyard/final-demo-verification.json;
+local reports `dist/Hackyard-final-feature-evidence/`.
+
+Final archive `dist/AccessMaze-hackyard-preview-746eaca.zip`: **389,996,150 bytes**,
+**1,703 ZIP entries** (1,702 manifest-covered files plus manifest), CRC passed;
+SHA-256 **6165c5693f9e57803cfa88d93c0525c59c3830527331e3aa7c0a3bb1b0ec1a53**.
+Command: `scripts/archive_preview.py --package dist/AccessMaze-hackyard-preview
+--archive dist/AccessMaze-hackyard-preview-746eaca.zip
+--report docs/hackyard/final-preview-artifact-verification.json` through the project Python.
+The archive is unsigned; its local hash does not establish publisher authenticity.
+
+A fresh ZIP extraction under `dist/Final portable verification Ω/` passed the same
+manifest/fixture checker with System32-only PATH (**1.089 s** worker startup). The extracted
+native desktop also reached **Worker connected in 5.239 s** with System32-only PATH and
+closed **all 9 children**. Raw final-extracted-{portable,native}-verification.json. Existing
+AppData and WebView2 were reused: this is neither fresh-user nor independent-machine evidence.
+The extraction helper's post-extraction Unicode print and the first native probe's environment
+key lookup failed; both diagnostic attempts and successful follow-ups are retained in the ledger.
+
+**Disposable cleanup not completed:** automatic approval review rejected the guarded
+PowerShell removal with “blocked by policy”. The extracted copy and the two exact UUID
+Temp stores remain on disk; paths and required manual cleanup are in
+../hackyard/final-feature-verification.json. No AccessMaze desktop remains running.
+The original package/ZIP and real AppData history must be retained.
+
+Final verification-tool checks: Ruff check passed and **72 files already formatted**;
+TypeScript/ESLint, Prettier, generated contracts and Cargo fmt passed. Engine and React
+source remained unchanged from the **112 / 9 passing regressions** recorded below;
+verification tools were checked through their actual native executions. No remote CI run.
+
+Remaining limits: bounded root recovery cannot undo external effects or replay prerequisite
+form inputs; privately withheld discovery targets require an authored journey for replay;
+layout zoom emulates viewport/device scale, not browser chrome/text zoom. Mandatory
+independent Windows/NVDA/security/redistribution/signing/remote-CI/overnight/performance
+and master-scope gates remain open in ../releases/remaining-actions.md. This is an unsigned
+readiness preview, not production-ready or release-qualified.
 
 ### Corrected feature source — full regression and first native acceptance
 
@@ -20,9 +122,9 @@ three approved discovery actions, reusable 125% layout-zoom profile across two p
 blocked keyboard run, observed-again replay, native-button correction and successful replay.
 Actual browser durations **1.336 / 0.974 / 1.385 / 8.798 s**, graph nodes **2 / 2 / 2 / 3**.
 Axe on this view: **0 violations**, color-contrast incomplete. Owned projects/profile
-removed normally. Raw ../hackyard/native-features-{runs,verification}.json. Screenshots
+removed normally. Raw ../hackyard/native-features-first-{runs,verification}.json. Screenshots
 were visually inspected. These records refer to the intermediate UI; final presentation
-build and acceptance are pending below, not silently inferred.
+build and acceptance are recorded above, separately from this intermediate evidence.
 
 Actual native schema-2 → 3 migration retained all **56 original projects / 56 original
 run payloads unchanged**. A private pre-upgrade SQLite backup passed integrity_check;
@@ -41,7 +143,7 @@ verified ordinary-release defect or discard it as irrelevant; repeat during qual
 Visual review prompted compact historical/live focus tables, explicit step-to-runtime-input
 mapping, visible discovery reachability and observed CSS viewport/zoom. Detailed raw
 records remain available; no results are fabricated. Final UI package/crash/portable/demo
-verification remains pending. Independent NVDA, legal/security, signing, clean-machine,
+verification is recorded above. Independent NVDA, legal/security, signing, clean-machine,
 remote-CI, overnight and performance-budget gates remain open.
 
 ### Verification correction — checked-state deduplication
@@ -67,7 +169,7 @@ Resource contention is a plausible explanation, not an established diagnosis or 
 of stability under arbitrary load. After the control-state/navigation fixes:
 `pytest engine/tests/test_website_exploration.py -q`: **7 passed in 19.02 s**;
 React **9 passed in 7.04 s**; type/lint/format/contracts passed. Updated ADR 003 records
-the decisions. Final full-suite/native/package checks for this corrected source remain pending.
+the decisions. Subsequent full-suite/native/package checks are recorded above.
 
 ### Remaining-feature milestones 2–3 — implementation and browser verification
 
@@ -751,7 +853,7 @@ measurements recorded above.
 This is an operational preview across parts of milestones 1–7, with milestone 8
 hardening. It does not complete the master specification. Milestone 9 remains gated.
 
-- External exploration is one approved walk; exhaustive coverage, unreachable-state proof and resume after crash remain absent.
+- External exploration supports approved semantic branches and optional approved root navigation; exhaustive coverage, unreachable-state proof and resume after crash remain absent.
 - Recording supports a reviewed subset. Preconditions, arbitrary zoom and advanced pointer profiles remain; runtime uploads are supported.
 - Real assistive-technology integration, manual NVDA/high-contrast/keyboard evaluation and full UI performance testing remain.
 - Retests are narrow; human annotations and a full finding lifecycle remain.

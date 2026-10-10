@@ -1,0 +1,320 @@
+{
+  "scope": "Owned HTTP app and actual Chromium; scripted recording, no NVDA claim",
+  "isolated_page_findings": 0,
+  "isolated_page_manual_review": [],
+  "isolated_page_scope": "Initial page axe rules and heading assertion only; no keyboard task completion or conformance verdict",
+  "broken_status": "failed",
+  "fixed_status": "completed_with_limitations",
+  "broken_outcome": {
+    "status": "blocked",
+    "reason": "A required interaction or assertion failed in this bounded attempt.",
+    "assertions": [
+      {
+        "step_id": "errors",
+        "status": "not-reached"
+      },
+      {
+        "step_id": "documents",
+        "status": "not-reached"
+      },
+      {
+        "step_id": "modal",
+        "status": "not-reached"
+      },
+      {
+        "step_id": "restore",
+        "status": "not-reached"
+      },
+      {
+        "step_id": "retained",
+        "status": "not-reached"
+      },
+      {
+        "step_id": "done",
+        "status": "not-reached"
+      }
+    ],
+    "blocked_step_id": "validate",
+    "limitation": "Task completion does not establish accessibility conformance or untested coverage."
+  },
+  "fixed_outcome": {
+    "status": "completed",
+    "reason": "All mandatory assertions passed in this execution.",
+    "assertions": [
+      {
+        "step_id": "errors",
+        "status": "passed"
+      },
+      {
+        "step_id": "documents",
+        "status": "passed"
+      },
+      {
+        "step_id": "modal",
+        "status": "passed"
+      },
+      {
+        "step_id": "restore",
+        "status": "passed"
+      },
+      {
+        "step_id": "retained",
+        "status": "passed"
+      },
+      {
+        "step_id": "done",
+        "status": "passed"
+      }
+    ],
+    "blocked_step_id": null,
+    "limitation": "Task completion does not establish accessibility conformance or untested coverage."
+  },
+  "environment_outcome": {
+    "status": "blocked",
+    "reason": "A required interaction or assertion failed in this bounded attempt.",
+    "assertions": [
+      {
+        "step_id": "retained",
+        "status": "failed"
+      }
+    ],
+    "blocked_step_id": "retained",
+    "limitation": "Task completion does not establish accessibility conformance or untested coverage."
+  },
+  "environment_scope": "Bundled synthetic form; actual Chromium offline/online events, not a physical adapter disconnect or proof about in-flight requests",
+  "retest": {
+    "previous_id": "d4f8d05b-e9a8-4b52-bcc5-77b281f0f30b",
+    "current_id": "459b279a-70a0-465d-ac08-9ed5e28a8aeb",
+    "comparable": true,
+    "findings": [
+      {
+        "finding_id": "1ba7eb6a-c02d-40f4-82b1-9834a14e1400",
+        "rule": "keyboard-unreachable",
+        "step_id": "validate",
+        "verdict": "passed-retest"
+      }
+    ],
+    "added_findings": [],
+    "steps": [
+      {
+        "step_id": "open",
+        "previous_status": "passed",
+        "current_status": "passed",
+        "previous_state_id": "ba370fad050c51d5",
+        "current_state_id": "1511de7cbe77b883"
+      },
+      {
+        "step_id": "validate",
+        "previous_status": "failed",
+        "current_status": "passed",
+        "previous_state_id": "cfbd339f7fd0528a",
+        "current_state_id": "c7a8ba1257afcc8c"
+      },
+      {
+        "step_id": "errors",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "c7a8ba1257afcc8c"
+      },
+      {
+        "step_id": "name",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "41d2c02c23045f67"
+      },
+      {
+        "step_id": "next",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "818f532a9dad292e"
+      },
+      {
+        "step_id": "documents",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "96cc558b067728ba"
+      },
+      {
+        "step_id": "international",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "51f9cc4249926c26"
+      },
+      {
+        "step_id": "reference",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "62e72c24f3a472a9"
+      },
+      {
+        "step_id": "help",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "5183d613571070fa"
+      },
+      {
+        "step_id": "modal",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "5183d613571070fa"
+      },
+      {
+        "step_id": "close",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "32a3a1baea207b5d"
+      },
+      {
+        "step_id": "restore",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "32a3a1baea207b5d"
+      },
+      {
+        "step_id": "offline",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "4185b384483df342"
+      },
+      {
+        "step_id": "online",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "8a1c5ac20f883686"
+      },
+      {
+        "step_id": "retained",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "8a1c5ac20f883686"
+      },
+      {
+        "step_id": "upload",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "b9f49e0751e1392a"
+      },
+      {
+        "step_id": "send",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "ed28e9fa391abbdb"
+      },
+      {
+        "step_id": "done",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "ed28e9fa391abbdb"
+      },
+      {
+        "step_id": "audit",
+        "previous_status": "not-reached",
+        "current_status": "passed",
+        "previous_state_id": null,
+        "current_state_id": "ed28e9fa391abbdb"
+      }
+    ],
+    "first_divergent_step": {
+      "step_id": "validate",
+      "previous_status": "failed",
+      "current_status": "passed",
+      "previous_state_id": "cfbd339f7fd0528a",
+      "current_state_id": "c7a8ba1257afcc8c"
+    },
+    "previous_outcome": {
+      "status": "blocked",
+      "reason": "A required interaction or assertion failed in this bounded attempt.",
+      "assertions": [
+        {
+          "step_id": "errors",
+          "status": "not-reached"
+        },
+        {
+          "step_id": "documents",
+          "status": "not-reached"
+        },
+        {
+          "step_id": "modal",
+          "status": "not-reached"
+        },
+        {
+          "step_id": "restore",
+          "status": "not-reached"
+        },
+        {
+          "step_id": "retained",
+          "status": "not-reached"
+        },
+        {
+          "step_id": "done",
+          "status": "not-reached"
+        }
+      ],
+      "blocked_step_id": "validate",
+      "limitation": "Task completion does not establish accessibility conformance or untested coverage."
+    },
+    "current_outcome": {
+      "status": "completed",
+      "reason": "All mandatory assertions passed in this execution.",
+      "assertions": [
+        {
+          "step_id": "errors",
+          "status": "passed"
+        },
+        {
+          "step_id": "documents",
+          "status": "passed"
+        },
+        {
+          "step_id": "modal",
+          "status": "passed"
+        },
+        {
+          "step_id": "restore",
+          "status": "passed"
+        },
+        {
+          "step_id": "retained",
+          "status": "passed"
+        },
+        {
+          "step_id": "done",
+          "status": "passed"
+        }
+      ],
+      "blocked_step_id": null,
+      "limitation": "Task completion does not establish accessibility conformance or untested coverage."
+    },
+    "changed_conditions": [],
+    "environment_changes": [],
+    "warnings": [],
+    "matching_rule": "Stable step ID + rule + exact affected-target set; array positions and private text tokens are never identities. Reordered definitions are descriptive only, not repair verification.",
+    "limitation": "A passed retest verifies only this configuration and execution."
+  },
+  "recorded_replay_status": "completed_with_limitations",
+  "server_observations": {
+    "api_posts": 1,
+    "api_options_requests": 3,
+    "uploaded_bytes": [
+      25
+    ]
+  },
+  "target_lifetime": "Ephemeral servers closed after demonstration; regenerate to replay",
+  "application_source_commit": "746eaca94fae91a7749c1ce293ac721bc03f95a4"
+}

@@ -6,6 +6,10 @@ failure replay and a reusable profile library. Their limits and local acceptance
 in ../hackyard/remaining-features.md and status. True browser chrome/text zoom,
 replay of withheld discovery targets and exhaustive external graph coverage remain
 outside this implemented scope; independent manual zoom testing is still required.
+Final local native/portable/demo acceptance passed at application source **746eaca**;
+exact ZIP/hash and measurements are in engineering status. Final instrumented sequence,
+three sequential startup closes and a separate ordinary launch left no children. The
+earlier 7628688 retention remains undiagnosed and still requires sustained verification.
 None of the following is implicitly passed by the browser regression suite.
 
 | Gate | Exact required action |
@@ -29,3 +33,9 @@ Useful procedures: [clean Windows](clean-machine.md), [package/build](packaging.
 Competition start date/eligibility, entrant/team contribution history and required
 AI-assistance disclosures must be supplied by the entrant. The Git boundary ledger
 documents pre-existing work; it does not certify competition eligibility.
+
+Local disposable cleanup follow-up: automatic approval review blocked deletion of the
+Unicode extraction and two synthetic Temp stores after their verification passed. Exact
+paths are recorded under `disposable_cleanup` in ../hackyard/final-feature-verification.json.
+Manually remove only those three test directories if desired. Keep the final ZIP/package
+and genuine AppData/history. The source working tree is separate from ignored test outputs.

@@ -1,0 +1,36 @@
+{
+  "frozen_worker": "passed",
+  "system_path_only": true,
+  "working_directory": "temporary path with spaces",
+  "browser_resources": "portable bundled revision",
+  "worker_startup_seconds": 0.612,
+  "package": "AccessMaze-hackyard-preview",
+  "runs": [
+    {
+      "fixture": "accessible",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 2.483
+    },
+    {
+      "fixture": "broken",
+      "status": "failed",
+      "findings": 1,
+      "seconds": 2.487
+    },
+    {
+      "fixture": "conditional",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 3.032
+    },
+    {
+      "fixture": "owned-http-spa",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 7.013
+    }
+  ],
+  "limitation": "Same Windows machine; not a clean-machine installation test.",
+  "application_source_commit": "746eaca94fae91a7749c1ce293ac721bc03f95a4"
+}
