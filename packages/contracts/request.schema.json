@@ -25,11 +25,16 @@
         "run.cancel",
         "run.pause",
         "run.resume",
+        "run.approve",
         "run.compare",
         "report.export",
         "evidence.read",
         "storage.backup",
-        "storage.prune"
+        "storage.prune",
+        "recorder.start",
+        "recorder.get",
+        "recorder.stop",
+        "recorder.assert"
       ],
       "title": "Method",
       "type": "string"

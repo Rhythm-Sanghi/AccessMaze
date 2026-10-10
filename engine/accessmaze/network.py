@@ -3,6 +3,7 @@
 import asyncio
 import ipaddress
 import socket
+from collections import Counter
 from urllib.parse import urljoin, urlsplit
 
 
@@ -51,6 +52,7 @@ class BrowserPolicy:
         self.effects = False
         self.resolver_rules = []
         self.local_origins = set()
+        self.authorized_writes = Counter()
 
     async def prepare(self):
         allow_local = self.journey.allow_local or self.journey.target.startswith("fixture://")
@@ -76,6 +78,8 @@ class BrowserPolicy:
         args = [
             "--no-proxy-server",
             "--disable-background-networking",
+            "--dns-prefetch-disable",
+            "--disable-quic",
             "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
         ]
         if self.resolver_rules:
@@ -111,18 +115,34 @@ class BrowserPolicy:
             headers = {h["name"].lower(): h["value"] for h in event.get("responseHeaders", [])}
             location = headers.get("location")
             reject = False
+            method = event["request"]["method"]
+            request_url = event["request"]["url"]
+            key = (method, request_url)
+            write_authorized = self.authorized_writes[key] > 0
+            if write_authorized:
+                self.authorized_writes[key] -= 1
+                if not self.authorized_writes[key]:
+                    del self.authorized_writes[key]
             if location and 300 <= event.get("responseStatusCode", 0) < 400:
+                status = event["responseStatusCode"]
+                redirected_url = urljoin(request_url, location)
                 try:
-                    destination = canonical_origin(urljoin(event["request"]["url"], location))
+                    destination = canonical_origin(redirected_url)
                 except ValueError:
                     destination = None
                 permitted = (
                     self.navigation if event.get("resourceType") == "Document" else self.resources
                 )
+                preserves_method = status in {307, 308} or status in {301, 302} and method != "POST"
+                redirected_write = preserves_method and method not in {"GET", "HEAD", "OPTIONS"}
                 reject = destination not in permitted or (
-                    event["request"]["method"] not in {"GET", "HEAD", "OPTIONS"}
-                    and (not self.effects or destination not in self.navigation)
+                    redirected_write
+                    and (not write_authorized or destination not in self.navigation)
                 )
+                if redirected_write and not reject:
+                    # Preserve authorization for this already approved redirect chain,
+                    # even if its server response outlives the action window.
+                    self.authorized_writes[(method, redirected_url)] += 1
                 if reject:
                     self.blocked.add("Cross-origin request blocked")
             command = {"requestId": event["requestId"]}
@@ -163,6 +183,8 @@ class BrowserPolicy:
             return
         if self.journey.profile.network_latency_ms:
             await asyncio.sleep(self.journey.profile.network_latency_ms / 1000)
+        if request.method not in {"GET", "HEAD", "OPTIONS"}:
+            self.authorized_writes[(request.method, request.url)] += 1
         await route.continue_()
 
 

@@ -10,6 +10,7 @@ const actions: Action[] = [
   "assert_value",
   "assert_errors",
   "assert_modal",
+  "assert_focus",
   "offline",
   "online",
   "wait",
@@ -31,6 +32,7 @@ const roles: Role[] = [
 ];
 const targeted = new Set<Action>([
   "assert_modal",
+  "assert_focus",
   "fill",
   "activate",
   "assert_visible",
@@ -80,6 +82,7 @@ export default function JourneyEditor({
           Target URL
           <input
             value={journey.target}
+            placeholder="https://your-authorized-test-site.example"
             onChange={(e) => onChange({ ...journey, target: e.target.value })}
           />
         </label>
@@ -305,6 +308,24 @@ export default function JourneyEditor({
         <span className="mono">PROFILE</span>
       </div>
       <div className="fields">
+        <label>
+          Action timeout (milliseconds)
+          <input
+            type="number"
+            min="1000"
+            max="30000"
+            value={journey.profile.action_timeout_ms ?? 10000}
+            onChange={(e) =>
+              onChange({
+                ...journey,
+                profile: {
+                  ...journey.profile,
+                  action_timeout_ms: Number(e.target.value),
+                },
+              })
+            }
+          />
+        </label>
         <label className="check">
           <input
             type="checkbox"
@@ -388,7 +409,6 @@ export default function JourneyEditor({
       <label className="check">
         <input
           type="checkbox"
-          disabled={!journey.target.startsWith("fixture://")}
           checked={exploration.enabled}
           onChange={(e) =>
             onChange({
@@ -397,7 +417,9 @@ export default function JourneyEditor({
             })
           }
         />
-        Explore named buttons after completion (bundled synthetic fixtures only)
+        {journey.target.startsWith("fixture://")
+          ? "Explore named buttons after completion (resettable synthetic fixture)"
+          : "Propose website buttons and links after completion; approve each action"}
       </label>
       {exploration.enabled && (
         <div className="fields">
@@ -440,10 +462,9 @@ export default function JourneyEditor({
         </div>
       )}
       <p className="muted">
-        Branch discovery repeats the authored journey to reset the synthetic
-        fixture, then activates discovered buttons in sorted order. All replay
-        actions count toward the budget. It does not cover arbitrary application
-        state.
+        {journey.target.startsWith("fixture://")
+          ? "Fixture discovery repeats the authored journey to reset the fixture. All replay actions count toward the budget."
+          : "Website exploration follows one bounded path. It waits for approval before every proposed action and never resets or replays external effects automatically. Approval time counts toward the run deadline."}
       </p>
       <label className="check">
         <input

@@ -37,6 +37,7 @@ class Step(StrictModel):
         "assert_value",
         "assert_errors",
         "assert_modal",
+        "assert_focus",
         "offline",
         "online",
         "wait",
@@ -61,7 +62,15 @@ class Step(StrictModel):
         ):
             raise ValueError("Upload requires a file label, runtime input and effect declaration")
         if (
-            self.action in {"fill", "activate", "assert_visible", "assert_value", "assert_modal"}
+            self.action
+            in {
+                "fill",
+                "activate",
+                "assert_visible",
+                "assert_value",
+                "assert_modal",
+                "assert_focus",
+            }
             and not self.target
         ):
             raise ValueError(f"{self.action} requires a semantic target")
@@ -107,6 +116,7 @@ class RuntimeInputs(StrictModel):
 
 
 class Profile(StrictModel):
+    action_timeout_ms: int = Field(default=10000, ge=1000, le=30000)
     keyboard_only: bool = True
     reduced_motion: bool = False
     viewport_width: int = Field(default=1280, ge=320, le=3840)
@@ -159,8 +169,6 @@ class Journey(StrictModel):
 
     @model_validator(mode="after")
     def validate_journey(self):
-        if self.exploration.enabled and not self.target.startswith("fixture://"):
-            raise ValueError("Branch discovery currently supports bundled synthetic fixtures only")
         parsed = urlsplit(self.target)
         if self.target not in {
             "fixture://accessible",
@@ -214,10 +222,15 @@ class Request(StrictModel):
         "run.cancel",
         "run.pause",
         "run.resume",
+        "run.approve",
         "run.compare",
         "report.export",
         "evidence.read",
         "storage.backup",
         "storage.prune",
+        "recorder.start",
+        "recorder.get",
+        "recorder.stop",
+        "recorder.assert",
     ]
     params: dict = Field(default_factory=dict)

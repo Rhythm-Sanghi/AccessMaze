@@ -46,3 +46,15 @@ Sensitive input requires HTTPS or explicitly approved private-address origins.
 HMAC signatures use an ephemeral per-worker key; repair comparison refuses changed
 inputs and comparisons across worker restarts rather than storing reusable secrets.
 Native file chooser accessibility is outside this programmatic upload check.
+
+The manual recorder uses the same origin policy in a fresh visible browser. Its
+separate authorization covers manual interactions and background writes during that
+bounded session. It captures field intent without reading values or file names;
+reviewed semantic drafts never replay automatically. Computed Chromium AX names
+improve observations but do not establish operating-system accessibility or AT behavior.
+
+External exploration follows one path without reset/replay. Each action requires
+a fresh proposal-specific approval, tied to a bounded state fingerprint and refused
+after observed changes. Awaiting approval counts against the deadline. Allowed write
+requests may complete method-preserving redirects after their action window closes;
+that permission belongs only to the existing chain and authorized origins.

@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import importlib.metadata
 import platform
 import threading
@@ -16,12 +17,47 @@ from accessmaze.exploration import explore
 from accessmaze.inputs import RunInputs
 from accessmaze.network import BrowserPolicy, resolve_host
 from accessmaze.storage import now
+from accessmaze.website_exploration import explore_website
 
 
 class RunControl:
     def __init__(self):
         self.cancel = threading.Event()
         self.pause = threading.Event()
+        self.approval_lock = threading.Lock()
+        self.proposal = None
+        self.decision = None
+
+    def offer(self, proposal):
+        with self.approval_lock:
+            self.proposal = copy.deepcopy(proposal)
+            self.decision = None
+
+    def pending(self):
+        with self.approval_lock:
+            return copy.deepcopy(self.proposal)
+
+    def approve(self, proposal_id, choice_id):
+        with self.approval_lock:
+            if not self.proposal or self.proposal["id"] != proposal_id or self.decision:
+                raise ValueError("This approval is stale or already answered")
+            if choice_id != "stop" and choice_id not in {c["id"] for c in self.proposal["choices"]}:
+                raise ValueError("Unknown proposed action")
+            self.decision = choice_id
+
+    def consume(self):
+        with self.approval_lock:
+            if self.decision is None:
+                return None
+            answer = self.decision
+            self.proposal = None
+            self.decision = None
+            return answer
+
+    def clear_approval(self):
+        with self.approval_lock:
+            self.proposal = None
+            self.decision = None
 
 
 def check_host(url, allow_local):
@@ -115,7 +151,8 @@ async def execute(
                     service_workers="block",
                     accept_downloads=False,
                 )
-                context.set_default_timeout(4000)
+                context.set_default_timeout(journey.profile.action_timeout_ms)
+                context.set_default_navigation_timeout(min(30000, journey.max_seconds * 1000))
                 context._accessmaze_inputs = inputs
                 if inputs.files:
                     result["limitations"].append(
@@ -219,6 +256,7 @@ async def execute(
                                     "target-ambiguous",
                                     "audit-unavailable",
                                     "sensitive-field",
+                                    "navigation-http",
                                 }
                                 else "confirmed-automated",
                                 "actual": failure.actual,
@@ -238,6 +276,9 @@ async def execute(
                                 except BrowserError:
                                     result["limitations"].append("Screenshot capture failed")
                             result["findings"].append(finding)
+                        interaction = getattr(context, "_accessmaze_interaction", {})
+                        if interaction:
+                            entry["interaction"] = privacy.interaction(interaction)
                         observation = await privacy.observe(page)
                         state_id = fingerprint(observation)
                         if state_id not in graph:
@@ -258,21 +299,36 @@ async def execute(
                             break
                     else:
                         if journey.exploration.enabled:
-                            result["limitations"].append(
-                                "Discovery is limited to named buttons on resettable fixtures."
-                            )
-                            await explore(
-                                page,
-                                context,
-                                journey,
-                                url,
-                                axe_path,
-                                graph,
-                                previous,
-                                result,
-                                control,
-                                save,
-                            )
+                            if not journey.target.startswith("fixture://"):
+                                await explore_website(
+                                    page,
+                                    context,
+                                    journey,
+                                    url,
+                                    axe_path,
+                                    graph,
+                                    previous,
+                                    result,
+                                    control,
+                                    save,
+                                    privacy,
+                                )
+                            else:
+                                result["limitations"].append(
+                                    "Discovery is limited to named buttons on resettable fixtures."
+                                )
+                                await explore(
+                                    page,
+                                    context,
+                                    journey,
+                                    url,
+                                    axe_path,
+                                    graph,
+                                    previous,
+                                    result,
+                                    control,
+                                    save,
+                                )
                         result["status"] = "completed_with_limitations"
             finally:
                 await browser.close()

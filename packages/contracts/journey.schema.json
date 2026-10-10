@@ -64,6 +64,13 @@
     "Profile": {
       "additionalProperties": false,
       "properties": {
+        "action_timeout_ms": {
+          "default": 10000,
+          "maximum": 30000,
+          "minimum": 1000,
+          "title": "Action Timeout Ms",
+          "type": "integer"
+        },
         "keyboard_only": {
           "default": true,
           "title": "Keyboard Only",
@@ -117,6 +124,7 @@
             "assert_value",
             "assert_errors",
             "assert_modal",
+            "assert_focus",
             "offline",
             "online",
             "wait",

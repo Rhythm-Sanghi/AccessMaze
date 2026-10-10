@@ -3,13 +3,16 @@ import type { Run } from "../../../packages/contracts";
 import { request } from "./api";
 
 export const activeRun = (run: Run | null) =>
-  !!run && ["preparing", "running", "paused"].includes(run.status);
+  !!run &&
+  ["preparing", "running", "paused", "awaiting_approval"].includes(run.status);
 export default function RunWorkspace({
   run,
   onControl,
+  onApprove,
 }: {
   run: Run;
   onControl: (action: "cancel" | "pause" | "resume") => void;
+  onApprove?: (proposal: string, choice: string) => void;
 }) {
   const [selected, setSelected] = useState("");
   const [scale, setScale] = useState(1);
@@ -54,6 +57,7 @@ export default function RunWorkspace({
           {activeRun(run) && (
             <>
               <button
+                disabled={run.status === "awaiting_approval"}
                 onClick={() =>
                   onControl(run.status === "paused" ? "resume" : "pause")
                 }
@@ -71,6 +75,30 @@ export default function RunWorkspace({
         <p role="alert" className="error">
           {run.error}
         </p>
+      )}
+      {run.approval && run.status === "awaiting_approval" && (
+        <section className="run-gate" aria-labelledby="approval-heading">
+          <h3 id="approval-heading">Approve one website action</h3>
+          <p>
+            The browser is waiting. Each action can submit data or change
+            external state. Approve only an interaction you are authorized to
+            perform. Other branches remain untested. Names below are transient
+            and remain withheld from private evidence.
+          </p>
+          <div className="toolbar">
+            {run.approval.choices.map((choice) => (
+              <button
+                key={choice.id}
+                onClick={() => onApprove?.(run.approval!.id, choice.id)}
+              >
+                Approve {choice.role}: {choice.name}
+              </button>
+            ))}
+          </div>
+          <button onClick={() => onApprove?.(run.approval!.id, "stop")}>
+            Finish without further actions
+          </button>
+        </section>
       )}
       <div className="workspace-grid">
         <section className="journey-panel" aria-label="Journey execution">
@@ -285,6 +313,42 @@ export default function RunWorkspace({
               </h3>
               <p>{node.observation.title}</p>
               <p className="mono muted">{node.observation.url}</p>
+              {node.observation.text_withheld && (
+                <p className="muted">
+                  Website text is private. Tokens identify states within this
+                  run.
+                </p>
+              )}
+              {node.observation.ax_tree && (
+                <details>
+                  <summary>Computed browser accessibility tree</summary>
+                  <p className="muted">
+                    {node.observation.ax_tree.source}. Bounded to depth 8 and
+                    500 semantic nodes. This is browser data, not a screen
+                    reader test. Field values are omitted.
+                  </p>
+                  <div className="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Role</th>
+                          <th>Computed name</th>
+                          <th>Focus</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {node.observation.ax_tree.nodes.map((n, i) => (
+                          <tr key={i}>
+                            <td>{n.role}</td>
+                            <td>{n.name}</td>
+                            <td>{n.focused ? "focused" : ""}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </details>
+              )}
               <p>
                 Network: {node.observation.online ? "online" : "offline"} ·
                 Motion preference:{" "}

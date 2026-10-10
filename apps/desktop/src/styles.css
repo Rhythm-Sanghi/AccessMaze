@@ -95,6 +95,12 @@ code,
 .muted {
   color: var(--muted);
 }
+.plain-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
 :focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;

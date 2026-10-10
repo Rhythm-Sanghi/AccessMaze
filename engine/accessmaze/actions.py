@@ -4,6 +4,22 @@ from playwright.async_api import Error as BrowserError
 
 from accessmaze.network import canonical_origin
 
+DEEP_FOCUS = """e => {
+  let active=document.activeElement;
+  while(active?.shadowRoot?.activeElement) active=active.shadowRoot.activeElement;
+  return e === active;
+}"""
+
+
+async def focus_description(page):
+    return await page.evaluate("""() => {
+      let e=document.activeElement;
+      while(e?.shadowRoot?.activeElement) e=e.shadowRoot.activeElement;
+      return {tag:e?.tagName.toLowerCase()||'',role:e?.getAttribute('role')||'',
+        name:(e?.getAttribute('aria-label')||e?.labels?.[0]?.textContent||
+          (['BUTTON','A'].includes(e?.tagName) ? e.textContent:'')||'').trim().slice(0,160)};
+    }""")
+
 
 async def cancellable(coroutine, control):
     task = asyncio.create_task(coroutine)
@@ -26,16 +42,24 @@ class CheckFailure(Exception):
 
 
 async def keyboard_reach(page, locator, budget):
+    await locator.wait_for(state="visible")
     if await locator.count() != 1:
         raise CheckFailure(
             "target-ambiguous",
             "Target is absent or has multiple matches",
             "Exactly one visible semantic target",
         )
-    for _ in range(budget + 1):
-        if await locator.evaluate("e => e === document.activeElement"):
+    trace = {"tab_presses": 0, "focus_history": []}
+    page.context._accessmaze_interaction = trace
+    for index in range(budget + 1):
+        if len(trace["focus_history"]) < 40:
+            trace["focus_history"].append(await focus_description(page))
+        if await locator.evaluate(DEEP_FOCUS):
             return
+        if index == budget:
+            break
         await page.keyboard.press("Tab")
+        trace["tab_presses"] += 1
     raise CheckFailure(
         "keyboard-unreachable",
         f"Target not reached within {budget} Tab presses",
@@ -44,6 +68,7 @@ async def keyboard_reach(page, locator, budget):
 
 
 async def perform(page, context, step, journey, url, axe_path):
+    context._accessmaze_interaction = {}
     policy = getattr(context, "_accessmaze_policy", None)
     if policy:
         policy.effects = step.effect
@@ -80,7 +105,15 @@ async def _perform(page, context, step, journey, url, axe_path):
     )
     match step.action:
         case "navigate":
-            await page.goto(url, wait_until="domcontentloaded")
+            response = await page.goto(url, wait_until="domcontentloaded")
+            if response:
+                context._accessmaze_interaction = {"http_status": response.status}
+                if response.status >= 400:
+                    raise CheckFailure(
+                        "navigation-http",
+                        f"Navigation returned HTTP {response.status}",
+                        "Target is available before accessibility checks",
+                    )
         case "fill":
             if step.value_from and not secure_input:
                 raise CheckFailure(
@@ -150,14 +183,21 @@ async def _perform(page, context, step, journey, url, axe_path):
                 )
         case "assert_modal":
             await locator.wait_for(state="visible")
-            for _ in range(8):
+            for key in ["Tab"] * 8 + ["Shift+Tab"] * 8:
                 if not await locator.evaluate("e => e.contains(document.activeElement)"):
                     raise CheckFailure(
                         "modal-focus-escape",
                         "Keyboard focus is outside the open modal",
                         "Focus enters and remains in the modal while it is open",
                     )
-                await page.keyboard.press("Tab")
+                await page.keyboard.press(key)
+        case "assert_focus":
+            if await locator.count() != 1 or not await locator.evaluate(DEEP_FOCUS):
+                raise CheckFailure(
+                    "focus-mismatch",
+                    "Focus is not on the expected target",
+                    "Expected semantic target owns keyboard focus",
+                )
         case "assert_value":
             if await locator.count() != 1 or await locator.input_value() != value:
                 raise CheckFailure(
@@ -167,18 +207,30 @@ async def _perform(page, context, step, journey, url, axe_path):
                 )
         case "assert_errors":
             result = await page.evaluate("""() => {
-              const fields=[...document.querySelectorAll('[aria-invalid=true]')];
+              const fields=[...document.querySelectorAll('[aria-invalid=true]')]
+                .filter(e=>e.getClientRects().length);
               return {count:fields.length,associated:fields.every(e=>
                 (e.getAttribute('aria-describedby')||e.getAttribute('aria-errormessage')||'')
-                  .split(/\\s+/).some(id=>document.getElementById(id)?.textContent.trim())),
+                  .split(/\\s+/).some(id=>{const error=document.getElementById(id);
+                    return error?.getClientRects().length && error.textContent.trim()})),
+                focus:fields.includes(document.activeElement),
                 live:[...document.querySelectorAll('[role=alert],[aria-live=assertive],[aria-live=polite]')]
                   .some(e=>e.getClientRects().length && e.textContent.trim())};
             }""")
-            if not result["count"] or not result["associated"] or not result["live"]:
+            context._accessmaze_interaction = {
+                "error_semantics": result,
+                "limitation": "Live-region presence does not prove an announcement",
+            }
+            if (
+                not result["count"]
+                or not result["associated"]
+                or not (result["live"] or result["focus"])
+            ):
                 raise CheckFailure(
                     "error-semantics",
                     f"Validation semantics: {result}",
-                    "Invalid fields associated with text errors and a populated live region",
+                    "Visible associated errors with a populated live region "
+                    "or focus on an invalid field",
                 )
         case "offline" | "online":
             offline = step.action == "offline"

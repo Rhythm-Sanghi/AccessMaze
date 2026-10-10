@@ -3,6 +3,7 @@ import type { Journey, Project, Run } from "../../../packages/contracts";
 import { desktopAvailable, download, request } from "./api";
 import JourneyEditor from "./JourneyEditor";
 import RunInputs, { emptyInputs, type Inputs } from "./RunInputs";
+import RecorderPanel from "./RecorderPanel";
 import Projects from "./Projects";
 import RunHistory from "./RunHistory";
 import Reports from "./Reports";
@@ -33,6 +34,7 @@ export default function App() {
   const [authorized, setAuthorized] = useState(false);
   const [effects, setEffects] = useState(false);
   const [inputs, setInputs] = useState<Inputs>(emptyInputs);
+  const [recordingActive, setRecordingActive] = useState(false);
   const [confirmation, setConfirmation] = useState<Project | null>(null);
   const [theme, setTheme] = useState(
     localStorage.getItem("accessmaze-theme") ?? "light",
@@ -142,13 +144,13 @@ export default function App() {
     );
     if (kind === "website") {
       next.name = "Website journey";
-      next.target = "https://example.org";
+      next.target = "";
       next.steps = [
         next.steps[0],
         {
           id: "complete",
           action: "assert_visible",
-          target: { role: "heading", name: "Example Domain" },
+          target: { role: "heading", name: "Task complete" },
           value: "",
           optional: false,
           effect: false,
@@ -240,6 +242,7 @@ export default function App() {
           {pages.map((p) => (
             <button
               key={p.id}
+              disabled={recordingActive && p.id !== "journey"}
               aria-current={page === p.id ? "page" : undefined}
               onClick={() => changePage(p.id)}
             >
@@ -344,7 +347,7 @@ export default function App() {
                   </label>
                   <div className="toolbar">
                     <button
-                      disabled={busy || !ready}
+                      disabled={busy || !ready || recordingActive}
                       onClick={() =>
                         void perform(async () => {
                           await save();
@@ -365,7 +368,7 @@ export default function App() {
                       Export journey
                     </button>
                     <button
-                      disabled={activeRun(run)}
+                      disabled={activeRun(run) || recordingActive}
                       onClick={() => fileInput.current?.click()}
                     >
                       Import journey
@@ -398,13 +401,30 @@ export default function App() {
                     }}
                   />
                 </div>
-                <JourneyEditor
-                  journey={journey}
-                  onChange={(value) => {
-                    setJourney(value);
+                <fieldset className="plain-fieldset" disabled={recordingActive}>
+                  <JourneyEditor
+                    journey={journey}
+                    onChange={(value) => {
+                      setJourney(value);
+                      setInputs(emptyInputs());
+                      setAuthorized(false);
+                      setEffects(false);
+                    }}
+                  />
+                </fieldset>
+                <RecorderPanel
+                  scope={JSON.stringify(journey)}
+                  disabled={busy || !ready || activeRun(run)}
+                  onStart={async () => (await save())?.id}
+                  onActive={setRecordingActive}
+                  onApply={(steps) => {
+                    setJourney({ ...journey, steps });
                     setInputs(emptyInputs());
                     setAuthorized(false);
                     setEffects(false);
+                    setMessage(
+                      "Recording loaded as a draft. Review targets, runtime bindings and completion assertions.",
+                    );
                   }}
                 />
                 <RunInputs
@@ -447,7 +467,8 @@ export default function App() {
                       !ready ||
                       !authorized ||
                       (!!hasEffects && !effects) ||
-                      activeRun(run)
+                      activeRun(run) ||
+                      recordingActive
                     }
                     onClick={() => void perform(start)}
                   >
@@ -470,6 +491,21 @@ export default function App() {
             (run ? (
               <RunWorkspace
                 run={run}
+                onApprove={(proposal_id, choice_id) =>
+                  void perform(async () => {
+                    await request("run.approve", {
+                      id: run.id,
+                      proposal_id,
+                      choice_id,
+                      allow_effects: true,
+                    });
+                    setMessage(
+                      choice_id === "stop"
+                        ? "Exploration finish requested"
+                        : "Approved one proposed action",
+                    );
+                  })
+                }
                 onControl={(action) => void perform(() => control(action))}
               />
             ) : (

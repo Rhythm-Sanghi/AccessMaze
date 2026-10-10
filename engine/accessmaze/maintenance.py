@@ -56,7 +56,7 @@ def prune(store, days):
     with store.connect() as db:
         rows = db.execute(
             "SELECT id FROM runs WHERE started_at<? AND status NOT IN "
-            "('preparing','running','paused')",
+            "('preparing','running','paused','awaiting_approval')",
             (cutoff,),
         ).fetchall()
         for row in rows:

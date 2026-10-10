@@ -17,6 +17,7 @@ from accessmaze.fixtures import FixtureServer
 from accessmaze.inputs import RunInputs
 from accessmaze.maintenance import backup, prune
 from accessmaze.models import Journey, ProjectInput, Request
+from accessmaze.recorder import Recorder
 from accessmaze.reports import export_report
 from accessmaze.retests import compare_runs
 from accessmaze.runner import RunControl, execute
@@ -26,6 +27,9 @@ from accessmaze.templates import template
 
 class Worker:
     def __init__(self, root: Path, resources: Path):
+        development_browsers = resources / ".accessmaze" / "browsers"
+        if development_browsers.is_dir():
+            os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", str(development_browsers))
         self.store = Store(root)
         self.store.recover()
         self.fixtures = FixtureServer()
@@ -36,6 +40,7 @@ class Worker:
         self.control = None
         self.thread = None
         self.input_key = os.urandom(32)
+        self.recorder = None
 
     def dispatch(self, request):
         params = request.params
@@ -58,6 +63,28 @@ class Worker:
                     ]
                 },
             }
+        if method == "recorder.start":
+            if self.active or (self.recorder and self.recorder.thread.is_alive()):
+                raise ValueError("Stop the active browser operation first")
+            if params.get("authorized") is not True or params.get("allow_effects") is not True:
+                raise ValueError("Authorize the target and manual session effects before recording")
+            journey = Journey.model_validate(self.store.project(params["project_id"])["journey"])
+            target = (
+                self.fixtures.url(journey.target)
+                if journey.target.startswith("fixture://")
+                else journey.target
+            )
+            self.recorder = Recorder(journey, target)
+            return self.recorder.start()
+        if method in {"recorder.get", "recorder.stop", "recorder.assert"}:
+            if not self.recorder or params["id"] != self.recorder.recording.id:
+                raise ValueError("Recording is unavailable; worker restart discards unsaved drafts")
+            if method == "recorder.stop":
+                self.recorder.recording.status = "stopping"
+                self.recorder.recording.stop.set()
+            elif method == "recorder.assert":
+                self.recorder.recording.capture.set()
+            return self.recorder.recording.snapshot()
         if method == "project.list":
             return self.store.projects()
         if method in {"storage.backup", "storage.prune"}:
@@ -88,7 +115,18 @@ class Worker:
         if method == "run.list":
             return self.store.runs(params["project_id"])
         if method == "run.get":
-            return self.store.run(params["id"])
+            run = self.store.run(params["id"])
+            if params["id"] == self.active and self.control and self.control.pending():
+                # Raw proposed names exist only in this response, not SQLite/reports.
+                run["approval"] = self.control.pending()
+            return run
+        if method == "run.approve":
+            if params["id"] != self.active or not self.control:
+                raise ValueError("This run is no longer active")
+            if params["choice_id"] != "stop" and params.get("allow_effects") is not True:
+                raise ValueError("Approve this specific action's possible external effects")
+            self.control.approve(params["proposal_id"], params["choice_id"])
+            return {"ok": True}
         if method == "run.compare":
             comparison = compare_runs(
                 self.store.run(params["previous_id"]), self.store.run(params["current_id"])
@@ -96,6 +134,8 @@ class Worker:
             self.store.save_retest(comparison)
             return comparison
         if method == "run.start":
+            if self.recorder and self.recorder.thread.is_alive():
+                raise ValueError("Stop the recording browser before analysis")
             if self.thread and self.thread.is_alive():
                 raise ValueError("One analysis may run at a time")
             if params.get("authorized") is not True:
@@ -190,6 +230,8 @@ class Worker:
         raise ValueError("Unknown method")
 
     def close(self):
+        if self.recorder:
+            self.recorder.close()
         if self.control:
             self.control.cancel.set()
         if self.thread:

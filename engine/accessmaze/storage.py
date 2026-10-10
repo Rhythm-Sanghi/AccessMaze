@@ -64,7 +64,8 @@ class Store:
     def recover(self):
         with self.connect() as db:
             rows = db.execute(
-                "SELECT id, result FROM runs WHERE status IN ('preparing','running','paused')"
+                "SELECT id, result FROM runs WHERE status IN "
+                "('preparing','running','paused','awaiting_approval')"
             ).fetchall()
             for row in rows:
                 result = json.loads(row["result"])
@@ -106,7 +107,14 @@ class Store:
                         ),
                         "incomplete_runs": sum(
                             run["status"]
-                            in {"preparing", "running", "paused", "cancelled", "interrupted"}
+                            in {
+                                "preparing",
+                                "running",
+                                "paused",
+                                "awaiting_approval",
+                                "cancelled",
+                                "interrupted",
+                            }
                             for run in runs
                         ),
                     },

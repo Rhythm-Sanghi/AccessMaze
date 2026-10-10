@@ -211,3 +211,63 @@ def test_dns_snapshot_is_used_by_the_real_browser(monkeypatch):
                 await browser.close()
 
     asyncio.run(exercise())
+
+
+@pytest.mark.browser
+def test_delayed_approved_write_redirect_retains_only_chain_permission():
+    import time
+
+    def delayed(handler):
+        time.sleep(0.4)
+        return 307, {"Location": "/saved"}, ""
+
+    async def exercise():
+        with website(
+            {"/": (200, {}, "ready"), "/submit": (307, {}, delayed), "/saved": (200, {}, "saved")}
+        ) as (target, hits):
+            journey = template()
+            journey.target = target
+            journey.allow_local = True
+            policy = BrowserPolicy(journey, target, set())
+            await policy.prepare()
+            async with async_playwright() as pw:
+                browser = await pw.chromium.launch(args=policy.launch_args)
+                context = await browser.new_context(service_workers="block")
+                await policy.install(context)
+                page = await context.new_page()
+                await policy.attach(page)
+                await page.goto(target)
+                policy.effects = True
+                await page.evaluate(
+                    "()=>{window.pending=fetch('/submit',{method:'POST'}).then(r=>r.text())}"
+                )
+                await asyncio.sleep(0.1)
+                policy.effects = False
+                assert await page.evaluate("window.pending") == "saved"
+                await page.evaluate("fetch('/saved',{method:'POST'}).catch(()=>{})")
+                assert hits.count(("POST", "/saved")) == 1
+                assert not policy.authorized_writes
+                await browser.close()
+
+    asyncio.run(exercise())
+
+
+@pytest.mark.browser
+def test_http_error_is_inconclusive_not_successful_navigation(store, fixtures, axe_path):
+    from accessmaze.models import ProjectInput, Step
+    from accessmaze.runner import RunControl, execute
+
+    with website({"/": (403, {}, "<h1>Denied</h1>")}) as (target, _):
+        journey = template()
+        journey.target = target
+        journey.allow_local = True
+        journey.steps = [
+            Step(id="open", action="navigate"),
+            Step(id="done", action="assert_visible", target={"role": "heading", "name": "Denied"}),
+        ]
+        project = store.save_project(ProjectInput(name="Denied website", journey=journey))
+        result = asyncio.run(
+            execute(store, project["id"], journey, RunControl(), fixtures, axe_path)
+        )
+        finding = next(f for f in result["findings"] if f["rule"] == "navigation-http")
+        assert finding["verification"] == "inconclusive"

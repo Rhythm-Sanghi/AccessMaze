@@ -28,12 +28,15 @@ for actual verification and remaining release gates.
   DNS pinning, redirect guards and private page-text evidence by default.
 - Run-only credential/text bindings and user-selected file uploads; saved definitions
   contain binding names and field labels, never credentials or file paths.
+- A manual browser recorder produces editable semantic steps and runtime bindings,
+  with explicit completion capture and review before replay.
 
 ## Limits
 
-Authored paths are bounded by step, Tab and wall-clock budgets. Automatic branch discovery
-is limited to named buttons on resettable bundled fixtures; external-site exploration is
-not implemented. Graphs show observed states only.
+Authored paths are bounded by step, Tab and wall-clock budgets. Fixture discovery can
+reset and replay bundled scenarios. Website exploration follows one path with a fresh
+approval for each proposed action, without resetting or replaying external state.
+Graphs show observed states only; neither mode proves exhaustive coverage.
 Keyboard findings describe the actual bounded attempt; they cannot establish that every
 possible keyboard path is unavailable. DOM semantics and axe-core do not simulate a
 screen reader or certify WCAG conformance. Motion preferences and viewport size are
@@ -43,7 +46,7 @@ use explicitly approved origins. Popups, embedded frames, service workers and We
 are blocked; these restrictions can change application behavior. Blocked traffic makes
 findings and repair verification inconclusive.
 
-No real assistive-technology integration, persistent credential management, recording assistant,
+No real assistive-technology integration, persistent credential management,
 PDF export, automatic issue resolution, mobile testing or plugin API is implemented.
 Use dedicated test accounts and synthetic input; literal journey inputs are plain text
 on disk. Passwords must use run-only bindings. Do not test hostile
@@ -58,6 +61,7 @@ Run from the repository root, including when the path contains spaces:
 ```powershell
 npm ci
 uv sync --project engine --locked --python 3.13
+$env:PLAYWRIGHT_BROWSERS_PATH = Join-Path (Get-Location) ".accessmaze/browsers"
 uv run --project engine playwright install chromium
 npm run desktop
 ```

@@ -4,6 +4,8 @@ import json
 import secrets as random_secrets
 from urllib.parse import urlsplit, urlunsplit
 
+from playwright.async_api import Error as BrowserError
+
 
 def safe_url(url):
     parsed = urlsplit(url)
@@ -80,12 +82,54 @@ class EvidencePrivacy:
             data["headings"] = [self.token(s) for s in data["headings"]]
             for control in data["controls"]:
                 control["name"] = self.token(control["name"])
+            for node in data.get("ax_tree", {}).get("nodes", []):
+                node["name"] = self.token(node["name"])
             parsed = urlsplit(data["url"])
             data["url"] = urlunsplit(
                 (parsed.scheme, parsed.netloc, "/" + self.token(parsed.path), "", "")
             )
             data["text_withheld"] = True
         return data
+
+    def interaction(self, data):
+        data = redact(data, self.secrets)
+        if self.hide_text:
+            for focus in data.get("focus_history", []):
+                focus["name"] = self.token(focus.get("name", ""))
+        return data
+
+
+async def accessibility_tree(page):
+    session = await page.context.new_cdp_session(page)
+    try:
+        tree = await session.send("Accessibility.getFullAXTree", {"depth": 8})
+        nodes = []
+        for node in tree["nodes"]:
+            role = node.get("role", {}).get("value", "")
+            if node.get("ignored") or role in {"StaticText", "InlineTextBox", "generic", "none"}:
+                continue
+            nodes.append(
+                {
+                    "role": role,
+                    "name": str(node.get("name", {}).get("value", ""))[:200],
+                    "focused": any(
+                        p["name"] == "focused" and p.get("value", {}).get("value") is True
+                        for p in node.get("properties", [])
+                    ),
+                }
+            )
+            if len(nodes) >= 500:
+                break
+        return {
+            "source": "Chromium computed accessibility tree",
+            "max_depth": 8,
+            "max_nodes": 500,
+            "nodes": nodes,
+        }
+    except BrowserError:
+        return {"source": "unavailable", "nodes": []}
+    finally:
+        await session.detach()
 
 
 async def observe(page):
@@ -94,7 +138,9 @@ async def observe(page):
         'button,input,select,textarea,a[href],[role=button],[role=dialog],[role=alert],[role=status]'
       )].slice(0,200).map(e=>({
         tag:e.tagName.toLowerCase(), role:e.getAttribute('role'),
-        name:(e.getAttribute('aria-label') ||
+        name:((e.getAttribute('aria-labelledby')||'').split(/\\s+/)
+          .map(id=>document.getElementById(id)?.textContent||'').join(' ').trim() ||
+          e.getAttribute('aria-label') ||
           (e.labels ? [...e.labels].map(l=>l.textContent).join(' ') : '')
           || (['BUTTON','A'].includes(e.tagName) || e.hasAttribute('role') ? e.textContent : '')
           || '').trim().slice(0,160),
@@ -109,4 +155,5 @@ async def observe(page):
         reduced_motion:matchMedia('(prefers-reduced-motion: reduce)').matches};
     }""")
     data["url"] = safe_url(page.url)
+    data["ax_tree"] = await accessibility_tree(page)
     return data

@@ -1,0 +1,31 @@
+{
+  "target": "https://example.org",
+  "scope": "Actual public HTTPS navigation and heading assertion; no effect actions",
+  "status": "failed",
+  "coverage_compromised": false,
+  "seconds": 10.79,
+  "browser": "153.0.8010.12",
+  "private_observations": true,
+  "error": null,
+  "steps": [
+    {
+      "id": "open",
+      "status": "passed"
+    },
+    {
+      "id": "heading",
+      "status": "failed"
+    }
+  ],
+  "finding_rules": [
+    "completion-assertion"
+  ],
+  "limitations": [
+    "Authored path only; unvisited branches are not covered.",
+    "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+    "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+    "Motion and viewport preferences are applied; usability requires human review.",
+    "Only approved origins are allowed; blocked traffic can change behavior.",
+    "Screenshots are captured only for bundled synthetic fixtures."
+  ]
+}

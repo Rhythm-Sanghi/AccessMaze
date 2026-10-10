@@ -7,6 +7,7 @@ export type Action =
   | "assert_value"
   | "assert_errors"
   | "assert_modal"
+  | "assert_focus"
   | "offline"
   | "online"
   | "wait"
@@ -43,6 +44,7 @@ export interface Journey {
   target: string;
   steps: Step[];
   profile: {
+    action_timeout_ms?: number;
     keyboard_only: boolean;
     reduced_motion: boolean;
     viewport_width: number;
@@ -80,6 +82,13 @@ export interface Finding {
   screenshot?: string;
 }
 export interface Observation {
+  text_withheld?: boolean;
+  ax_tree?: {
+    source: string;
+    max_depth?: number;
+    max_nodes?: number;
+    nodes: { role: string; name: string; focused: boolean }[];
+  };
   url: string;
   title: string;
   controls: {
@@ -97,6 +106,11 @@ export interface Observation {
   reduced_motion: boolean;
 }
 export interface Run {
+  approval?: {
+    id: string;
+    state_id: string;
+    choices: { id: string; role: string; name: string }[];
+  };
   input_signature?: string | null;
   exploration?: {
     actions: {
@@ -151,8 +165,20 @@ export type Method =
   | "run.cancel"
   | "run.pause"
   | "run.resume"
+  | "run.approve"
   | "run.compare"
   | "report.export"
   | "evidence.read"
   | "storage.backup"
-  | "storage.prune";
+  | "storage.prune"
+  | "recorder.start"
+  | "recorder.get"
+  | "recorder.stop"
+  | "recorder.assert";
+export interface Recording {
+  id: string;
+  status: "preparing" | "recording" | "stopping" | "stopped";
+  origin: string;
+  steps: Step[];
+  warnings: string[];
+}
