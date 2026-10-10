@@ -42,3 +42,9 @@ uncontrolled and CDP polling overhead is included. Owned process trees exited af
 sample. Frozen worker health startup in separate system-PATH checks was 0.662 and 0.713 s.
 See `desktop-startup.json` and `../releases/readiness-portable-*.json`. Large UI graphs,
 overnight stability and independent hardware remain unverified.
+
+The final 207a09a package also ran under concurrent integrity/worker/archive activity.
+Its preserved results show startup 0.718 / 1.669 s, fixture execution 18.657–26.355 s
+and the complex path 29.350 s (`../releases/readiness-final-*.json`). These conditions
+are not comparable to the earlier sequential baseline. The spread demonstrates why
+controlled repeat measurements and reviewed workload budgets remain release gates.

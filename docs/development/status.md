@@ -4,6 +4,34 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Final readiness preview — verified locally, release gates open
+
+Built `dist/AccessMaze-readiness-preview-final` from clean source **207a09a**, preserving
+all previous previews. `package-manifest.json`: **1,690 hashed files**, dirty=false.
+Frozen verification explicitly asserts that the new in-flight connectivity limitation
+is present in saved/exportable run evidence. Actual final commands/results:
+
+- `uv run --project engine python scripts/package_windows.py --name AccessMaze-readiness-preview-final`: native release host, frozen Python worker, freshly installed full Chromium/headless shell, dependency inventory/notices and exact browser credits built successfully.
+- `powershell -NoProfile -File scripts/Test-AccessMazePortable.ps1 -Package dist/AccessMaze-readiness-preview-final -Report docs/releases/readiness-final-powershell.json`: hashes/path containment, system-only PATH, three browser fixtures, report identity and EOF passed; worker startup **0.718 s**.
+- `uv run --project engine python scripts/portable_smoke.py --package AccessMaze-readiness-preview-final --complex --report docs/releases/readiness-final-smoke.json`: three fixtures plus 19-step HTTP SPA/upload passed expected outcomes, coverage uncompromised, exact uploaded bytes/one POST and persisted connectivity limitation asserted; worker startup **1.669 s**. Concurrent checks/archive and laptop load produced fixture durations **18.657–26.355 s**, complex run **29.350 s**. This variability is retained, not presented as a performance-budget pass.
+- Launched final executable with `launch_preview.py`; repeated `desktop_smoke.py`, `desktop_website_smoke.py`, `desktop_readiness.py` and `desktop_crash.py` at test-only port 9224. All passed: native flows, light/dark axe (contrast incomplete), one approved POST/no replay, visible recorder, Tab/Enter/heading and dialog focus, private actionable error/input retention, interruption/restart and **4 Chromium children cleaned**.
+- An actual native Connection recovery fixture run exposed the expected form-state-lost finding and displayed the new offline-emulation limitation. Result: `../testing/desktop-connectivity.json`; screenshot: `screenshots/connectivity-limitation.png`.
+- `uv run --project engine python scripts/archive_preview.py --package dist/AccessMaze-readiness-preview-final --archive dist/AccessMaze-readiness-preview-final.zip --report docs/releases/readiness-final-artifact.json`: **1,691 ZIP files / 391,203,383 bytes**, CRC passed; SHA-256 **da43a6e0303dcd89d4cf6e8cfcb61a8cecef15043ccba8be495d8f4e0dfeb87f**. Unsigned; hash detects corruption, not authenticated provenance.
+
+Final engine suite: **83 passed**; **5 React tests**, **1 Rust test**, TypeScript/ESLint,
+production build, Ruff, formatting and contracts passed as recorded in these milestones.
+The test desktop was closed; owned children and ports 9224/9227 cleanup is recorded in
+`../testing/readiness-cleanup.json`. Final post-runtime integrity-only check passed.
+No source logic changed after this package's clean commit; subsequent changes record
+verification. Working tree is committed clean at handoff.
+
+**Not production-ready or release-qualified.** Actual human NVDA evaluation and an
+independent clean Windows machine/image are unavailable here; their documented
+procedures remain NOT RUN. Overnight stability, native large-graph scaling, independent
+security/diagnostic review, the 87 dependency metadata/notice gaps, verified SBOM,
+matching-source/binary distribution obligations, remote CI and signing remain open.
+See the qualification matrix below. No AT or WCAG certification is claimed.
+
 ### Readiness follow-up — in-flight connectivity scope
 
 The 82-test suite passed after adding archive timestamp regression. A subsequent real
@@ -26,7 +54,7 @@ demo were re-executed, with actual summaries in `compatibility-followup.json` an
 `hackyard-demo-followup.json` under `../testing/`. Updated reports contain the connectivity
 limitation. Archive regression suite: **3 passed**.
 The previously verified `AccessMaze-readiness-preview` at `fcd95a8` is
-preserved; a final preview with this reporting correction is being built separately.
+preserved; the separately built and verified final preview above includes this correction.
 
 ### Readiness milestone 4 — frozen and native Windows revalidation
 

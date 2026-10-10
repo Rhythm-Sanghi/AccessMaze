@@ -1,0 +1,35 @@
+{
+  "frozen_worker": "passed",
+  "system_path_only": true,
+  "working_directory": "temporary path with spaces",
+  "browser_resources": "portable bundled revision",
+  "worker_startup_seconds": 1.669,
+  "package": "AccessMaze-readiness-preview-final",
+  "runs": [
+    {
+      "fixture": "accessible",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 18.657
+    },
+    {
+      "fixture": "broken",
+      "status": "failed",
+      "findings": 1,
+      "seconds": 20.012
+    },
+    {
+      "fixture": "conditional",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 26.355
+    },
+    {
+      "fixture": "owned-http-spa",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 29.35
+    }
+  ],
+  "limitation": "Same Windows machine; not a clean-machine installation test."
+}

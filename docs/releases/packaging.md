@@ -75,3 +75,11 @@ The archive output must not exist. ZIP timestamps are clamped to its supported r
 because some upstream notices carry Unix-epoch timestamps; contents remain unchanged.
 The helper verifies every ZIP entry's CRC and records archive SHA-256. Neither locked
 builds nor archive generation currently promise bit-for-bit reproducible binaries.
+
+The latest locally verified artifact is `dist/AccessMaze-readiness-preview-final.zip`,
+clean source **207a09a**, **391,203,383 bytes / 1,691 files**, with CRC/hash recorded in
+`readiness-final-artifact.json`. Both final system-PATH/frozen-complex checks passed,
+including the persisted in-flight connectivity limitation, and native UI/approval/
+recorder/keyboard/error/crash checks passed again. Earlier artifacts remain preserved.
+This is still same-machine, unsigned preview validation, with independent clean-machine
+and redistribution gates open. See engineering status for actual results and limitations.
