@@ -4,6 +4,18 @@ import { request } from "./api";
 import RunInputs, { emptyInputs } from "./RunInputs";
 import { activeRun } from "./RunWorkspace";
 
+function focusSummary(interaction?: Record<string, unknown>) {
+  const history = interaction?.focus_history;
+  if (!Array.isArray(history)) return "Unavailable";
+  const visible = history
+    .slice(0, 12)
+    .map((f) => String(f.name || f.role || f.tag || "unnamed").slice(0, 80));
+  return (
+    visible.join(" → ") +
+    (history.length > 12 ? " → … (more in recorded evidence)" : "")
+  );
+}
+
 export default function FailureReplay({
   original,
   current,
@@ -156,18 +168,54 @@ export default function FailureReplay({
                 ))}
               </tbody>
             </table>
-            <pre>
-              {JSON.stringify(
-                {
-                  historicalFocus: record?.interaction ?? "Unavailable",
-                  liveFocus:
-                    current.steps.find((s) => s.id === finding.step_id)
-                      ?.interaction ?? "Unavailable",
-                },
-                null,
-                2,
-              )}
-            </pre>
+            <table aria-label="Historical and live focus comparison">
+              <thead>
+                <tr>
+                  <th>Evidence</th>
+                  <th>Tab presses</th>
+                  <th>Recorded focus path</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Historical</td>
+                  <td>
+                    {String(record?.interaction?.tab_presses ?? "Unavailable")}
+                  </td>
+                  <td>{focusSummary(record?.interaction)}</td>
+                </tr>
+                <tr>
+                  <td>Live</td>
+                  <td>
+                    {String(
+                      current.steps.find((s) => s.id === finding.step_id)
+                        ?.interaction?.tab_presses ?? "Unavailable",
+                    )}
+                  </td>
+                  <td>
+                    {focusSummary(
+                      current.steps.find((s) => s.id === finding.step_id)
+                        ?.interaction,
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <details>
+              <summary>Raw focus evidence</summary>
+              <pre>
+                {JSON.stringify(
+                  {
+                    historicalFocus: record?.interaction,
+                    liveFocus: current.steps.find(
+                      (s) => s.id === finding.step_id,
+                    )?.interaction,
+                  },
+                  null,
+                  2,
+                )}
+              </pre>
+            </details>
           </details>
         )}
       <button
@@ -203,6 +251,7 @@ export default function FailureReplay({
             {draft.steps.map((s) => (
               <li key={s.id}>
                 {s.id} / {s.action} / {s.target?.name ?? ""}
+                {s.value_from ? ` / input: ${s.value_from}` : ""}
                 {s.effect ? " / potentially state-changing" : ""}
               </li>
             ))}

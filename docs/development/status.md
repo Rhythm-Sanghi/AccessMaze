@@ -4,6 +4,46 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Corrected feature source — full regression and first native acceptance
+
+Backend/source **7628688**: `uv run --project engine pytest engine/tests -q
+--junitxml=dist/hackyard-verified-tests.xml`: **112 passed in 151.64 s**, including
+both reproduced control-state/navigation regressions. No engine source changed afterward.
+React after final replay binding/focus/discovery presentation changes: **9 passed in
+5.32 s**; TypeScript/ESLint, Ruff/check/format, contracts, Prettier and Cargo fmt passed.
+The earlier **1 Rust Windows Job regression** passed; no Rust behavior changed.
+
+Clean intermediate package `AccessMaze-hackyard-verified` at 7628688:
+1,702 manifest files, source_dirty=false, frozen Python/bundled Chromium, 782 notices
+and existing native MPL sources. `desktop_features.py` actually passed in **19.413 s**:
+three approved discovery actions, reusable 125% layout-zoom profile across two projects,
+blocked keyboard run, observed-again replay, native-button correction and successful replay.
+Actual browser durations **1.336 / 0.974 / 1.385 / 8.798 s**, graph nodes **2 / 2 / 2 / 3**.
+Axe on this view: **0 violations**, color-contrast incomplete. Owned projects/profile
+removed normally. Raw ../hackyard/native-features-{runs,verification}.json. Screenshots
+were visually inspected. These records refer to the intermediate UI; final presentation
+build and acceptance are pending below, not silently inferred.
+
+Actual native schema-2 → 3 migration retained all **56 original projects / 56 original
+run payloads unchanged**. A private pre-upgrade SQLite backup passed integrity_check;
+it remains outside the repository. Raw ../hackyard/native-migration-verification.json.
+One idle native measurement: **331.32 MiB summed RSS / 3,689 summed handles / 8 children**,
+shared pages counted repeatedly; no leak/budget conclusion (native-features-memory.json).
+
+CDP-instrumented desktop 81236 closed its host/worker and port, but three WebView2
+processes remained beyond the five-second check. Only the verified orphan tree was
+explicitly terminated, and subsequent inspection confirmed exit. Root cause is not
+established. A separate **ordinary launch without CDP/browser automation** (PID 54532)
+closed **all 8 children** normally. Preserve both results: native-shutdown-investigation.json
+and native-nondebug-shutdown.json. Do not call instrumentation retention an independently
+verified ordinary-release defect or discard it as irrelevant; repeat during qualification.
+
+Visual review prompted compact historical/live focus tables, explicit step-to-runtime-input
+mapping, visible discovery reachability and observed CSS viewport/zoom. Detailed raw
+records remain available; no results are fabricated. Final UI package/crash/portable/demo
+verification remains pending. Independent NVDA, legal/security, signing, clean-machine,
+remote-CI, overnight and performance-budget gates remain open.
+
 ### Verification correction — checked-state deduplication
 
 A new actual Chromium regression initially failed: toggling a discovered checkbox produced

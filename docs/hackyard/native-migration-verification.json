@@ -1,0 +1,9 @@
+{
+  "scope": "Actual local native store upgrade; prior private schema-2 backup retained",
+  "previous_schema": 2,
+  "current_schema": 3,
+  "original_project_count": 56,
+  "original_run_count": 56,
+  "original_journeys_preserved": true,
+  "original_runs_preserved": true
+}

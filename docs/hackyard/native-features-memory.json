@@ -1,0 +1,8 @@
+{
+  "source_commit": "7628688",
+  "phase": "idle after actual native feature sequence",
+  "summed_rss_mib": 331.32,
+  "summed_handles": 3689,
+  "child_processes": 8,
+  "scope": "One idle point on development laptop; RSS shared pages counted repeatedly; no leak or performance-budget conclusion"
+}

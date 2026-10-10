@@ -1,0 +1,13 @@
+{
+  "scope": "CDP-instrumented close of owned desktop 81236 / packaged source 7628688; worker and test port exited, WebView2 browser/GPU/utility survived the 5-second check and later observation",
+  "surviving_owned_pids": [
+    68792,
+    29572,
+    64988
+  ],
+  "webview2_version": "156.0.4314.15",
+  "cleanup": "Explicitly terminate only the verified orphan tree after confirming no AccessMaze desktop exists",
+  "owned_orphans_subsequently_exited": true,
+  "nondebug_followup": "native-nondebug-shutdown.json: ordinary launch closed all eight children",
+  "conclusion": "Retention observed with test instrumentation; root cause not established. Ordinary-launch follow-up passed; no independent long-term shutdown qualification."
+}

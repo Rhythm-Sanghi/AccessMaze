@@ -42,3 +42,10 @@ zero rule violations, followed by a keyboard task failure on that same broken ap
 the correction/comparable passed retest and a separate environmental draft-loss failure.
 All results are produced by the engine. See status for exact commands, durations and limits.
 Broader discovery/profile/replay features and independent release gates remain open.
+
+Remaining-feature backend verification: **112 Python tests passed (151.64 s)** at 7628688;
+React **9 passed**, including replay approval/input mapping, profile persistence controls,
+and graph-state evidence selection. First real native acceptance is recorded in
+native-features-verification.json and native-features-runs.json; ordinary/instrumented
+shutdown results are separate. Current final artifact/source acceptance is authoritative
+in ../development/status.md, including any later presentation-only increment.

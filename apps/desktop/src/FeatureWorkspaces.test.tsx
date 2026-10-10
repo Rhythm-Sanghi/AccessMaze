@@ -50,6 +50,12 @@ it("keeps historical evidence separate and requires approval before real replay 
     steps: [
       { id: "open", action: "navigate" },
       {
+        id: "fill",
+        action: "fill",
+        value_from: "fresh_name",
+        target: { role: "textbox", name: "Applicant name" },
+      },
+      {
         id: "failed",
         action: "activate",
         effect: true,
@@ -111,6 +117,8 @@ it("keeps historical evidence separate and requires approval before real replay 
     name: "Run approved replay",
   });
   expect(start).toBeDisabled();
+  expect(screen.getByText(/input: fresh_name/)).toBeVisible();
+  expect(screen.getByLabelText("fresh_name")).toBeVisible();
   await user.click(screen.getByLabelText(/I authorize this target/));
   start.focus();
   await user.keyboard("{Enter}");
@@ -167,11 +175,29 @@ it("uses the finding's recorded step state instead of an unrelated graph screens
     ],
     edges: [],
     limitations: [],
+    exploration: {
+      mode: "approved-branches",
+      actions: [
+        {
+          step_id: "explore-1",
+          action: "activate",
+          target: { role: "checkbox", name: "Terms" },
+          status: "passed",
+          reachability: "reached",
+        },
+      ],
+      pending_branches: [],
+      stop_reason: "action-budget",
+    },
     environment: {},
   } as unknown as Run;
   render(<RunWorkspace run={run} onControl={() => {}} />);
   expect(request).not.toHaveBeenCalled();
   const user = userEvent.setup();
+  await user.click(
+    screen.getByText("Executed discovery actions and reachability"),
+  );
+  expect(screen.getByRole("cell", { name: "reached" })).toBeVisible();
   await user.click(screen.getByRole("button", { name: "01 · open" }));
   expect(request).toHaveBeenCalledWith("evidence.read", {
     id: "run",

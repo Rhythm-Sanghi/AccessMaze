@@ -77,7 +77,11 @@ this.remove()">Beta</button></main></html>"""
                 ).wait_for()
 
             async def run():
-                await page.get_by_label(re.compile("I am authorized")).check()
+                await (
+                    page.locator(".run-gate")
+                    .get_by_label(re.compile("I am authorized"))
+                    .check()
+                )
                 await page.get_by_label(re.compile("I authorize this journey")).check()
                 await page.get_by_role("button", name="Run analysis →").click()
 
@@ -123,6 +127,10 @@ this.remove()">Beta</button></main></html>"""
                 "heading", name="Task outcome: completed", exact=True
             ).wait_for()
             await page.get_by_text("Stopped: action-budget", exact=True).wait_for()
+            await page.get_by_text(
+                "Executed discovery actions and reachability", exact=True
+            ).click()
+            await page.evaluate("window.scrollTo(0,0)")
             await page.screenshot(
                 path=ROOT / "docs/development/screenshots/approved-branches.png",
                 full_page=True,
@@ -182,6 +190,7 @@ this.remove()">Beta</button></main></html>"""
             await page.get_by_text(
                 "Compare historical and live step evidence", exact=True
             ).click()
+            await page.evaluate("window.scrollTo(0,0)")
             await page.screenshot(
                 path=ROOT / "docs/development/screenshots/failure-replay.png",
                 full_page=True,

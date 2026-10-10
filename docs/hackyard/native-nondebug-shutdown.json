@@ -1,0 +1,41 @@
+{
+  "source_commit": "7628688",
+  "scope": "Same laptop; ordinary launch without CDP or browser automation; 8-second startup observation",
+  "desktop_pid": 54532,
+  "owned_children": [
+    {
+      "pid": 76152,
+      "name": "msedgewebview2.exe"
+    },
+    {
+      "pid": 37396,
+      "name": "accessmaze-worker.exe"
+    },
+    {
+      "pid": 78892,
+      "name": "conhost.exe"
+    },
+    {
+      "pid": 60976,
+      "name": "msedgewebview2.exe"
+    },
+    {
+      "pid": 47528,
+      "name": "msedgewebview2.exe"
+    },
+    {
+      "pid": 51040,
+      "name": "msedgewebview2.exe"
+    },
+    {
+      "pid": 79704,
+      "name": "msedgewebview2.exe"
+    },
+    {
+      "pid": 2292,
+      "name": "msedgewebview2.exe"
+    }
+  ],
+  "close_main_window": "True",
+  "surviving_after_normal_close": []
+}

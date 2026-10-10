@@ -1,0 +1,1489 @@
+[
+  {
+    "coverage_compromised": false,
+    "duration_seconds": 1.336,
+    "edges": [
+      {
+        "cycle": false,
+        "source": "ab567fd7a130b1fd",
+        "status": "passed",
+        "step_id": "continue",
+        "target": "e15f017f371898b2"
+      },
+      {
+        "cycle": true,
+        "source": "e15f017f371898b2",
+        "status": "passed",
+        "step_id": "done",
+        "target": "e15f017f371898b2"
+      }
+    ],
+    "environment": {
+      "browser": "153.0.8010.12",
+      "engine": "0.1.0",
+      "networkx": "3.7",
+      "os": "Windows-11-10.0.26220-SP0",
+      "playwright": "1.63.0",
+      "python": "3.13.9"
+    },
+    "findings": [],
+    "finished_at": "2026-10-10T15:40:49.676904+00:00",
+    "id": "40affab9-cdb5-4538-858e-0eaead9a82d9",
+    "input_signature": null,
+    "journey": {
+      "allow_local": true,
+      "exploration": {
+        "enabled": false,
+        "max_actions": 50,
+        "max_depth": 2,
+        "recover_navigation": false
+      },
+      "max_seconds": 60,
+      "name": "Native features replay a4bf617c",
+      "network": {
+        "navigation_origins": [],
+        "resource_origins": []
+      },
+      "privacy": {
+        "capture_page_text": true
+      },
+      "profile": {
+        "action_timeout_ms": 10000,
+        "audit_semantics": false,
+        "disconnect_after_step": null,
+        "focus_target": null,
+        "keyboard_only": true,
+        "layout_zoom_percent": 125,
+        "network_latency_ms": 0,
+        "reconnect_after_step": null,
+        "reduced_motion": false,
+        "viewport_height": 800,
+        "viewport_width": 1280
+      },
+      "schema_version": 1,
+      "steps": [
+        {
+          "action": "navigate",
+          "effect": false,
+          "file_label": "",
+          "id": "open",
+          "optional": false,
+          "target": null,
+          "value": "",
+          "value_from": null
+        },
+        {
+          "action": "activate",
+          "effect": true,
+          "file_label": "",
+          "id": "continue",
+          "optional": false,
+          "target": {
+            "by": "role",
+            "name": "Continue",
+            "role": "button"
+          },
+          "value": "",
+          "value_from": null
+        },
+        {
+          "action": "assert_visible",
+          "effect": false,
+          "file_label": "",
+          "id": "done",
+          "optional": false,
+          "target": {
+            "by": "role",
+            "name": "Done",
+            "role": "heading"
+          },
+          "value": "",
+          "value_from": null
+        }
+      ],
+      "tab_budget": 8,
+      "target": "http://127.0.0.1:59656"
+    },
+    "limitations": [
+      "Authored path only; unvisited branches are not covered.",
+      "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+      "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+      "Motion and viewport preferences are applied; usability requires human review.",
+      "Only approved origins are allowed; blocked traffic can change behavior.",
+      "Screenshots are captured only for bundled synthetic fixtures.",
+      "Layout zoom emulation changes CSS viewport and device scale; it does not operate browser chrome zoom or verify OS magnification."
+    ],
+    "nodes": [
+      {
+        "first_step": "open",
+        "id": "ab567fd7a130b1fd",
+        "observation": {
+          "ax_tree": {
+            "max_depth": 8,
+            "max_nodes": 500,
+            "nodes": [
+              {
+                "focused": true,
+                "name": "Owned replay",
+                "role": "RootWebArea",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "",
+                "role": "main",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Base",
+                "role": "heading",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Continue",
+                "role": "button",
+                "states": {}
+              }
+            ],
+            "source": "Chromium computed accessibility tree"
+          },
+          "controls": [
+            {
+              "checked": null,
+              "disabled": false,
+              "expanded": null,
+              "focused": false,
+              "invalid": null,
+              "name": "Continue",
+              "populated": false,
+              "role": null,
+              "selected": null,
+              "tag": "button",
+              "visible": true
+            }
+          ],
+          "headings": [
+            "Base"
+          ],
+          "online": true,
+          "reduced_motion": false,
+          "title": "Owned replay",
+          "url": "http://127.0.0.1:59656/",
+          "viewport": {
+            "device_pixel_ratio": 1.25,
+            "height": 640,
+            "width": 1024
+          }
+        }
+      },
+      {
+        "first_step": "continue",
+        "id": "e15f017f371898b2",
+        "observation": {
+          "ax_tree": {
+            "max_depth": 8,
+            "max_nodes": 500,
+            "nodes": [
+              {
+                "focused": true,
+                "name": "Owned replay",
+                "role": "RootWebArea",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "",
+                "role": "main",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Done",
+                "role": "heading",
+                "states": {}
+              },
+              {
+                "focused": true,
+                "name": "Continue",
+                "role": "button",
+                "states": {}
+              }
+            ],
+            "source": "Chromium computed accessibility tree"
+          },
+          "controls": [
+            {
+              "checked": null,
+              "disabled": false,
+              "expanded": null,
+              "focused": true,
+              "invalid": null,
+              "name": "Continue",
+              "populated": false,
+              "role": null,
+              "selected": null,
+              "tag": "button",
+              "visible": true
+            }
+          ],
+          "headings": [
+            "Done"
+          ],
+          "online": true,
+          "reduced_motion": false,
+          "title": "Owned replay",
+          "url": "http://127.0.0.1:59656/",
+          "viewport": {
+            "device_pixel_ratio": 1.25,
+            "height": 640,
+            "width": 1024
+          }
+        }
+      }
+    ],
+    "outcome": {
+      "assertions": [
+        {
+          "status": "passed",
+          "step_id": "done"
+        }
+      ],
+      "blocked_step_id": null,
+      "limitation": "Task completion does not establish accessibility conformance or untested coverage.",
+      "reason": "All mandatory assertions passed in this execution.",
+      "status": "completed"
+    },
+    "project_id": "5d14f2ab-cd91-4da5-ac89-20919d4a85b8",
+    "replay": {
+      "finding_id": "74ba770c-0048-49ac-b174-849de6b1ba30",
+      "source_id": "7e236ba0-42b7-482d-b064-ea2d94218d2b",
+      "verdict": "not-reproduced-in-this-run"
+    },
+    "started_at": "2026-10-10T15:40:48.341013+00:00",
+    "status": "completed_with_limitations",
+    "steps": [
+      {
+        "action": "navigate",
+        "id": "open",
+        "index": 0,
+        "interaction": {
+          "http_status": 200
+        },
+        "state_id": "ab567fd7a130b1fd",
+        "status": "passed",
+        "timestamp": "2026-10-10T15:40:49.011760+00:00"
+      },
+      {
+        "action": "activate",
+        "id": "continue",
+        "index": 1,
+        "interaction": {
+          "focus_history": [
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "Continue",
+              "role": "",
+              "tag": "button"
+            }
+          ],
+          "tab_presses": 1
+        },
+        "state_id": "e15f017f371898b2",
+        "status": "passed",
+        "timestamp": "2026-10-10T15:40:49.091728+00:00"
+      },
+      {
+        "action": "assert_visible",
+        "id": "done",
+        "index": 2,
+        "state_id": "e15f017f371898b2",
+        "status": "passed",
+        "timestamp": "2026-10-10T15:40:49.535423+00:00"
+      }
+    ]
+  },
+  {
+    "coverage_compromised": false,
+    "duration_seconds": 0.974,
+    "edges": [
+      {
+        "cycle": false,
+        "source": "db3f24ba3e2e0100",
+        "status": "failed",
+        "step_id": "continue",
+        "target": "f92bb43a86fd8860"
+      }
+    ],
+    "environment": {
+      "browser": "153.0.8010.12",
+      "engine": "0.1.0",
+      "networkx": "3.7",
+      "os": "Windows-11-10.0.26220-SP0",
+      "playwright": "1.63.0",
+      "python": "3.13.9"
+    },
+    "findings": [
+      {
+        "actual": "Target not reached within 8 Tab presses",
+        "expected": "Target reachable through sequential keyboard navigation",
+        "id": "103f76d8-0d72-4f74-b018-c15a842d27ae",
+        "remediation": "Inspect the step and target; rerun after repair.",
+        "reproduction": [
+          "open",
+          "continue"
+        ],
+        "rule": "keyboard-unreachable",
+        "severity": "serious",
+        "step_id": "continue",
+        "timestamp": "2026-10-10T15:40:47.746234+00:00",
+        "title": "Target not reached within 8 Tab presses",
+        "verification": "confirmed-automated"
+      }
+    ],
+    "finished_at": "2026-10-10T15:40:47.857341+00:00",
+    "id": "5ad2f835-98c2-4d04-921b-3e2efcb4bf92",
+    "input_signature": null,
+    "journey": {
+      "allow_local": true,
+      "exploration": {
+        "enabled": false,
+        "max_actions": 50,
+        "max_depth": 2,
+        "recover_navigation": false
+      },
+      "max_seconds": 60,
+      "name": "Native features replay a4bf617c",
+      "network": {
+        "navigation_origins": [],
+        "resource_origins": []
+      },
+      "privacy": {
+        "capture_page_text": true
+      },
+      "profile": {
+        "action_timeout_ms": 10000,
+        "audit_semantics": false,
+        "disconnect_after_step": null,
+        "focus_target": null,
+        "keyboard_only": true,
+        "layout_zoom_percent": 125,
+        "network_latency_ms": 0,
+        "reconnect_after_step": null,
+        "reduced_motion": false,
+        "viewport_height": 800,
+        "viewport_width": 1280
+      },
+      "schema_version": 1,
+      "steps": [
+        {
+          "action": "navigate",
+          "effect": false,
+          "file_label": "",
+          "id": "open",
+          "optional": false,
+          "target": null,
+          "value": "",
+          "value_from": null
+        },
+        {
+          "action": "activate",
+          "effect": true,
+          "file_label": "",
+          "id": "continue",
+          "optional": false,
+          "target": {
+            "by": "role",
+            "name": "Continue",
+            "role": "button"
+          },
+          "value": "",
+          "value_from": null
+        },
+        {
+          "action": "assert_visible",
+          "effect": false,
+          "file_label": "",
+          "id": "done",
+          "optional": false,
+          "target": {
+            "by": "role",
+            "name": "Done",
+            "role": "heading"
+          },
+          "value": "",
+          "value_from": null
+        }
+      ],
+      "tab_budget": 8,
+      "target": "http://127.0.0.1:59656"
+    },
+    "limitations": [
+      "Authored path only; unvisited branches are not covered.",
+      "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+      "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+      "Motion and viewport preferences are applied; usability requires human review.",
+      "Only approved origins are allowed; blocked traffic can change behavior.",
+      "Screenshots are captured only for bundled synthetic fixtures.",
+      "Layout zoom emulation changes CSS viewport and device scale; it does not operate browser chrome zoom or verify OS magnification."
+    ],
+    "nodes": [
+      {
+        "first_step": "open",
+        "id": "db3f24ba3e2e0100",
+        "observation": {
+          "ax_tree": {
+            "max_depth": 8,
+            "max_nodes": 500,
+            "nodes": [
+              {
+                "focused": true,
+                "name": "Owned replay",
+                "role": "RootWebArea",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "",
+                "role": "main",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Base",
+                "role": "heading",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Continue",
+                "role": "button",
+                "states": {}
+              }
+            ],
+            "source": "Chromium computed accessibility tree"
+          },
+          "controls": [
+            {
+              "checked": null,
+              "disabled": false,
+              "expanded": null,
+              "focused": false,
+              "invalid": null,
+              "name": "Continue",
+              "populated": false,
+              "role": "button",
+              "selected": null,
+              "tag": "div",
+              "visible": true
+            }
+          ],
+          "headings": [
+            "Base"
+          ],
+          "online": true,
+          "reduced_motion": false,
+          "title": "Owned replay",
+          "url": "http://127.0.0.1:59656/",
+          "viewport": {
+            "device_pixel_ratio": 1.25,
+            "height": 640,
+            "width": 1024
+          }
+        }
+      },
+      {
+        "first_step": "continue",
+        "id": "f92bb43a86fd8860",
+        "observation": {
+          "ax_tree": {
+            "max_depth": 8,
+            "max_nodes": 500,
+            "nodes": [
+              {
+                "focused": false,
+                "name": "Owned replay",
+                "role": "RootWebArea",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "",
+                "role": "main",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Base",
+                "role": "heading",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Continue",
+                "role": "button",
+                "states": {}
+              }
+            ],
+            "source": "Chromium computed accessibility tree"
+          },
+          "controls": [
+            {
+              "checked": null,
+              "disabled": false,
+              "expanded": null,
+              "focused": false,
+              "invalid": null,
+              "name": "Continue",
+              "populated": false,
+              "role": "button",
+              "selected": null,
+              "tag": "div",
+              "visible": true
+            }
+          ],
+          "headings": [
+            "Base"
+          ],
+          "online": true,
+          "reduced_motion": false,
+          "title": "Owned replay",
+          "url": "http://127.0.0.1:59656/",
+          "viewport": {
+            "device_pixel_ratio": 1.25,
+            "height": 640,
+            "width": 1024
+          }
+        }
+      }
+    ],
+    "outcome": {
+      "assertions": [
+        {
+          "status": "not-reached",
+          "step_id": "done"
+        }
+      ],
+      "blocked_step_id": "continue",
+      "limitation": "Task completion does not establish accessibility conformance or untested coverage.",
+      "reason": "A required interaction or assertion failed in this bounded attempt.",
+      "status": "blocked"
+    },
+    "project_id": "5d14f2ab-cd91-4da5-ac89-20919d4a85b8",
+    "replay": {
+      "finding_id": "74ba770c-0048-49ac-b174-849de6b1ba30",
+      "source_id": "7e236ba0-42b7-482d-b064-ea2d94218d2b",
+      "verdict": "observed-again"
+    },
+    "started_at": "2026-10-10T15:40:46.883789+00:00",
+    "status": "failed",
+    "steps": [
+      {
+        "action": "navigate",
+        "id": "open",
+        "index": 0,
+        "interaction": {
+          "http_status": 200
+        },
+        "state_id": "db3f24ba3e2e0100",
+        "status": "passed",
+        "timestamp": "2026-10-10T15:40:47.442972+00:00"
+      },
+      {
+        "action": "activate",
+        "id": "continue",
+        "index": 1,
+        "interaction": {
+          "focus_history": [
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            }
+          ],
+          "tab_presses": 8
+        },
+        "state_id": "f92bb43a86fd8860",
+        "status": "failed",
+        "timestamp": "2026-10-10T15:40:47.530093+00:00"
+      }
+    ]
+  },
+  {
+    "coverage_compromised": false,
+    "duration_seconds": 1.385,
+    "edges": [
+      {
+        "cycle": false,
+        "source": "db3f24ba3e2e0100",
+        "status": "failed",
+        "step_id": "continue",
+        "target": "f92bb43a86fd8860"
+      }
+    ],
+    "environment": {
+      "browser": "153.0.8010.12",
+      "engine": "0.1.0",
+      "networkx": "3.7",
+      "os": "Windows-11-10.0.26220-SP0",
+      "playwright": "1.63.0",
+      "python": "3.13.9"
+    },
+    "findings": [
+      {
+        "actual": "Target not reached within 8 Tab presses",
+        "expected": "Target reachable through sequential keyboard navigation",
+        "id": "74ba770c-0048-49ac-b174-849de6b1ba30",
+        "remediation": "Inspect the step and target; rerun after repair.",
+        "reproduction": [
+          "open",
+          "continue"
+        ],
+        "rule": "keyboard-unreachable",
+        "severity": "serious",
+        "step_id": "continue",
+        "timestamp": "2026-10-10T15:40:46.004793+00:00",
+        "title": "Target not reached within 8 Tab presses",
+        "verification": "confirmed-automated"
+      }
+    ],
+    "finished_at": "2026-10-10T15:40:46.127710+00:00",
+    "id": "7e236ba0-42b7-482d-b064-ea2d94218d2b",
+    "input_signature": null,
+    "journey": {
+      "allow_local": true,
+      "exploration": {
+        "enabled": false,
+        "max_actions": 50,
+        "max_depth": 2,
+        "recover_navigation": false
+      },
+      "max_seconds": 60,
+      "name": "Native features replay a4bf617c",
+      "network": {
+        "navigation_origins": [],
+        "resource_origins": []
+      },
+      "privacy": {
+        "capture_page_text": true
+      },
+      "profile": {
+        "action_timeout_ms": 10000,
+        "audit_semantics": false,
+        "disconnect_after_step": null,
+        "focus_target": null,
+        "keyboard_only": true,
+        "layout_zoom_percent": 125,
+        "network_latency_ms": 0,
+        "reconnect_after_step": null,
+        "reduced_motion": false,
+        "viewport_height": 800,
+        "viewport_width": 1280
+      },
+      "schema_version": 1,
+      "steps": [
+        {
+          "action": "navigate",
+          "effect": false,
+          "file_label": "",
+          "id": "open",
+          "optional": false,
+          "target": null,
+          "value": "",
+          "value_from": null
+        },
+        {
+          "action": "activate",
+          "effect": true,
+          "file_label": "",
+          "id": "continue",
+          "optional": false,
+          "target": {
+            "by": "role",
+            "name": "Continue",
+            "role": "button"
+          },
+          "value": "",
+          "value_from": null
+        },
+        {
+          "action": "assert_visible",
+          "effect": false,
+          "file_label": "",
+          "id": "done",
+          "optional": false,
+          "target": {
+            "by": "role",
+            "name": "Done",
+            "role": "heading"
+          },
+          "value": "",
+          "value_from": null
+        }
+      ],
+      "tab_budget": 8,
+      "target": "http://127.0.0.1:59656"
+    },
+    "limitations": [
+      "Authored path only; unvisited branches are not covered.",
+      "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+      "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+      "Motion and viewport preferences are applied; usability requires human review.",
+      "Only approved origins are allowed; blocked traffic can change behavior.",
+      "Screenshots are captured only for bundled synthetic fixtures.",
+      "Layout zoom emulation changes CSS viewport and device scale; it does not operate browser chrome zoom or verify OS magnification."
+    ],
+    "nodes": [
+      {
+        "first_step": "open",
+        "id": "db3f24ba3e2e0100",
+        "observation": {
+          "ax_tree": {
+            "max_depth": 8,
+            "max_nodes": 500,
+            "nodes": [
+              {
+                "focused": true,
+                "name": "Owned replay",
+                "role": "RootWebArea",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "",
+                "role": "main",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Base",
+                "role": "heading",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Continue",
+                "role": "button",
+                "states": {}
+              }
+            ],
+            "source": "Chromium computed accessibility tree"
+          },
+          "controls": [
+            {
+              "checked": null,
+              "disabled": false,
+              "expanded": null,
+              "focused": false,
+              "invalid": null,
+              "name": "Continue",
+              "populated": false,
+              "role": "button",
+              "selected": null,
+              "tag": "div",
+              "visible": true
+            }
+          ],
+          "headings": [
+            "Base"
+          ],
+          "online": true,
+          "reduced_motion": false,
+          "title": "Owned replay",
+          "url": "http://127.0.0.1:59656/",
+          "viewport": {
+            "device_pixel_ratio": 1.25,
+            "height": 640,
+            "width": 1024
+          }
+        }
+      },
+      {
+        "first_step": "continue",
+        "id": "f92bb43a86fd8860",
+        "observation": {
+          "ax_tree": {
+            "max_depth": 8,
+            "max_nodes": 500,
+            "nodes": [
+              {
+                "focused": false,
+                "name": "Owned replay",
+                "role": "RootWebArea",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "",
+                "role": "main",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Base",
+                "role": "heading",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Continue",
+                "role": "button",
+                "states": {}
+              }
+            ],
+            "source": "Chromium computed accessibility tree"
+          },
+          "controls": [
+            {
+              "checked": null,
+              "disabled": false,
+              "expanded": null,
+              "focused": false,
+              "invalid": null,
+              "name": "Continue",
+              "populated": false,
+              "role": "button",
+              "selected": null,
+              "tag": "div",
+              "visible": true
+            }
+          ],
+          "headings": [
+            "Base"
+          ],
+          "online": true,
+          "reduced_motion": false,
+          "title": "Owned replay",
+          "url": "http://127.0.0.1:59656/",
+          "viewport": {
+            "device_pixel_ratio": 1.25,
+            "height": 640,
+            "width": 1024
+          }
+        }
+      }
+    ],
+    "outcome": {
+      "assertions": [
+        {
+          "status": "not-reached",
+          "step_id": "done"
+        }
+      ],
+      "blocked_step_id": "continue",
+      "limitation": "Task completion does not establish accessibility conformance or untested coverage.",
+      "reason": "A required interaction or assertion failed in this bounded attempt.",
+      "status": "blocked"
+    },
+    "project_id": "5d14f2ab-cd91-4da5-ac89-20919d4a85b8",
+    "started_at": "2026-10-10T15:40:44.742234+00:00",
+    "status": "failed",
+    "steps": [
+      {
+        "action": "navigate",
+        "id": "open",
+        "index": 0,
+        "interaction": {
+          "http_status": 200
+        },
+        "state_id": "db3f24ba3e2e0100",
+        "status": "passed",
+        "timestamp": "2026-10-10T15:40:45.510631+00:00"
+      },
+      {
+        "action": "activate",
+        "id": "continue",
+        "index": 1,
+        "interaction": {
+          "focus_history": [
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            },
+            {
+              "name": "",
+              "role": "",
+              "tag": "body"
+            }
+          ],
+          "tab_presses": 8
+        },
+        "state_id": "f92bb43a86fd8860",
+        "status": "failed",
+        "timestamp": "2026-10-10T15:40:45.618320+00:00"
+      }
+    ]
+  },
+  {
+    "coverage_compromised": false,
+    "duration_seconds": 8.798,
+    "edges": [
+      {
+        "cycle": true,
+        "source": "e3c139a18d7b1c0c",
+        "status": "passed",
+        "step_id": "base",
+        "target": "e3c139a18d7b1c0c"
+      },
+      {
+        "cycle": false,
+        "source": "e3c139a18d7b1c0c",
+        "status": "passed",
+        "step_id": "explore-1",
+        "target": "feb8f7d54909b100"
+      },
+      {
+        "cycle": false,
+        "source": "e3c139a18d7b1c0c",
+        "status": "passed",
+        "step_id": "explore-3",
+        "target": "de356d6536c18c84"
+      },
+      {
+        "cycle": true,
+        "source": "feb8f7d54909b100",
+        "status": "passed",
+        "step_id": "explore-2",
+        "target": "e3c139a18d7b1c0c"
+      }
+    ],
+    "environment": {
+      "browser": "153.0.8010.12",
+      "engine": "0.1.0",
+      "networkx": "3.7",
+      "os": "Windows-11-10.0.26220-SP0",
+      "playwright": "1.63.0",
+      "python": "3.13.9"
+    },
+    "exploration": {
+      "actions": [
+        {
+          "action": "activate",
+          "approval_id": "e376211c-09ed-4307-8e0d-049536c87e58",
+          "interaction": {
+            "focus_history": [
+              {
+                "name": "",
+                "role": "",
+                "tag": "body"
+              },
+              {
+                "name": "Alpha",
+                "role": "",
+                "tag": "button"
+              }
+            ],
+            "tab_presses": 1
+          },
+          "kind": "approved-explore",
+          "reachability": "reached",
+          "source": "e3c139a18d7b1c0c",
+          "state_id": "feb8f7d54909b100",
+          "status": "passed",
+          "step_id": "explore-1",
+          "target": {
+            "by": "role",
+            "name": "Alpha",
+            "role": "button"
+          },
+          "timestamp": "2026-10-10T15:40:39.661175+00:00"
+        },
+        {
+          "action": "navigate",
+          "approval_id": "53207825-cb32-452b-a7bf-9fb968b3c0be",
+          "interaction": {
+            "http_status": 200
+          },
+          "kind": "approved-recovery",
+          "reachability": "inconclusive",
+          "source": "feb8f7d54909b100",
+          "state_id": "e3c139a18d7b1c0c",
+          "status": "passed",
+          "step_id": "explore-2",
+          "target": null,
+          "timestamp": "2026-10-10T15:40:40.549822+00:00"
+        },
+        {
+          "action": "activate",
+          "approval_id": "1958defd-30a5-43f1-aec2-f883fa97dcdd",
+          "interaction": {
+            "focus_history": [
+              {
+                "name": "",
+                "role": "",
+                "tag": "body"
+              },
+              {
+                "name": "Alpha",
+                "role": "",
+                "tag": "button"
+              },
+              {
+                "name": "Beta",
+                "role": "",
+                "tag": "button"
+              }
+            ],
+            "tab_presses": 2
+          },
+          "kind": "approved-explore",
+          "reachability": "reached",
+          "source": "e3c139a18d7b1c0c",
+          "state_id": "de356d6536c18c84",
+          "status": "passed",
+          "step_id": "explore-3",
+          "target": {
+            "by": "role",
+            "name": "Beta",
+            "role": "button"
+          },
+          "timestamp": "2026-10-10T15:40:42.358927+00:00"
+        }
+      ],
+      "discovered_states": 3,
+      "mode": "approved-branches",
+      "pending_branches": [
+        {
+          "normalized_state_id": "c5ddcf739820aac1",
+          "path": [
+            "Beta"
+          ],
+          "reason": "depth-bound",
+          "state_id": "feb8f7d54909b100"
+        },
+        {
+          "path": [
+            "Alpha"
+          ],
+          "reason": "action-budget",
+          "state_id": "de356d6536c18c84"
+        }
+      ],
+      "reachability": [
+        {
+          "source": "e3c139a18d7b1c0c",
+          "status": "reached",
+          "step_id": "explore-1",
+          "target": "feb8f7d54909b100"
+        },
+        {
+          "source": "feb8f7d54909b100",
+          "status": "inconclusive",
+          "step_id": "explore-2",
+          "target": "e3c139a18d7b1c0c"
+        },
+        {
+          "source": "e3c139a18d7b1c0c",
+          "status": "reached",
+          "step_id": "explore-3",
+          "target": "de356d6536c18c84"
+        }
+      ],
+      "stop_reason": "action-budget"
+    },
+    "findings": [],
+    "finished_at": "2026-10-10T15:40:42.991413+00:00",
+    "id": "ba14563e-f3e6-475c-90bc-cb2a14a94d30",
+    "input_signature": null,
+    "journey": {
+      "allow_local": true,
+      "exploration": {
+        "enabled": true,
+        "max_actions": 3,
+        "max_depth": 1,
+        "recover_navigation": true
+      },
+      "max_seconds": 60,
+      "name": "Native features branches a4bf617c",
+      "network": {
+        "navigation_origins": [],
+        "resource_origins": []
+      },
+      "privacy": {
+        "capture_page_text": true
+      },
+      "profile": {
+        "action_timeout_ms": 10000,
+        "audit_semantics": false,
+        "disconnect_after_step": null,
+        "focus_target": null,
+        "keyboard_only": true,
+        "layout_zoom_percent": 125,
+        "network_latency_ms": 0,
+        "reconnect_after_step": null,
+        "reduced_motion": false,
+        "viewport_height": 800,
+        "viewport_width": 1280
+      },
+      "schema_version": 1,
+      "steps": [
+        {
+          "action": "navigate",
+          "effect": false,
+          "file_label": "",
+          "id": "open",
+          "optional": false,
+          "target": null,
+          "value": "",
+          "value_from": null
+        },
+        {
+          "action": "assert_visible",
+          "effect": false,
+          "file_label": "",
+          "id": "base",
+          "optional": false,
+          "target": {
+            "by": "role",
+            "name": "Base",
+            "role": "heading"
+          },
+          "value": "",
+          "value_from": null
+        }
+      ],
+      "tab_budget": 8,
+      "target": "http://127.0.0.1:59656"
+    },
+    "limitations": [
+      "Website exploration requires approval for each action; unvisited branches are not covered.",
+      "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+      "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+      "Motion and viewport preferences are applied; usability requires human review.",
+      "Only approved origins are allowed; blocked traffic can change behavior.",
+      "Screenshots are captured only for bundled synthetic fixtures.",
+      "Layout zoom emulation changes CSS viewport and device scale; it does not operate browser chrome zoom or verify OS magnification.",
+      "Semantic discovery is capped at 500 AX nodes / depth 8 and 30 unique enabled actions per state. Every activation and optional root navigation requires approval. Root recovery does not undo server effects, restore application data, or replay form inputs. Unattempted actions and exhausted budgets do not establish inaccessibility."
+    ],
+    "nodes": [
+      {
+        "first_step": "open",
+        "id": "e3c139a18d7b1c0c",
+        "observation": {
+          "ax_tree": {
+            "max_depth": 8,
+            "max_nodes": 500,
+            "nodes": [
+              {
+                "focused": true,
+                "name": "Owned branches",
+                "role": "RootWebArea",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "",
+                "role": "main",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Base",
+                "role": "heading",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Alpha",
+                "role": "button",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Beta",
+                "role": "button",
+                "states": {}
+              }
+            ],
+            "source": "Chromium computed accessibility tree"
+          },
+          "controls": [
+            {
+              "checked": null,
+              "disabled": false,
+              "expanded": null,
+              "focused": false,
+              "invalid": null,
+              "name": "Alpha",
+              "populated": false,
+              "role": null,
+              "selected": null,
+              "tag": "button",
+              "visible": true
+            },
+            {
+              "checked": null,
+              "disabled": false,
+              "expanded": null,
+              "focused": false,
+              "invalid": null,
+              "name": "Beta",
+              "populated": false,
+              "role": null,
+              "selected": null,
+              "tag": "button",
+              "visible": true
+            }
+          ],
+          "headings": [
+            "Base"
+          ],
+          "online": true,
+          "reduced_motion": false,
+          "title": "Owned branches",
+          "url": "http://127.0.0.1:59656/",
+          "viewport": {
+            "device_pixel_ratio": 1.25,
+            "height": 640,
+            "width": 1024
+          }
+        }
+      },
+      {
+        "first_step": "explore-1",
+        "id": "feb8f7d54909b100",
+        "observation": {
+          "ax_tree": {
+            "max_depth": 8,
+            "max_nodes": 500,
+            "nodes": [
+              {
+                "focused": true,
+                "name": "Owned branches",
+                "role": "RootWebArea",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "",
+                "role": "main",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Alpha branch",
+                "role": "heading",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Beta",
+                "role": "button",
+                "states": {}
+              }
+            ],
+            "source": "Chromium computed accessibility tree"
+          },
+          "controls": [
+            {
+              "checked": null,
+              "disabled": false,
+              "expanded": null,
+              "focused": false,
+              "invalid": null,
+              "name": "Beta",
+              "populated": false,
+              "role": null,
+              "selected": null,
+              "tag": "button",
+              "visible": true
+            }
+          ],
+          "headings": [
+            "Alpha branch"
+          ],
+          "online": true,
+          "reduced_motion": false,
+          "title": "Owned branches",
+          "url": "http://127.0.0.1:59656/",
+          "viewport": {
+            "device_pixel_ratio": 1.25,
+            "height": 640,
+            "width": 1024
+          }
+        }
+      },
+      {
+        "first_step": "explore-3",
+        "id": "de356d6536c18c84",
+        "observation": {
+          "ax_tree": {
+            "max_depth": 8,
+            "max_nodes": 500,
+            "nodes": [
+              {
+                "focused": true,
+                "name": "Owned branches",
+                "role": "RootWebArea",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "",
+                "role": "main",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Beta branch",
+                "role": "heading",
+                "states": {}
+              },
+              {
+                "focused": false,
+                "name": "Alpha",
+                "role": "button",
+                "states": {}
+              }
+            ],
+            "source": "Chromium computed accessibility tree"
+          },
+          "controls": [
+            {
+              "checked": null,
+              "disabled": false,
+              "expanded": null,
+              "focused": false,
+              "invalid": null,
+              "name": "Alpha",
+              "populated": false,
+              "role": null,
+              "selected": null,
+              "tag": "button",
+              "visible": true
+            }
+          ],
+          "headings": [
+            "Beta branch"
+          ],
+          "online": true,
+          "reduced_motion": false,
+          "title": "Owned branches",
+          "url": "http://127.0.0.1:59656/",
+          "viewport": {
+            "device_pixel_ratio": 1.25,
+            "height": 640,
+            "width": 1024
+          }
+        }
+      }
+    ],
+    "outcome": {
+      "assertions": [
+        {
+          "status": "passed",
+          "step_id": "base"
+        }
+      ],
+      "blocked_step_id": null,
+      "limitation": "Task completion does not establish accessibility conformance or untested coverage.",
+      "reason": "All mandatory assertions passed in this execution.",
+      "status": "completed"
+    },
+    "project_id": "d99e95cb-f0a3-4899-a996-88514c9b5e61",
+    "started_at": "2026-10-10T15:40:34.192728+00:00",
+    "status": "completed_with_limitations",
+    "steps": [
+      {
+        "action": "navigate",
+        "id": "open",
+        "index": 0,
+        "interaction": {
+          "http_status": 200
+        },
+        "state_id": "e3c139a18d7b1c0c",
+        "status": "passed",
+        "timestamp": "2026-10-10T15:40:38.650734+00:00"
+      },
+      {
+        "action": "assert_visible",
+        "id": "base",
+        "index": 1,
+        "state_id": "e3c139a18d7b1c0c",
+        "status": "passed",
+        "timestamp": "2026-10-10T15:40:38.897840+00:00"
+      }
+    ]
+  }
+]

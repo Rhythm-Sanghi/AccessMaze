@@ -156,13 +156,19 @@ export default function RunWorkspace({
             {run.journey.profile.viewport_width} ×{" "}
             {run.journey.profile.viewport_height}
           </p>
+          <p className="muted">
+            Layout zoom emulation:{" "}
+            {run.journey.profile.layout_zoom_percent ?? 100}%
+            {node?.observation.viewport &&
+              ` · observed CSS viewport ${node.observation.viewport.width} × ${node.observation.viewport.height}`}
+          </p>
           <h3>Coverage limits</h3>
           {run.exploration && (
             <>
               <h3>Branch discovery</h3>
               <p>
                 {run.exploration.actions.length}{" "}
-                {run.exploration.mode === "approved-walk"
+                {run.exploration.mode?.startsWith("approved-")
                   ? "approved website actions"
                   : "replay/discovery actions"}
               </p>
@@ -175,6 +181,44 @@ export default function RunWorkspace({
                 {run.exploration.pending_branches.length} bounded frontier
                 states or actions
               </p>
+              <details>
+                <summary>Executed discovery actions and reachability</summary>
+                <p className="muted">
+                  Each result describes an actual bounded attempt. Pending
+                  branches have no accessibility verdict.
+                </p>
+                <div
+                  className="table-scroll"
+                  tabIndex={0}
+                  role="region"
+                  aria-label="Scrollable discovery execution evidence"
+                >
+                  <table aria-label="Approved discovery actions">
+                    <thead>
+                      <tr>
+                        <th>Action</th>
+                        <th>Target</th>
+                        <th>Execution</th>
+                        <th>Keyboard evidence</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {run.exploration.actions.map((a) => (
+                        <tr key={a.step_id}>
+                          <td>
+                            {a.step_id} / {a.action}
+                          </td>
+                          <td>{a.target?.name ?? "configured start"}</td>
+                          <td>{a.status}</td>
+                          <td>
+                            {a.reachability ?? "See recorded interaction"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
               <details>
                 <summary>Pending branches</summary>
                 <ul>
