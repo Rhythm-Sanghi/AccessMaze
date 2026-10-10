@@ -419,8 +419,27 @@ export default function JourneyEditor({
         />
         {journey.target.startsWith("fixture://")
           ? "Explore named buttons after completion (resettable synthetic fixture)"
-          : "Propose website buttons and links after completion; approve each action"}
+          : "Propose semantic buttons, links, checkboxes and radios; approve each action"}
       </label>
+      {exploration.enabled && !journey.target.startsWith("fixture://") && (
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={exploration.recover_navigation ?? false}
+            onChange={(e) =>
+              onChange({
+                ...journey,
+                exploration: {
+                  ...exploration,
+                  recover_navigation: e.target.checked,
+                },
+              })
+            }
+          />
+          Offer separately approved navigation to the configured start for other
+          branches. This does not undo effects or replay form inputs.
+        </label>
+      )}
       {exploration.enabled && (
         <div className="fields">
           <label>

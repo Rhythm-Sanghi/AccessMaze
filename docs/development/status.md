@@ -4,6 +4,24 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Remaining-feature milestone 1 — approved branch recovery
+
+Continuation baseline is **8e074e7**. Website discovery now uses deterministically
+ordered computed accessible names for buttons, links, checkboxes and radios.
+Opt-in root recovery requires its own fresh approval; it never automatically replays
+forms or reverses server effects. Focus-normalized coverage keys avoid retrying the
+same named action after approved recovery, while graph observations retain focus.
+Earlier unvisited alternatives remain persisted, including when bounds stop exploration.
+Executed actions retain keyboard reachability and focus evidence. Unknown paths are
+not classified inaccessible. Candidate and AX limits are reported explicitly.
+
+Actual local command: `uv run --project engine pytest engine/tests/test_website_exploration.py -q`:
+**5 passed in 16.42 s**, including real multi-page and history-SPA branch recovery,
+blocked unapproved destructive action, stale approvals, cancellation and persistence.
+Native verification, packaging and broader regression checks for this increment remain pending.
+This is workstation continuation, not claimed onsite development. Independent release gates remain open.
+
+
 ### Competition outcome milestone — native verification complete for this increment
 
 Application source **504774a**, built clean as `dist/AccessMaze-competition-startup`;

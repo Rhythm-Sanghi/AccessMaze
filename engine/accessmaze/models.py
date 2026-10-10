@@ -126,6 +126,7 @@ class Profile(StrictModel):
 
 class Exploration(StrictModel):
     enabled: bool = False
+    recover_navigation: bool = False
     max_depth: int = Field(default=2, ge=1, le=4)
     max_actions: int = Field(default=50, ge=1, le=200)
 

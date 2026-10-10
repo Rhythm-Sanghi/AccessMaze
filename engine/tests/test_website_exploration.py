@@ -135,3 +135,70 @@ def test_changed_state_refuses_previously_approved_action(store, fixtures, axe_p
             assert ("POST", "/write") not in hits
 
     asyncio.run(exercise())
+
+
+@pytest.mark.parametrize("spa", [False, True], ids=["multi-page", "history-spa"])
+def test_authorized_branch_recovery_is_separately_approved(store, fixtures, axe_path, spa):
+    async def exercise():
+        branch = (
+            "<h1>Branch</h1>"
+            "<button onclick=\"fetch('/danger',{method:'POST'})\">Delete records</button>"
+        )
+        if spa:
+            body = """<h1>Base</h1><span id='name'>Alpha</span>
+<button aria-labelledby='name' onclick="history.pushState({},'', '/alpha');
+document.body.innerHTML='<h1>Alpha branch</h1>'">hidden</button>
+<button onclick="history.pushState({},'', '/beta');
+document.body.innerHTML='<h1>Beta branch</h1>'">Beta</button>"""
+        else:
+            body = "<h1>Base</h1><a href='/beta'>Beta</a><a href='/alpha'>Alpha</a>"
+        with website(
+            {
+                "/": (200, {"Content-Type": "text/html"}, body),
+                "/alpha": (200, {"Content-Type": "text/html"}, branch),
+                "/beta": (200, {"Content-Type": "text/html"}, branch),
+                "/danger": (200, {}, "bad"),
+            }
+        ) as (target, hits):
+            journey = journey_for(target)
+            journey.exploration.recover_navigation = True
+            journey.exploration.max_actions = 3
+            journey.exploration.max_depth = 1
+            p = store.save_project(ProjectInput(name="Branches", journey=journey))
+            control = RunControl()
+            task = asyncio.create_task(
+                execute(store, p["id"], journey, control, fixtures, axe_path)
+            )
+            first = await wait_for_proposal(control)
+            assert [c["name"] for c in first["choices"]] == ["Alpha", "Beta"]
+            control.approve(first["id"], first["choices"][0]["id"])
+
+            async def next_proposal(previous):
+                for _ in range(200):
+                    pending = control.pending()
+                    if pending and pending["id"] != previous["id"]:
+                        return pending
+                    await asyncio.sleep(0.05)
+                pytest.fail("Next approved branch was unavailable")
+
+            recovery = await next_proposal(first)
+            assert [c["role"] for c in recovery["choices"]] == ["navigation"]
+            assert hits.count(("GET", "/")) == 1
+            partial = store.runs(p["id"])[0]
+            assert partial["exploration"]["pending_branches"]  # root sibling retained
+            control.approve(recovery["id"], recovery["choices"][0]["id"])
+            second = await next_proposal(recovery)
+            assert [c["name"] for c in second["choices"]] == ["Beta"]
+            control.approve(second["id"], second["choices"][0]["id"])
+            result = await asyncio.wait_for(task, 8)
+            assert result["exploration"]["stop_reason"] == "action-budget"
+            assert len(result["exploration"]["actions"]) == 3
+            assert len(result["nodes"]) >= 3
+            assert result["exploration"]["actions"][0]["reachability"] == "reached"
+            assert result["exploration"]["actions"][1]["kind"] == "approved-recovery"
+            assert not result["findings"]
+            assert not any(method == "POST" for method, _ in hits)
+            assert hits.count(("GET", "/")) == 2
+            assert store.run(result["id"])["exploration"] == result["exploration"]
+
+    asyncio.run(exercise())

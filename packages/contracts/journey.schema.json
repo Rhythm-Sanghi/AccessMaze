@@ -8,6 +8,11 @@
           "title": "Enabled",
           "type": "boolean"
         },
+        "recover_navigation": {
+          "default": false,
+          "title": "Recover Navigation",
+          "type": "boolean"
+        },
         "max_depth": {
           "default": 2,
           "maximum": 4,

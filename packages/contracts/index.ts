@@ -38,7 +38,12 @@ export interface Step {
 export interface Journey {
   privacy?: { capture_page_text: boolean };
   network?: { navigation_origins: string[]; resource_origins: string[] };
-  exploration?: { enabled: boolean; max_depth: number; max_actions: number };
+  exploration?: {
+    enabled: boolean;
+    recover_navigation?: boolean;
+    max_depth: number;
+    max_actions: number;
+  };
   schema_version: 1;
   name: string;
   target: string;
@@ -114,7 +119,7 @@ export interface Run {
   };
   input_signature?: string | null;
   exploration?: {
-    mode?: "approved-walk";
+    mode?: "approved-walk" | "approved-branches";
     actions: {
       step_id: string;
       kind: string;

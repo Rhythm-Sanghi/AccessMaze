@@ -1,15 +1,52 @@
-"""A bounded, approved walk through a website. Never reset/replay external effects."""
+"""Bounded semantic discovery. Every activation and root recovery needs fresh approval."""
 
 import asyncio
+import copy
 from uuid import uuid4
 
 import networkx as nx
 from playwright.async_api import Error as BrowserError
 
-from accessmaze.actions import CheckFailure, perform
+from accessmaze.actions import CheckFailure, cancellable, perform
 from accessmaze.evidence import accessibility_tree, fingerprint
 from accessmaze.models import Step
 from accessmaze.storage import now
+
+
+def state_key(observation):
+    """Ignore transient focus for coverage deduplication, but retain it in evidence."""
+    stable = copy.deepcopy(observation)
+    for control in stable.get("controls", []):
+        control.pop("focused", None)
+    for node in stable.get("ax_tree", {}).get("nodes", []):
+        node.pop("focused", None)
+    return fingerprint(stable)
+
+
+async def candidates(page):
+    # Computed accessible names handle aria-labelledby and native labelled controls.
+    names = sorted(
+        {
+            (node["role"], node["name"])
+            for node in (await accessibility_tree(page))["nodes"]
+            if node["role"] in {"button", "link", "checkbox", "radio"} and node["name"]
+        }
+    )
+    choices = []
+    for role, name in names[:100]:
+        locator = page.get_by_role(role, name=name, exact=True)
+        if await locator.count() == 1 and await locator.is_visible() and await locator.is_enabled():
+            choices.append(
+                {
+                    "id": str(uuid4()),
+                    "role": role,
+                    "name": name,
+                    "classification": "potentially-consequential",
+                }
+            )
+        if len(choices) == 30:
+            break
+    return choices
 
 
 async def explore_website(
@@ -20,61 +57,79 @@ async def explore_website(
         "discovered_states": len(graph),
         "pending_branches": [],
         "stop_reason": "running",
-        "mode": "approved-walk",
+        "mode": "approved-branches",
+        "reachability": [],
     }
     result["exploration"] = progress
     result["limitations"].append(
-        "Website exploration follows one approved path; no resets or automatic effect replay."
+        "Semantic discovery is capped at 500 AX nodes / depth 8 "
+        "and 30 unique enabled actions per state. "
+        "Every activation and optional root navigation requires approval. Root recovery does not "
+        "undo server effects, restore application data, or replay form inputs. "
+        "Unattempted actions and exhausted budgets do not establish inaccessibility."
     )
-    visited = {source}
+    attempted = set()
+    frontier = {}
+    root = None
+    depth = 0
     try:
-        for depth in range(min(journey.exploration.max_depth, journey.exploration.max_actions)):
+        while len(progress["actions"]) < journey.exploration.max_actions:
             if control.cancel.is_set():
                 raise asyncio.CancelledError
-            choices = []
-            seen = set()
-            for node in (await accessibility_tree(page))["nodes"]:
-                role, name = node["role"], node["name"]
-                if role not in {"button", "link"} or not name or (role, name) in seen:
-                    continue
-                seen.add((role, name))
-                locator = page.get_by_role(role, name=name, exact=True)
-                if (
-                    await locator.count() != 1
-                    or not await locator.is_visible()
-                    or not await locator.is_enabled()
-                ):
-                    continue
-                choices.append({"id": str(uuid4()), "role": role, "name": name})
-                if len(choices) >= 30:
-                    break
-            if not choices:
-                progress["stop_reason"] = "no-supported-actions"
-                break
-            # Observation and permission are tied to this exact bounded state.
             observation = await privacy.observe(page)
-            current = fingerprint(observation)
-            if current != source:
-                source = current
+            source = fingerprint(observation)
+            normalized = state_key(observation)
+            root = root or normalized
+            if source not in graph:
                 graph.add_node(source, observation=observation, first_step="exploration-observed")
+            all_choices = await candidates(page)
+            choices = []
+            for choice in all_choices:
+                key = (normalized, choice["role"], choice["name"])
+                if key in attempted:
+                    continue
+                private_name = (
+                    privacy.token(choice["name"]) if privacy.hide_text else choice["name"]
+                )
+                frontier[key] = {
+                    "state_id": source,
+                    "normalized_state_id": normalized,
+                    "path": [private_name],
+                    "reason": "approval-required"
+                    if depth < journey.exploration.max_depth
+                    else "depth-bound",
+                }
+                if depth < journey.exploration.max_depth:
+                    choices.append(choice)
+            # Recovery navigates only to the original configured URL, with no automatic replay.
+            # It is separately approved even though GET is normally considered read-only.
+            if journey.exploration.recover_navigation and normalized != root:
+                choices.append(
+                    {
+                        "id": str(uuid4()),
+                        "role": "navigation",
+                        "name": "Return to configured start",
+                        "classification": "navigation-may-change-state",
+                    }
+                )
+            progress["pending_branches"] = list(frontier.values())
+            progress["discovered_states"] = len(graph)
+            if not choices:
+                progress["stop_reason"] = (
+                    "depth-bound"
+                    if depth >= journey.exploration.max_depth
+                    else "no-unattempted-actions"
+                )
+                break
             proposal = {"id": str(uuid4()), "state_id": source, "choices": choices}
             control.offer(proposal)
             result["approval"] = {
                 **proposal,
                 "choices": [
-                    {
-                        **choice,
-                        "name": privacy.token(choice["name"])
-                        if privacy.hide_text
-                        else choice["name"],
-                    }
-                    for choice in choices
+                    {**c, "name": privacy.token(c["name"]) if privacy.hide_text else c["name"]}
+                    for c in choices
                 ],
             }
-            progress["pending_branches"] = [
-                {"state_id": source, "path": [choice["name"]], "reason": "approval-required"}
-                for choice in result["approval"]["choices"]
-            ]
             result["status"] = "awaiting_approval"
             save()
             answer = None
@@ -92,33 +147,40 @@ async def explore_website(
                 result["limitations"].append("State changed after approval; action refused")
                 break
             selected = next(c for c in choices if c["id"] == answer)
+            recovery = selected["role"] == "navigation"
+            key = (normalized, selected["role"], selected["name"])
+            if not recovery:
+                attempted.add(key)
+                frontier.pop(key, None)
             step = Step(
-                id=f"explore-{depth + 1}",
-                action="activate",
+                id=f"explore-{len(progress['actions']) + 1}",
+                action="navigate" if recovery else "activate",
                 effect=True,
-                target={"role": selected["role"], "name": selected["name"]},
+                target=None if recovery else {"role": selected["role"], "name": selected["name"]},
             )
-            result["status"] = "running"
             entry = {
                 "step_id": step.id,
-                "kind": "approved-explore",
-                "action": "activate",
-                "target": {
+                "kind": "approved-recovery" if recovery else "approved-explore",
+                "action": step.action,
+                "target": None
+                if recovery
+                else {
                     **step.target.model_dump(),
                     "name": privacy.token(selected["name"])
                     if privacy.hide_text
                     else selected["name"],
                 },
+                "source": source,
                 "timestamp": now(),
                 "status": "running",
                 "approval_id": proposal["id"],
             }
             progress["actions"].append(entry)
+            progress["pending_branches"] = list(frontier.values())
+            result["status"] = "running"
             save()
             failure = None
             try:
-                from accessmaze.actions import cancellable
-
                 await cancellable(perform(page, context, step, journey, url, axe_path), control)
                 entry["status"] = "passed"
             except (CheckFailure, BrowserError) as error:
@@ -132,8 +194,22 @@ async def explore_website(
                     )
                 )
                 entry["status"] = "failed"
+            interaction = privacy.interaction(getattr(context, "_accessmaze_interaction", {}))
+            entry["interaction"] = interaction
+            entry["reachability"] = (
+                "not-tested-pointer"
+                if not journey.profile.keyboard_only
+                else (
+                    "bounded-failure"
+                    if failure and failure.code == "keyboard-unreachable"
+                    else "reached"
+                    if not recovery and not failure
+                    else "inconclusive"
+                )
+            )
             observation = await privacy.observe(page)
             target = fingerprint(observation)
+            entry["state_id"] = target
             if target not in graph:
                 graph.add_node(target, observation=observation, first_step=step.id)
             graph.add_edge(
@@ -143,13 +219,15 @@ async def explore_website(
                 status=entry["status"],
                 cycle=nx.has_path(graph, target, source),
             )
+            progress["reachability"].append(
+                {
+                    "step_id": step.id,
+                    "source": source,
+                    "target": target,
+                    "status": entry["reachability"],
+                }
+            )
             progress["discovered_states"] = len(graph)
-            progress["pending_branches"] = [
-                {"state_id": source, "path": [choice["name"]], "reason": "unvisited-alternative"}
-                for choice in result["approval"]["choices"]
-                if choice["id"] != answer
-            ]
-            save()
             if failure:
                 result["findings"].append(
                     {
@@ -166,27 +244,32 @@ async def explore_website(
                         "timestamp": now(),
                         "reproduction": [
                             *[s.id for s in journey.steps],
-                            *[a["target"]["name"] for a in progress["actions"]],
+                            *[a["step_id"] for a in progress["actions"]],
                         ],
                         "remediation": "Inspect the approved target and its keyboard behavior.",
                     }
                 )
+                # The failed branch remains explicitly observed; never automatically retry it.
                 progress["stop_reason"] = "action-failed"
-                result["limitations"].append(
-                    "Approved exploration action failed; no subsequent path was tested"
-                )
+                save()
                 break
-            if target in visited:
-                progress["stop_reason"] = "observed-cycle"
-                break
-            visited.add(target)
-            source = target
+            depth = 0 if recovery else depth + 1
+            save()
         else:
-            progress["stop_reason"] = (
-                "depth-bound"
-                if journey.exploration.max_depth <= journey.exploration.max_actions
-                else "action-budget"
-            )
+            progress["stop_reason"] = "action-budget"
+            # Capture the final state's untested candidates even when no further action is allowed.
+            observation = await privacy.observe(page)
+            for choice in await candidates(page):
+                key = (state_key(observation), choice["role"], choice["name"])
+                if key not in attempted:
+                    frontier[key] = {
+                        "state_id": fingerprint(observation),
+                        "path": [
+                            privacy.token(choice["name"]) if privacy.hide_text else choice["name"]
+                        ],
+                        "reason": "action-budget",
+                    }
+            progress["pending_branches"] = list(frontier.values())
     finally:
         control.clear_approval()
         result.pop("approval", None)
