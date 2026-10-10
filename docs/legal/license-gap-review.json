@@ -1,0 +1,1894 @@
+{
+  "source_commit": "275a4e1873cb022e6d6ca903a0e2c42d89906eeb",
+  "source_dirty": true,
+  "scope": "All original metadata/notice gaps classified. Not legal clearance, binary SBOM, independently verified linkage or third-party runtime clearance. Re-run for every changed build.",
+  "inputs_sha256": {
+    "license-inventory.json": "d90f55b8fa292bfc335b69074154629a48215825fdb98b7f9e46cd18c14b5c1d",
+    "inventory.json": "9f4200b4f2f7b0f9c833b015b7dc8d9798d3bbf5d34ff30c4183fc3f963041e4",
+    "modules.json": "e94a0bc0998fe3bc5f01991ba4a23cc3ad0c07321cc4a00f6533de2052ddd2bc",
+    "Analysis-00.toc": "ee294adece37e51b3accf37d1089fa9f660fb788886f01ed608588279af3f000"
+  },
+  "components": 627,
+  "original_gaps": 87,
+  "resolutions": [
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/aix-ppc64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/android-arm",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/android-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/android-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/darwin-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/darwin-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/freebsd-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/freebsd-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-arm",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-ia32",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-loong64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-mips64el",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-ppc64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-riscv64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-s390x",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/netbsd-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/netbsd-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/openbsd-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/openbsd-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/openharmony-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/sunos-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/win32-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/win32-ia32",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/win32-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@humanfs/types",
+      "version": "0.15.0",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@napi-rs/lzma-linux-x64-gnu",
+      "version": "1.5.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-android-arm-eabi",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-android-arm64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-darwin-arm64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-darwin-x64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-freebsd-arm64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-freebsd-x64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-arm-gnueabihf",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-arm-musleabihf",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-arm64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-arm64-musl",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-loong64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-loong64-musl",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-ppc64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-ppc64-musl",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-riscv64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-riscv64-musl",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-s390x-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-x64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-x64-musl",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-openbsd-x64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-openharmony-arm64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-win32-arm64-msvc",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-win32-ia32-msvc",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-win32-x64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-win32-x64-msvc",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-darwin-arm64",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-darwin-x64",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-arm-gnueabihf",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-arm64-gnu",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-arm64-musl",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-riscv64-gnu",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-x64-gnu",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-x64-musl",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-win32-arm64-msvc",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-win32-ia32-msvc",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-win32-x64-msvc",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "Apache-2.0 OR MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "esrecurse",
+      "version": "4.3.0",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "BSD-2-Clause",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fsevents",
+      "version": "2.3.3",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "imurmurhash",
+      "version": "0.1.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "keyv",
+      "version": "4.5.4",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "natural-compare",
+      "version": "1.4.0",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "saxes",
+      "version": "6.0.0",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "ISC",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "npm",
+      "name": "stackback",
+      "version": "0.0.2",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "classification": "false positive / non-distributed build or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "Absent from actual Vite production module graph; package recipe copies no node_modules and separately ships axe-core (not this component). Not a license grant or clearance for distributing development tools."
+    },
+    {
+      "ecosystem": "python",
+      "name": "colorama",
+      "version": "0.4.6",
+      "missing": [
+        "declared_license"
+      ],
+      "declared_license": "License :: OSI Approved :: BSD License",
+      "notice_evidence": [
+        {
+          "path": "notices/0337/licenses/LICENSE.txt",
+          "sha256": "cac35c02686e5d04a5a7140bfb3b36e73aed496656e891102e428886d7930318"
+        }
+      ],
+      "frozen_source_matches": [],
+      "classification": "false positive / non-distributed development or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "No distribution RECORD file matched any source in actual frozen Analysis TOC. macholib is macOS-only and absent on this Windows environment. Build-hook generated code and PyInstaller bootloader obligations are reviewed separately; absence is not universal source-package clearance."
+    },
+    {
+      "ecosystem": "python",
+      "name": "macholib",
+      "version": "1.16.4",
+      "missing": [
+        "declared_license",
+        "notice_files"
+      ],
+      "declared_license": null,
+      "notice_evidence": [],
+      "frozen_source_matches": [],
+      "classification": "false positive / non-distributed development or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "No distribution RECORD file matched any source in actual frozen Analysis TOC. macholib is macOS-only and absent on this Windows environment. Build-hook generated code and PyInstaller bootloader obligations are reviewed separately; absence is not universal source-package clearance."
+    },
+    {
+      "ecosystem": "python",
+      "name": "markdown-it-py",
+      "version": "4.2.0",
+      "missing": [
+        "declared_license"
+      ],
+      "declared_license": "License :: OSI Approved :: MIT License",
+      "notice_evidence": [
+        {
+          "path": "notices/0346/licenses/LICENSE",
+          "sha256": "4a2260d6e2cd0f5a151a1e86dbfe7d3ed552b1e2beabf9941c1ba5c49cbce484"
+        },
+        {
+          "path": "notices/0346/licenses/LICENSE.markdown-it",
+          "sha256": "792c48c5a849a15fdf9e37e8bcf9e6d1dd13b32b46c642a748a0a46a9919d473"
+        }
+      ],
+      "frozen_source_matches": [
+        "markdown_it/__init__.py",
+        "markdown_it/_punycode.py",
+        "markdown_it/common/__init__.py",
+        "markdown_it/common/entities.py",
+        "markdown_it/common/html_blocks.py",
+        "markdown_it/common/html_re.py",
+        "markdown_it/common/normalize_url.py",
+        "markdown_it/common/utils.py",
+        "markdown_it/helpers/__init__.py",
+        "markdown_it/helpers/parse_link_destination.py",
+        "markdown_it/helpers/parse_link_label.py",
+        "markdown_it/helpers/parse_link_title.py",
+        "markdown_it/main.py",
+        "markdown_it/parser_block.py",
+        "markdown_it/parser_core.py",
+        "markdown_it/parser_inline.py",
+        "markdown_it/presets/__init__.py",
+        "markdown_it/presets/commonmark.py",
+        "markdown_it/presets/default.py",
+        "markdown_it/presets/zero.py",
+        "markdown_it/renderer.py",
+        "markdown_it/ruler.py",
+        "markdown_it/rules_block/__init__.py",
+        "markdown_it/rules_block/blockquote.py",
+        "markdown_it/rules_block/code.py",
+        "markdown_it/rules_block/fence.py",
+        "markdown_it/rules_block/heading.py",
+        "markdown_it/rules_block/hr.py",
+        "markdown_it/rules_block/html_block.py",
+        "markdown_it/rules_block/lheading.py",
+        "markdown_it/rules_block/list.py",
+        "markdown_it/rules_block/paragraph.py",
+        "markdown_it/rules_block/reference.py",
+        "markdown_it/rules_block/state_block.py",
+        "markdown_it/rules_block/table.py",
+        "markdown_it/rules_core/__init__.py",
+        "markdown_it/rules_core/block.py",
+        "markdown_it/rules_core/inline.py",
+        "markdown_it/rules_core/linkify.py",
+        "markdown_it/rules_core/normalize.py",
+        "markdown_it/rules_core/replacements.py",
+        "markdown_it/rules_core/smartquotes.py",
+        "markdown_it/rules_core/state_core.py",
+        "markdown_it/rules_core/text_join.py",
+        "markdown_it/rules_inline/__init__.py",
+        "markdown_it/rules_inline/autolink.py",
+        "markdown_it/rules_inline/backticks.py",
+        "markdown_it/rules_inline/balance_pairs.py",
+        "markdown_it/rules_inline/emphasis.py",
+        "markdown_it/rules_inline/entity.py",
+        "markdown_it/rules_inline/escape.py",
+        "markdown_it/rules_inline/fragments_join.py",
+        "markdown_it/rules_inline/html_inline.py",
+        "markdown_it/rules_inline/image.py",
+        "markdown_it/rules_inline/link.py",
+        "markdown_it/rules_inline/linkify.py",
+        "markdown_it/rules_inline/newline.py",
+        "markdown_it/rules_inline/state_inline.py",
+        "markdown_it/rules_inline/strikethrough.py",
+        "markdown_it/rules_inline/text.py",
+        "markdown_it/token.py",
+        "markdown_it/utils.py"
+      ],
+      "classification": "missing metadata / required attribution",
+      "disposition": "metadata recovered and original notices preserved",
+      "basis": "Actual PyInstaller Analysis source matches; publisher license classifiers retained verbatim without SPDX inference. See hashed original notices."
+    },
+    {
+      "ecosystem": "python",
+      "name": "mdurl",
+      "version": "0.1.2",
+      "missing": [
+        "declared_license"
+      ],
+      "declared_license": "License :: OSI Approved :: MIT License",
+      "notice_evidence": [
+        {
+          "path": "notices/0347/LICENSE",
+          "sha256": "7c605df6e28667a9603118e98274f64a49ce3eed0d26fccce9534a345e0ef955"
+        }
+      ],
+      "frozen_source_matches": [
+        "mdurl/__init__.py",
+        "mdurl/_decode.py",
+        "mdurl/_encode.py",
+        "mdurl/_format.py",
+        "mdurl/_parse.py",
+        "mdurl/_url.py"
+      ],
+      "classification": "missing metadata / required attribution",
+      "disposition": "metadata recovered and original notices preserved",
+      "basis": "Actual PyInstaller Analysis source matches; publisher license classifiers retained verbatim without SPDX inference. See hashed original notices."
+    },
+    {
+      "ecosystem": "python",
+      "name": "packageurl-python",
+      "version": "0.17.6",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [],
+      "frozen_source_matches": [],
+      "classification": "false positive / non-distributed development or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "No distribution RECORD file matched any source in actual frozen Analysis TOC. macholib is macOS-only and absent on this Windows environment. Build-hook generated code and PyInstaller bootloader obligations are reviewed separately; absence is not universal source-package clearance."
+    },
+    {
+      "ecosystem": "python",
+      "name": "pip-audit",
+      "version": "2.10.1",
+      "missing": [
+        "declared_license"
+      ],
+      "declared_license": "License :: OSI Approved :: Apache Software License",
+      "notice_evidence": [
+        {
+          "path": "notices/0355/licenses/LICENSE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        }
+      ],
+      "frozen_source_matches": [],
+      "classification": "false positive / non-distributed development or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "No distribution RECORD file matched any source in actual frozen Analysis TOC. macholib is macOS-only and absent on this Windows environment. Build-hook generated code and PyInstaller bootloader obligations are reviewed separately; absence is not universal source-package clearance."
+    },
+    {
+      "ecosystem": "python",
+      "name": "pip-requirements-parser",
+      "version": "32.0.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [
+        {
+          "path": "notices/0356/mit.LICENSE",
+          "sha256": "18081c2c82771ca09d99d08cdac405924309e09fd19b16f1eea59cbc6ab809ed"
+        }
+      ],
+      "frozen_source_matches": [],
+      "classification": "false positive / non-distributed development or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "No distribution RECORD file matched any source in actual frozen Analysis TOC. macholib is macOS-only and absent on this Windows environment. Build-hook generated code and PyInstaller bootloader obligations are reviewed separately; absence is not universal source-package clearance."
+    },
+    {
+      "ecosystem": "python",
+      "name": "pyinstaller-hooks-contrib",
+      "version": "2026.8",
+      "missing": [
+        "declared_license"
+      ],
+      "declared_license": "License :: OSI Approved :: Apache Software License; License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+      "notice_evidence": [
+        {
+          "path": "notices/0367/licenses/LICENSE",
+          "sha256": "91d0baaff00773038e72c0a1fc9d5d2d38706b7a2b9c04f34296608f931b9cd0"
+        }
+      ],
+      "frozen_source_matches": [],
+      "classification": "false positive / non-distributed development or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "No distribution RECORD file matched any source in actual frozen Analysis TOC. macholib is macOS-only and absent on this Windows environment. Build-hook generated code and PyInstaller bootloader obligations are reviewed separately; absence is not universal source-package clearance."
+    },
+    {
+      "ecosystem": "python",
+      "name": "ruff",
+      "version": "0.13.1",
+      "missing": [
+        "declared_license"
+      ],
+      "declared_license": "License :: OSI Approved :: MIT License",
+      "notice_evidence": [
+        {
+          "path": "notices/0373/licenses/LICENSE",
+          "sha256": "2597d854122b77ddc71971564ca2350a37608575ce324adc5650a2b2051c8f18"
+        }
+      ],
+      "frozen_source_matches": [],
+      "classification": "false positive / non-distributed development or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "No distribution RECORD file matched any source in actual frozen Analysis TOC. macholib is macOS-only and absent on this Windows environment. Build-hook generated code and PyInstaller bootloader obligations are reviewed separately; absence is not universal source-package clearance."
+    },
+    {
+      "ecosystem": "python",
+      "name": "tomli-w",
+      "version": "1.2.0",
+      "missing": [
+        "declared_license"
+      ],
+      "declared_license": "License :: OSI Approved :: MIT License",
+      "notice_evidence": [
+        {
+          "path": "notices/0377/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        }
+      ],
+      "frozen_source_matches": [],
+      "classification": "false positive / non-distributed development or platform dependency",
+      "disposition": "excluded from application redistribution gap count",
+      "basis": "No distribution RECORD file matched any source in actual frozen Analysis TOC. macholib is macOS-only and absent on this Windows environment. Build-hook generated code and PyInstaller bootloader obligations are reviewed separately; absence is not universal source-package clearance."
+    },
+    {
+      "ecosystem": "cargo",
+      "name": "alloc-stdlib",
+      "version": "0.3.0",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "BSD-3-Clause",
+      "notice_evidence": [
+        {
+          "path": "notices/0384/alloc-stdlib-LICENSE",
+          "sha256": "c0c56f26d9c051cac4d200c34c84e7ae9aaa853e01a982a1df08b09931e518ae",
+          "upstream_url": "https://raw.githubusercontent.com/dropbox/rust-alloc-no-stdlib/0a81fd6928ea3b33c8cd484aa4575d50ffb98012/LICENSE"
+        }
+      ],
+      "classification": "genuine redistribution obligation / required notices",
+      "disposition": "original upstream notice preserved",
+      "basis": "Conservatively retain notice for resolved Windows crate, including generated/build code. Supplement is tied to .cargo_vcs_info.json exact revision and SHA-256; MPL source availability remains a separate release obligation."
+    },
+    {
+      "ecosystem": "cargo",
+      "name": "defmt-parser",
+      "version": "1.0.0",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT OR Apache-2.0",
+      "notice_evidence": [
+        {
+          "path": "notices/0421/defmt-parser-LICENSE-MIT",
+          "sha256": "2710a622a896bba67356913d4d0492cab5465f61b2ecce6d880aeb483834fb50",
+          "upstream_url": "https://raw.githubusercontent.com/knurling-rs/defmt/4a8cdb44891ed57b8ff5a023b6bec7137c48708f/LICENSE-MIT"
+        }
+      ],
+      "classification": "genuine redistribution obligation / required notices",
+      "disposition": "original upstream notice preserved",
+      "basis": "Conservatively retain notice for resolved Windows crate, including generated/build code. Supplement is tied to .cargo_vcs_info.json exact revision and SHA-256; MPL source availability remains a separate release obligation."
+    },
+    {
+      "ecosystem": "cargo",
+      "name": "selectors",
+      "version": "0.38.0",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MPL-2.0",
+      "notice_evidence": [
+        {
+          "path": "notices/0526/selectors-MPL-2.0.txt",
+          "sha256": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04",
+          "upstream_url": "https://www.mozilla.org/media/MPL/2.0/index.txt"
+        }
+      ],
+      "classification": "genuine redistribution obligation / required notices",
+      "disposition": "original upstream notice preserved",
+      "basis": "Conservatively retain notice for resolved Windows crate, including generated/build code. Supplement is tied to .cargo_vcs_info.json exact revision and SHA-256; MPL source availability remains a separate release obligation."
+    },
+    {
+      "ecosystem": "cargo",
+      "name": "webview2-com",
+      "version": "0.39.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [
+        {
+          "path": "notices/0594/webview2-com-LICENSE",
+          "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
+          "upstream_url": "https://raw.githubusercontent.com/wravery/webview2-rs/edc2caf886175ccaebe86078c9cfe1ae2a187328/LICENSE"
+        }
+      ],
+      "classification": "genuine redistribution obligation / required notices",
+      "disposition": "original upstream notice preserved",
+      "basis": "Conservatively retain notice for resolved Windows crate, including generated/build code. Supplement is tied to .cargo_vcs_info.json exact revision and SHA-256; MPL source availability remains a separate release obligation."
+    },
+    {
+      "ecosystem": "cargo",
+      "name": "webview2-com-macros",
+      "version": "0.8.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [
+        {
+          "path": "notices/0595/webview2-com-macros-LICENSE",
+          "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
+          "upstream_url": "https://raw.githubusercontent.com/wravery/webview2-rs/dffa41a8a46d3f5565eefbff2de57d38d399f158/LICENSE"
+        }
+      ],
+      "classification": "genuine redistribution obligation / required notices",
+      "disposition": "original upstream notice preserved",
+      "basis": "Conservatively retain notice for resolved Windows crate, including generated/build code. Supplement is tied to .cargo_vcs_info.json exact revision and SHA-256; MPL source availability remains a separate release obligation."
+    },
+    {
+      "ecosystem": "cargo",
+      "name": "webview2-com-sys",
+      "version": "0.39.1",
+      "missing": [
+        "notice_files"
+      ],
+      "declared_license": "MIT",
+      "notice_evidence": [
+        {
+          "path": "notices/0596/webview2-com-sys-LICENSE",
+          "sha256": "0dcf41516e608bbcb6cdc5229feb7b86fe4a643b85e7df251133c93408fdac73",
+          "upstream_url": "https://raw.githubusercontent.com/wravery/webview2-rs/edc2caf886175ccaebe86078c9cfe1ae2a187328/LICENSE"
+        }
+      ],
+      "classification": "genuine redistribution obligation / required notices",
+      "disposition": "original upstream notice preserved",
+      "basis": "Conservatively retain notice for resolved Windows crate, including generated/build code. Supplement is tied to .cargo_vcs_info.json exact revision and SHA-256; MPL source availability remains a separate release obligation."
+    }
+  ],
+  "remaining_metadata_gaps": [
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/aix-ppc64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/android-arm",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/android-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/android-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/darwin-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/darwin-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/freebsd-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/freebsd-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-arm",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-ia32",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-loong64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-mips64el",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-ppc64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-riscv64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-s390x",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/linux-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/netbsd-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/netbsd-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/openbsd-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/openbsd-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/openharmony-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/sunos-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/win32-arm64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/win32-ia32",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@esbuild/win32-x64",
+      "version": "0.28.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@humanfs/types",
+      "version": "0.15.0",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@napi-rs/lzma-linux-x64-gnu",
+      "version": "1.5.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-android-arm-eabi",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-android-arm64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-darwin-arm64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-darwin-x64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-freebsd-arm64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-freebsd-x64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-arm-gnueabihf",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-arm-musleabihf",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-arm64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-arm64-musl",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-loong64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-loong64-musl",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-ppc64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-ppc64-musl",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-riscv64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-riscv64-musl",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-s390x-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-x64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-linux-x64-musl",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-openbsd-x64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-openharmony-arm64",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-win32-arm64-msvc",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-win32-ia32-msvc",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-win32-x64-gnu",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rollup/rollup-win32-x64-msvc",
+      "version": "4.64.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-darwin-arm64",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-darwin-x64",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-arm-gnueabihf",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-arm64-gnu",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-arm64-musl",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-riscv64-gnu",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-x64-gnu",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-linux-x64-musl",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-win32-arm64-msvc",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-win32-ia32-msvc",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@tauri-apps/cli-win32-x64-msvc",
+      "version": "2.12.1",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "esrecurse",
+      "version": "4.3.0",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fsevents",
+      "version": "2.3.3",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "imurmurhash",
+      "version": "0.1.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "keyv",
+      "version": "4.5.4",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "natural-compare",
+      "version": "1.4.0",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "saxes",
+      "version": "6.0.0",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "stackback",
+      "version": "0.0.2",
+      "missing": [
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "python",
+      "name": "macholib",
+      "version": "1.16.4",
+      "missing": [
+        "declared_license",
+        "notice_files"
+      ]
+    },
+    {
+      "ecosystem": "python",
+      "name": "packageurl-python",
+      "version": "0.17.6",
+      "missing": [
+        "notice_files"
+      ]
+    }
+  ]
+}

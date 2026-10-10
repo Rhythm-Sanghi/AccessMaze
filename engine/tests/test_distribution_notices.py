@@ -20,6 +20,7 @@ def test_notice_collection_preserves_nested_attribution(tmp_path):
     (tmp_path / "licenses").mkdir()
     for path in [
         "LICENSE-MIT",
+        "mit.LICENSE",
         "NOTICE",
         "ThirdPartyNotices.txt",
         "licenses/third-party.txt",
@@ -27,7 +28,13 @@ def test_notice_collection_preserves_nested_attribution(tmp_path):
     ]:
         (tmp_path / path).write_text("test")
     found = {p.relative_to(tmp_path).as_posix() for p in script("license_audit").notices(tmp_path)}
-    assert found == {"LICENSE-MIT", "NOTICE", "ThirdPartyNotices.txt", "licenses/third-party.txt"}
+    assert found == {
+        "LICENSE-MIT",
+        "mit.LICENSE",
+        "NOTICE",
+        "ThirdPartyNotices.txt",
+        "licenses/third-party.txt",
+    }
 
 
 def test_archive_preserves_epoch_dated_notices_and_refuses_overwrite(tmp_path):

@@ -4,6 +4,30 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### License gap investigation — original 87 rows classified
+
+Continued from clean `275a4e1`. `docs/legal/license-gap-review.md` and JSON record
+every original gap and its evidence. Actual Vite module collection excluded 71 npm
+build/platform entries; actual frozen PyInstaller Analysis source matching excluded
+8 Python development/platform entries. Two Python packages (`markdown-it-py`, `mdurl`)
+really ship and retain their original notices. Six Windows crates now have preserved
+license texts: five from exact upstream VCS revisions, selectors from the Mozilla
+license explicitly named in its hashed source declaration. No SPDX expression inferred.
+
+`license_audit.py` recognizes `mit.LICENSE`, preserves publisher license classifiers,
+validates supplement revisions/hashes, records dirty provenance and writes a readable
+third-party notice index. Actual commands are in the review: 627 components / 782
+collected notice files / 73 raw flags (non-distributed entries remain visible), all 87
+original rows classified with no open notice row. Distribution notice tests: **3 passed**,
+including real Chromium hidden license extraction; Ruff passed. Initial upstream 404s
+and the one-open-row intermediate review are preserved/documented.
+
+This closes investigation of those metadata flags, **not redistribution qualification**.
+FFmpeg static LGPL corresponding source/relink plan, covered native MPL source delivery,
+Chromium/headless incorporated obligations, Microsoft binary provenance and independent
+legal review remain release blockers. Existing packaged artifacts are unchanged; the
+updated notice recipe must be used in a subsequent verified preview.
+
 ### Final readiness preview — verified locally, release gates open
 
 Built `dist/AccessMaze-readiness-preview-final` from clean source **207a09a**, preserving
