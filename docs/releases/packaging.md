@@ -48,3 +48,30 @@ The preview is unsigned. Required gates before a release candidate:
 - Remaining authoring, recovery and general bounded exploration features.
 
 Linux/macOS packaging and code signing require separate validation and resources.
+
+## Readiness preview
+
+`dist/AccessMaze-readiness-preview` was built with clean manifest source `fcd95a8`.
+It preserves the earlier previews and adds collected dependency notices/inventory,
+unmodified readable axe source, exact full Chromium credits and offline testing procedures.
+The manifest covers 1,690 files. Frozen checks pass with system-only PATH, including the
+owned multi-step HTTP SPA and actual upload, and native UI/approval/recorder/crash checks
+pass on the developer laptop. Raw evidence is in `readiness-portable-*.json` and
+`../testing/desktop-*.json`; see authoritative engineering status for exact commands.
+
+The archive/hash/CRC record is `readiness-artifact.json`. The checked archive is unsigned;
+its hash is not an authenticated distribution channel. This remains a development preview.
+The [independent clean-machine procedure](clean-machine.md) remains NOT RUN. Collected
+notices are an improvement, not complete redistribution clearance; the
+[license audit](../architecture/dependencies.md) records unresolved obligations.
+
+Archive a new package using:
+
+```powershell
+uv run --project engine python scripts/archive_preview.py --package dist/AccessMaze-readiness-preview --archive dist/AccessMaze-readiness-preview-new.zip --report docs/releases/readiness-artifact-new.json
+```
+
+The archive output must not exist. ZIP timestamps are clamped to its supported range
+because some upstream notices carry Unix-epoch timestamps; contents remain unchanged.
+The helper verifies every ZIP entry's CRC and records archive SHA-256. Neither locked
+builds nor archive generation currently promise bit-for-bit reproducible binaries.

@@ -17,7 +17,9 @@ function next(){
     input.setAttribute('aria-invalid','true');input.setAttribute('aria-describedby','name-error');return;
   }
   applicant=input.value;
-  fetch(api+'/options').then(r=>r.json()).then(()=>setTimeout(documents,300));
+  fetch(api+'/options').then(r=>r.json()).then(()=>setTimeout(documents,300)).catch(()=>{
+    document.querySelector('#errors').innerHTML='<p role="alert">Connection interrupted. Draft retained; retry Continue when online.</p>';
+  });
 }
 function documents(){
   history.pushState({},'', '/documents');

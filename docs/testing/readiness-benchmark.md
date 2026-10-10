@@ -34,3 +34,11 @@ worker/UI soak, monitor post-run idle memory and handles, repeat cancellation/cr
 measure native startup and large-history graph rendering, and set reviewed budgets on
 representative hardware. No overnight stability, memory-leak clearance, or release
 performance pass is claimed by this five-minute execution.
+
+Packaged follow-up: `uv run --project engine python scripts/desktop_startup.py --package
+AccessMaze-readiness-preview` measured three real WebView2/worker launches to connected
+UI at 4.395 / 1.572 / 1.534 s, with 437.70–447.93 MiB ready summed RSS. Cache state is
+uncontrolled and CDP polling overhead is included. Owned process trees exited after each
+sample. Frozen worker health startup in separate system-PATH checks was 0.662 and 0.713 s.
+See `desktop-startup.json` and `../releases/readiness-portable-*.json`. Large UI graphs,
+overnight stability and independent hardware remain unverified.

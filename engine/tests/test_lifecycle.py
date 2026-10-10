@@ -57,7 +57,8 @@ def test_pause_is_between_steps_and_resume_completes(store, project, fixtures, a
         assert paused["steps"][-1]["id"] == "delay"
         assert paused["steps"][-1]["status"] == "passed"
         control.pause.clear()
-        return await asyncio.wait_for(task, 10)
+        # Completion uses the configured run budget; cancellation responsiveness has its own test.
+        return await asyncio.wait_for(task, journey.max_seconds + 5)
 
     result = asyncio.run(exercise())
     assert result["status"] == "completed_with_limitations"

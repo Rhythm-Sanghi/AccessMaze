@@ -4,6 +4,81 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Readiness follow-up — in-flight connectivity scope
+
+The 82-test suite passed after adding archive timestamp regression. A subsequent real
+in-flight API probe initially failed its expected-error assertion: offline emulation
+alone allowed an already-started request to finish. Extended the owned server to hold
+and actually close TCP requests; the regression now verifies visible failure, retained
+draft, no automatic retry/submission after reconnection and explicit successful retry.
+Reports now disclose the offline-emulation/in-flight limitation. The first integration
+incorrectly returned this metadata as an axe audit; full-suite regressions exposed three
+`KeyError` failures. Moved it to the existing interaction metadata channel; combined
+SPA/interruption/demo regressions then **3 passed**. Full-suite rerun is recorded below.
+That rerun had **82 passed / 1 failed** under substantial laptop load (77.6% CPU,
+1.59 GiB available RAM): the pause/resume harness's fixed ten-second completion timer
+cancelled its own run. The unchanged isolated test then passed in 5.58 s. Aligned that
+completion wait with the journey's configured maximum plus shutdown allowance; pause
+boundary/status assertions and separate cancellation responsiveness tests remain intact.
+Final source rerun: `uv run --project engine pytest engine/tests -q`: **83 passed** in
+102.15 s; Ruff/contracts/diff checks passed. Controlled 19-step corpus and Hackyard
+demo were re-executed, with actual summaries in `compatibility-followup.json` and
+`hackyard-demo-followup.json` under `../testing/`. Updated reports contain the connectivity
+limitation. Archive regression suite: **3 passed**.
+The previously verified `AccessMaze-readiness-preview` at `fcd95a8` is
+preserved; a final preview with this reporting correction is being built separately.
+
+### Readiness milestone 4 — frozen and native Windows revalidation
+
+Built `dist/AccessMaze-readiness-preview` with
+`uv run --project engine python scripts/package_windows.py --name AccessMaze-readiness-preview`.
+Manifest records clean source `fcd95a8`, **1,690 hashed files**, 775 collected notices,
+readable axe source, offline procedures and exact full Chromium credits. Earlier packages
+are preserved. Native host compiled successfully; PyInstaller warned about optional
+`tzdata`, which is not used by the tested UTC timestamp paths. No all-feature freeze claim.
+
+Executed actual packaged checks:
+
+- `powershell -NoProfile -File scripts/Test-AccessMazePortable.ps1 -Package dist/AccessMaze-readiness-preview -Report docs/releases/readiness-portable-powershell.json`: integrity/path containment, system-only PATH, three real fixtures, exports and EOF passed; worker startup **0.662 s**.
+- `uv run --project engine python scripts/portable_smoke.py --package AccessMaze-readiness-preview --complex --report docs/releases/readiness-portable-smoke.json`: three fixtures plus 19-step owned HTTP SPA passed expected outcomes, with exact actual uploaded bytes/one POST and uncompromised coverage; worker startup **0.713 s**. These independent processes ran concurrently on the same laptop, not independent machines.
+- `uv run --project engine python scripts/desktop_startup.py --package AccessMaze-readiness-preview`: three native launches reached connected UI in **4.395 / 1.572 / 1.534 s**, ready summed RSS **437.70–447.93 MiB**, each owned process tree closed. Existing synthetic history, uncontrolled cache, CDP/poll overhead included.
+- `uv run --project engine python scripts/launch_preview.py --package AccessMaze-readiness-preview`, followed by `desktop_smoke.py --endpoint http://127.0.0.1:9224`: real native three-fixture flows passed; light/dark axe zero violations, contrast **incomplete**. Screenshots visually inspected; existing design retained.
+- `desktop_website_smoke.py --endpoint http://127.0.0.1:9224`: zero POSTs before approval, exactly one after, no replay, visible bundled recorder completion/stop passed.
+- `desktop_readiness.py --endpoint http://127.0.0.1:9224`: actual Tab/Enter navigation and heading focus, private schema-error alert, retained invalid input, dialog initial focus/Escape/return focus passed; only its unique disposable project removed. Initial harness assumptions about navigation text and model-level error locations were corrected against the actual UI; no app defect inferred from those mismatches.
+- `desktop_crash.py --endpoint http://127.0.0.1:9224 --exe dist/AccessMaze-readiness-preview/AccessMaze.exe`: interrupted state/restarted worker and **4 Chromium processes cleaned** passed.
+- `cargo test --locked --manifest-path apps/desktop/src-tauri/Cargo.toml`: **1 passed**; Cargo formatting and Ruff passed.
+
+Packaged startup applied the protected ACL to actual AppData and its pre-existing
+database; `icacls` verified only current user/SYSTEM/Administrators remained. The owned
+desktop was closed. An immediate port check preceded asynchronous WebView2 shutdown;
+the bounded follow-up confirmed test-only ports **9224/9227 closed**. Archive CRC/hash
+record is `../releases/readiness-artifact.json`. No public publication or upstream push.
+
+Archive generation initially rejected epoch-dated upstream notice files (ZIP cannot
+represent dates before 1980). The incomplete archive is preserved with an `-incomplete`
+name. Added `scripts/archive_preview.py` to clamp ZIP timestamps without changing file
+contents, refuse overwrite and check CRC/SHA-256; regression verifies preserved notice
+bytes and overwrite refusal. The verified archive uses the ordinary preview ZIP name.
+
+### Current qualification matrix
+
+| Objective / gate | Actual disposition |
+| --- | --- |
+| Repeatable authorized compatibility corpus | Four Chromium paths completed; controlled SPA/API/forms/modal/upload/validation/conditional/offline covered. Broader site classes remain outside coverage. |
+| Finding accuracy | Confirmed false positives/negatives corrected with browser regressions; current full engine suite 83 passed. Native semantics/axe do not prove AT behavior or exhaustively clear findings. |
+| Hackyard differentiation | Real failure, evidence, native-button correction, comparable retest and recorder draft replay reproduced; synthetic owned target only. |
+| Windows performance | Startup/browser/RSS/handles/backend graph/reports measured locally. Overnight worker/UI soak, UI graph scaling and representative-hardware budgets NOT RUN. |
+| Security | Local source/ACL/credential/retention/origin/isolation/integrity review complete; inherited ACL issue fixed. Independent threat-model, diagnostics privacy and hostile-target containment clearance OPEN. |
+| Dependencies/distribution | 627-component inventory, collected notices, exact full-browser credits and advisory scans complete. 87 metadata/notice gaps, verified SBOM and binary/source obligations OPEN. |
+| Portable runtime | Fresh frozen/native/system-PATH tests passed on this developer laptop. Independent clean Windows installation/upgrade/removal/offline qualification NOT RUN. |
+| Human accessibility | Documented NVDA procedure; actual human NVDA/high contrast/manual evaluation NOT RUN. Requires a human tester. |
+| CI / authenticity | Windows CI not executed remotely; package unsigned, authenticated public distribution/signing unverified. No push or publication authorized/performed. |
+
+This environment has no independent Windows machine/image or human NVDA tester.
+Those external prerequisites prevent release qualification. Distribution clearance needs
+the documented matching-source/rights review. These unresolved gates must remain open;
+the locally verified artifact is an **unsigned development preview**, not production-ready.
+
 ### Readiness milestone 2 — local security, measurements and demonstration
 
 Added repeatable 60-journey Windows benchmark with actual browser startup, resource
@@ -38,7 +113,7 @@ Manual NVDA and independent Windows procedures are in `../testing/nvda.md` and
 `../releases/clean-machine.md`, all human/independent results explicitly **NOT RUN**.
 No independent machine or human NVDA tester is available in this environment.
 
-### Readiness milestone 3 — redistribution audit (package verification pending)
+### Readiness milestone 3 — redistribution audit
 
 Inventoried 627 locked/resolved components, copied 775 installed notices and recorded
 87 unresolved declarations/notice sets. Extracted full Chromium's exact binary credits
@@ -53,7 +128,7 @@ and headless-shell provenance remain release blockers.
 Actual npm/Python audits found no known advisories (editable project skipped); Rust audit
 found zero vulnerability entries plus two informational warnings outside the resolved
 Windows graph. See security review. Existing portable artifact remains older source;
-new packaging, frozen workflow and native UI revalidation are pending below.
+packaging, frozen workflow and native UI revalidation completed in milestone 4 above.
 
 Final source checks for milestones 2–3: full engine suite **81 passed** in 93.55 s;
 TypeScript/ESLint, **5 React tests**, production build, formatting, Ruff and contracts

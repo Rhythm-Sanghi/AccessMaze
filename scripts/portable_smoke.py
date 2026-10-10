@@ -142,6 +142,10 @@ def main():
                 )
                 assert result["status"] == expected, result
                 assert not result["coverage_compromised"], result
+                if kind == "owned-http-spa":
+                    assert any(
+                        "in-flight requests" in text for text in result["limitations"]
+                    )
                 report = request("report.export", {"id": run_id, "format": "json"})
                 assert json.loads(report["content"])["findings"] == result["findings"]
                 html = request("report.export", {"id": run_id, "format": "html"})[

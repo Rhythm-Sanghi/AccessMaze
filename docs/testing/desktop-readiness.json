@@ -1,0 +1,8 @@
+{
+  "keyboard_navigation_and_heading_focus": "passed",
+  "actionable_private_schema_error": "passed",
+  "invalid_input_retained": "passed",
+  "native_dialog_initial_and_restored_focus": "passed",
+  "owned_test_project_removed": true,
+  "scope": "Actual packaged WebView2/IPC. No NVDA, contrast or exhaustive keyboard claim."
+}

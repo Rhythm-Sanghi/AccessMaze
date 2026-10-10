@@ -1,0 +1,28 @@
+{
+  "scope": "Owned HTTP app and actual Chromium; scripted recording, no NVDA claim",
+  "broken_status": "failed",
+  "fixed_status": "completed_with_limitations",
+  "retest": {
+    "previous_id": "b39b5f79-c424-445e-8217-c8a9b97966b2",
+    "current_id": "d1b8e5a7-165f-4bab-981e-4222b8f23d2f",
+    "comparable": true,
+    "findings": [
+      {
+        "finding_id": "51043ba5-1b64-4de1-968b-85b04fbf6fc3",
+        "rule": "keyboard-unreachable",
+        "step_id": "validate",
+        "verdict": "passed-retest"
+      }
+    ],
+    "limitation": "A passed retest verifies only this configuration and execution."
+  },
+  "recorded_replay_status": "completed_with_limitations",
+  "server_observations": {
+    "api_posts": 1,
+    "api_options_requests": 3,
+    "uploaded_bytes": [
+      25
+    ]
+  },
+  "target_lifetime": "Ephemeral servers closed after demonstration; regenerate to replay"
+}

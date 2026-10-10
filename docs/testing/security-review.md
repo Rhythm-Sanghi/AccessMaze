@@ -35,3 +35,9 @@ binaries or prove absence of vulnerabilities.
 Open gates: independent threat-model/network containment review, hostile-target boundary,
 diagnostic privacy, explicit child ACL review, authenticated/signable packaging,
 complete third-party binary/source obligations and clean-machine/manual testing.
+
+Packaged follow-up confirmed `icacls` on the actual AppData workspace and pre-existing
+SQLite database after startup: only current user, SYSTEM and Administrators remained;
+the previously inherited reader group was removed. Frozen complex upload, native
+per-action approval, visible recorder and actual worker crash cleanup passed again.
+The test-only desktop was closed and debugging ports 9224/9227 confirmed closed.

@@ -1,0 +1,21 @@
+{
+  "package": "AccessMaze-readiness-preview",
+  "measurements": [
+    {
+      "connected_ui_seconds": 4.395,
+      "ready_summed_rss_mib": 442.98,
+      "child_processes": 8
+    },
+    {
+      "connected_ui_seconds": 1.572,
+      "ready_summed_rss_mib": 437.7,
+      "child_processes": 8
+    },
+    {
+      "connected_ui_seconds": 1.534,
+      "ready_summed_rss_mib": 447.93,
+      "child_processes": 9
+    }
+  ],
+  "scope": "Same laptop, existing synthetic AppData history, three sequential launches; cache state uncontrolled. Time to CDP-observed Worker connected includes polling/harness overhead. RSS includes desktop, WebView2 and worker; shared pages counted repeatedly. Test-only loopback port closed after owned desktop exit."
+}

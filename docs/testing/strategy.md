@@ -48,3 +48,13 @@ inspect focus after navigation/dialog closure; test 200% text and narrow windows
 both themes in high contrast; evaluate announcements with NVDA; inspect graph alternatives;
 cancel during browser preparation and active actions; kill/restart worker; run offline with
 all external connectivity blocked. Do not mark an unevaluated check as passed.
+
+Readiness extensions: the [compatibility corpus](compatibility.md) adds real owned
+multi-step/CORS/upload behavior and opt-in public educational targets. A separate
+controlled TCP-drop test distinguishes in-flight interruption from Chromium's offline
+emulation. The [Hackyard demo](hackyard.md) preserves failure, correction and retest.
+The [benchmark](readiness-benchmark.md) separates real browser timings from synthetic
+backend graph scaling. Native readiness checks cover keyboard navigation, safe error
+alerts, retained input and dialog focus through WebView2/IPC. The
+[NVDA procedure](nvda.md) and [independent Windows procedure](../releases/clean-machine.md)
+remain unexecuted human/independent gates. Engineering status is authoritative.

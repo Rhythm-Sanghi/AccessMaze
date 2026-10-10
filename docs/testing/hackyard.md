@@ -38,3 +38,7 @@ fixed and recorded replay completed with limitations; comparable keyboard assert
 passed retest; one API POST with 25 synthetic upload bytes. A real-browser regression
 also checks this sequence and refusal to overwrite evidence. This is a reproducible
 scripted demonstration, not a human recording, NVDA result or WCAG certification.
+
+The follow-up execution at `dist/Hackyard-readiness-final` reproduced the same failure,
+correction, comparable passed retest and recorded replay after adding the explicit
+offline-emulation limitation. Its actual summary is `hackyard-demo-followup.json`.

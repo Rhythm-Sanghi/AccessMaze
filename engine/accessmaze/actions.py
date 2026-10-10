@@ -284,6 +284,11 @@ async def _perform(page, context, step, journey, url, axe_path):
             await page.wait_for_function(
                 "expected => navigator.onLine === expected", arg=not offline
             )
+            context._accessmaze_interaction = {
+                "limitation": "Connectivity uses Chromium offline emulation; in-flight requests "
+                "may finish. Physical connection interruption requires a controlled-server "
+                "or manual network test."
+            }
         case "wait":
             await asyncio.sleep(int(step.value) / 1000)
         case "audit":

@@ -1,6 +1,8 @@
 import asyncio
 import importlib.util
+import json
 import os
+import zipfile
 from pathlib import Path
 
 import pytest
@@ -26,6 +28,25 @@ def test_notice_collection_preserves_nested_attribution(tmp_path):
         (tmp_path / path).write_text("test")
     found = {p.relative_to(tmp_path).as_posix() for p in script("license_audit").notices(tmp_path)}
     assert found == {"LICENSE-MIT", "NOTICE", "ThirdPartyNotices.txt", "licenses/third-party.txt"}
+
+
+def test_archive_preserves_epoch_dated_notices_and_refuses_overwrite(tmp_path):
+    package = tmp_path / "package"
+    package.mkdir()
+    (package / "package-manifest.json").write_text(
+        json.dumps({"source_commit": "test", "source_dirty": False})
+    )
+    notice = package / "LICENSE"
+    notice.write_text("Retain this original notice")
+    os.utime(notice, (1, 1))
+    archive = tmp_path / "preview.zip"
+    helper = script("archive_preview")
+    result = helper.archive_preview(package, archive)
+    assert result["zip_crc"] == "passed" and result["files"] == 2
+    with zipfile.ZipFile(archive) as packed:
+        assert packed.read("package/LICENSE") == notice.read_bytes()
+    with pytest.raises(FileExistsError):
+        helper.archive_preview(package, archive)
 
 
 @pytest.mark.browser

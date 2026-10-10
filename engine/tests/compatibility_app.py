@@ -13,6 +13,9 @@ from accessmaze.models import Journey, Step
 class CompatibilityApp:
     def __init__(self):
         self.broken = False
+        self.options_gate = None
+        self.options_disconnect = False
+        self.options_started = threading.Event()
         self.posts = []
         self.hits = []
         owner = self
@@ -21,6 +24,13 @@ class CompatibilityApp:
             def do_GET(self):
                 owner.hits.append((self.server.server_port, self.path))
                 if self.path == "/options":
+                    owner.options_started.set()
+                    if owner.options_gate:
+                        owner.options_gate.wait(timeout=5)
+                    if owner.options_disconnect:
+                        self.close_connection = True
+                        self.connection.close()
+                        return
                     time.sleep(0.15)
                     self.respond(b'{"routes":["domestic","international"]}', "application/json")
                 else:
@@ -52,7 +62,10 @@ class CompatibilityApp:
                 self.send_header("Access-Control-Allow-Origin", owner.origin)
                 self.send_header("Cache-Control", "no-store")
                 self.end_headers()
-                self.wfile.write(content)
+                try:
+                    self.wfile.write(content)
+                except (BrokenPipeError, ConnectionResetError):
+                    pass  # Expected when the real connectivity test interrupts the client.
 
             def log_message(self, *args):
                 pass

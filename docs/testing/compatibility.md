@@ -38,6 +38,15 @@ W3C before exposed seven rule IDs; after still exposed `landmark-one-main` and `
 This is not a WCAG assessment or an assertion that the teaching site is defective under
 every modern rule. Axe outcomes depend on rule version, rendering, scope and manual review.
 
+An additional real API interruption regression holds an actual server request, drops
+its TCP connection while applying the engine's offline action, checks the visible retry
+error and retained draft, reconnects and verifies no automatic retry/submission, then
+explicitly retries successfully. `pytest engine/tests/test_connectivity_interruption.py`
+executes it. The first attempt demonstrated that Chromium offline emulation alone can
+allow an existing request to finish; reports now disclose this limitation. The server
+drop is genuine transport interruption, not a Playwright request-routing mock. This
+does not establish behavior under every OS/Wi-Fi failure or server-side commit ambiguity.
+
 ## Confirmed automation defects and regression oracles
 
 - Native radio activation used Enter, which did not select the option. Space now selects it.

@@ -35,6 +35,7 @@ def test_multistep_spa_modal_upload_conditional_and_connectivity(store, fixtures
         )
         assert not result["coverage_compromised"]
         assert not result["findings"]
+        assert any("in-flight requests" in text for text in result["limitations"])
         assert app.posts[0]["document"] == b"No personal data"
         assert app.posts[0]["route"] == b"international"
         assert app.posts[0]["reference"] == b"TEST-ONLY"
