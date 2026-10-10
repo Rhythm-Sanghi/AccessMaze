@@ -9,6 +9,41 @@ from accessmaze.models import Request
 from accessmaze.worker import Worker
 
 
+def test_run_initial_record_is_available_before_slow_environment_probe(tmp_path, monkeypatch):
+    import threading
+
+    from accessmaze.models import ProjectInput
+    from accessmaze.templates import template
+
+    entered, release = threading.Event(), threading.Event()
+
+    def slow_environment():
+        entered.set()
+        assert release.wait(10)
+        return "Delayed synthetic environment"
+
+    worker = Worker(tmp_path, Path.cwd())
+    project = worker.store.save_project(ProjectInput(name="Slow startup", journey=template()))
+    monkeypatch.setattr("accessmaze.runner.platform.platform", slow_environment)
+    try:
+        response = worker.dispatch(
+            Request(
+                version=1,
+                id="start",
+                method="run.start",
+                params={"project_id": project["id"], "authorized": True, "allow_effects": True},
+            )
+        )
+        assert entered.wait(2)
+        saved = worker.store.run(response["id"])
+        assert saved["status"] == "preparing"
+        assert saved["outcome"]["status"] == "incomplete"
+        worker.control.cancel.set()
+    finally:
+        release.set()
+        worker.close()
+
+
 def test_effect_authorization_precedes_browser_launch(tmp_path):
     worker = Worker(tmp_path, Path.cwd())
     try:

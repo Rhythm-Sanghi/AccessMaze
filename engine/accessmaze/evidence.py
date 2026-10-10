@@ -27,6 +27,7 @@ def redact(value, secrets):
             "id",
             "project_id",
             "step_id",
+            "blocked_step_id",
             "state_id",
             "source",
             "target",

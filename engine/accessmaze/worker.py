@@ -206,9 +206,8 @@ class Worker:
             ready = threading.Event()
 
             def run():
-                async def start():
-                    # Allow start response only after the first persisted run record exists.
-                    task = asyncio.create_task(
+                try:
+                    asyncio.run(
                         execute(
                             self.store,
                             project["id"],
@@ -218,14 +217,9 @@ class Worker:
                             self.axe,
                             run_id,
                             inputs,
+                            on_ready=ready.set,
                         )
                     )
-                    await asyncio.sleep(0)
-                    ready.set()
-                    return await task
-
-                try:
-                    asyncio.run(start())
                 except Exception:
                     message = internal_error("run execution")
                     try:

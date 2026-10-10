@@ -75,6 +75,7 @@ async def execute(
     run_id=None,
     inputs=None,
     input_key=None,
+    on_ready=None,
 ):
     run_id = run_id or str(uuid4())
     inputs = inputs or RunInputs(journey, key=input_key)
@@ -95,10 +96,6 @@ async def execute(
         "edges": [],
         "environment": {
             "engine": "0.1.0",
-            "playwright": importlib.metadata.version("playwright"),
-            "python": platform.python_version(),
-            "os": platform.platform(),
-            "networkx": importlib.metadata.version("networkx"),
         },
         "limitations": [
             "Bounded fixture button discovery; unvisited branches are not covered."
@@ -131,9 +128,23 @@ async def execute(
         store.save_run(redact(result, secrets))
 
     save()
+    if on_ready:
+        on_ready()
     try:
         if control.cancel.is_set():
             raise asyncio.CancelledError
+        # OS inspection can be slow on a cold Windows launch. The UI must already
+        # have a persisted preparing record and be able to poll/cancel this run.
+        result["environment"].update(
+            playwright=importlib.metadata.version("playwright"),
+            python=platform.python_version(),
+            os=platform.platform(),
+            networkx=importlib.metadata.version("networkx"),
+        )
+        if control.cancel.is_set():
+            raise asyncio.CancelledError
+        if time.monotonic() - started >= journey.max_seconds:
+            raise TimeoutError
         policy = BrowserPolicy(journey, url, blocked)
         await cancellable(policy.prepare(), control)
         async with async_playwright() as pw:

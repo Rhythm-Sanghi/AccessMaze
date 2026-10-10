@@ -1,0 +1,25 @@
+{
+  "integrity": "passed",
+  "runs": [
+    {
+      "fixture": "accessible",
+      "status": "completed_with_limitations",
+      "findings": 0
+    },
+    {
+      "fixture": "broken",
+      "status": "failed",
+      "findings": 1
+    },
+    {
+      "fixture": "conditional",
+      "status": "completed_with_limitations",
+      "findings": 0
+    }
+  ],
+  "source_commit": "e84b34e53a4ab529027a9f207c6c380dccf50d30",
+  "limitation": "Automated check on this machine; independent clean Windows installation and manual accessibility review remain required.",
+  "worker_startup_seconds": 0.582,
+  "system_path_only": true,
+  "source_dirty": false
+}

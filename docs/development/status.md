@@ -4,6 +4,35 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Native validation exposed a cold-start readiness blocker — corrected
+
+Clean milestone source **e84b34e** packaged as `dist/AccessMaze-competition-outcomes`.
+Frozen PowerShell integrity/system-PATH/three-fixture/export checks passed, startup
+**0.582 s**, source_dirty=false. Actual report: `../hackyard/portable-outcomes-verification.json`.
+The first native comparison attempt instead failed before analysis navigation with
+**Run initialization timed out**. Its saved run was cancelled before browser execution
+(duration 0.011 s measured after the old environment initialization). This is a failed
+native gate, not a passed result. A first checker invocation used wrong argument names;
+corrected `-Package`/`-Report` invocation above passed. No application defect is inferred
+from that command error.
+
+Investigation found environment/version collection preceding both the first persistence
+and the worker ready signal. A deliberately delayed OS probe reproduced the exact timeout:
+`pytest engine/tests/test_worker.py::test_run_initial_record_is_available_before_slow_environment_probe -q`
+**failed in 5.65 s before the fix**. Runner now persists a complete preparing record and
+signals readiness before environment collection. Worker polling/cancellation can operate
+while inspection finishes. The elapsed execution budget includes that work, with a check
+before browser preparation. A blocked OS inspection itself cannot be forcibly cancelled
+within Python; worker/Job termination remains the recovery boundary.
+
+The new regression plus worker/browser/Hackyard focused suite passed **17 tests in 35.73 s**;
+Ruff check and all **66 files** format check passed. Full-suite repetition and new clean-source
+native verification are pending below, rather than attributing the older package's results
+to this fix. Added `scripts/desktop_comparison.py` exercises actual UI/IPC/browser failure,
+correction, keyboard-operated comparison, stale-state hiding, axe and uniquely owned cleanup.
+The initial failed native GUI PID 54316 and its descendants were closed; zero remained.
+
+
 ### Hackyard mission milestone 1 — task outcomes and conservative comparisons
 
 Baseline inspected clean at **9f3222a**. Targeted assessment and measurable remaining
