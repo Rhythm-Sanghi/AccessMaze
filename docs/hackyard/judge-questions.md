@@ -4,8 +4,8 @@
 passed in one bounded execution. Rule findings and manual-review requirements remain.
 
 **What is discovered automatically?** Named supported controls and observed state
-transitions under finite budgets. External exploration follows one approved path.
-Fixture branch search can reset only bundled synthetic applications. No general
+transitions under finite budgets. Each external action and optional root navigation
+requires approval. Automatic reset/replay is limited to bundled synthetic applications. No general
 natural-language task understanding or exhaustive coverage is claimed.
 
 **How is a repair verified?** Same project, exact journey configuration, runtime input

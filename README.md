@@ -112,10 +112,11 @@ runtime bindings. Review labels for personal information and remove unwanted ste
 Unsupported widgets and address-bar navigation require manual editing; drafts are
 discarded after worker restart unless reviewed and saved.
 
-Optional website exploration begins after authored completion. It proposes buttons
-and links, waits for approval before each action and follows one bounded path.
-Approve only authorized effects; finish or emergency-stop at any time. It never
-resets an external workflow. Waiting for approval counts toward the time budget.
+Optional website exploration begins after authored completion. It proposes semantic
+buttons, links, checkboxes and radios, and requires approval before each action.
+Optional root navigation allows another branch to be explored with fresh approval;
+it cannot undo external effects or restore form inputs. Finish or emergency-stop at
+any time. Waiting for approval counts toward the time budget.
 Page text stays private by default; computed browser semantics do not establish
 screen-reader behavior or WCAG conformance.
 

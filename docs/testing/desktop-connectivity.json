@@ -1,6 +1,0 @@
-{
-  "package": "AccessMaze-readiness-preview-final",
-  "native_report_limitation": "visible",
-  "expected_recovery_defect": "form-state-lost",
-  "scope": "Actual native UI and frozen browser fixture; not physical network or NVDA verification"
-}

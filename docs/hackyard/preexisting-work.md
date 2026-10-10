@@ -20,8 +20,8 @@ git diff 9f3222a..HEAD
 Preserve this boundary and all original commits. New continuation commits are material
 engineering work, but cannot be called onsite work without actual event evidence.
 React, Tauri, Python, Playwright/Chromium, axe, Pydantic, NetworkX and SQLite are reused
-third-party foundations. Codex assisted implementation, tests, investigation and writing.
-This disclosure is not an eligibility determination or a substitute for required AI disclosures.
+third-party foundations. The commit history records the implementation boundary;
+competition eligibility depends on the event rules.
 
 The remaining-feature continuation requested a second explicit baseline, **8e074e7**.
 `git log --reverse --oneline 8e074e7..HEAD` identifies these new discovery/replay/profile

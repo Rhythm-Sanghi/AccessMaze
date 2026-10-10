@@ -1,72 +1,44 @@
-# Technical evidence index
+# Verification
 
-Current continuation: see [discovery, replay and reusable conditions](remaining-features.md)
-for the implemented workflow, approvals and explicit limits. Baseline **8e074e7**;
-workstation development, not claimed onsite. Native/package acceptance is recorded
-in [engineering status](../development/status.md), separately from older evidence below.
+[Engineering status](../development/status.md) records the tested source, results,
+measurements, failures and release blockers. The latest application package is from
+clean commit `746eaca`; later changes concern verification tools and documentation.
 
+## Regression coverage
 
-The source of truth is ../development/status.md, with actual commands, results and limits.
-Baseline verification belongs to 9f3222a and its earlier package source 228ad9c; it is not
-proof that later UI or engine changes passed native tests.
+| Tests                                           | What they verify                                                                                                                          |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `test_website_exploration.py`                   | Multi-page/SPA branches, approvals, bounded recovery, frontier persistence, control-state identity and navigation-consistent observations |
+| `test_replay.py`                                | Reproduction, correction, cancellation, redaction, immutable history and authorization boundaries                                         |
+| `test_profiles.py`                              | Profile persistence, migration, browser conditions, keyboard/pointer outcomes, connectivity and focus assertions                          |
+| `test_outcomes.py`                              | Mandatory assertions, cancellation, interruption and inconclusive coverage                                                                |
+| `test_comparison_browser.py`, `test_retests.py` | Target-aware findings, changed conditions and conservative repair comparisons                                                             |
+| `test_hackyard_demo.py`                         | Broken/fixed workflow, upload bytes, recorder replay and offline draft loss                                                               |
 
-New meaningful regressions:
+The recorded suite passed 112 Python, 9 React and 1 Rust tests. Browser regressions
+launch Chromium; component tests separately exercise the interface.
 
-- engine/tests/test_outcomes.py: mandatory assertions, cancellation, interruption,
-  coverage compromise, unknown browser failure and optional/manual scope.
-- engine/tests/test_comparison_browser.py: actual Chromium/axe observations on different
-  unnamed controls must not be conflated solely because the rule and step match.
-- engine/tests/test_retests.py: missing audit, private tokens, changed step ordering and
-  conservative repair verification.
-- engine/tests/test_browser.py: actual blocked/completed task outcomes persisted to SQLite.
-- engine/tests/test_hackyard_demo.py: failure, correction, exact upload, recorder replay
-  and environmental draft-loss evidence from real engine execution.
+## Native Windows checks
 
-Run the script in demo-script.md to generate JSON/HTML/CSV, diffs, summary and private
-SQLite records. Matching semantics and outcome definitions are in comparison-rules.md.
-Full-suite/native/package measurements must be recorded in status after execution;
-this index does not claim a pending check passed. Independent NVDA and clean-machine
-procedures remain unexecuted unless separately attested.
+Launch the local preview with the test-only CDP helper, then run the harnesses:
 
-## Earlier completed outcome increment (504774a)
+```powershell
+uv run --project engine python scripts/launch_preview.py --package AccessMaze-hackyard-preview
+uv run --project engine python scripts/desktop_features.py --endpoint http://127.0.0.1:9224
+uv run --project engine python scripts/desktop_comparison.py --endpoint http://127.0.0.1:9224
+uv run --project engine python scripts/desktop_readiness.py --endpoint http://127.0.0.1:9224
+uv run --project engine python scripts/desktop_website_smoke.py --endpoint http://127.0.0.1:9224
+uv run --project engine python scripts/desktop_cancel.py --endpoint http://127.0.0.1:9224 --exe dist/AccessMaze-hackyard-preview/AccessMaze.exe
+uv run --project engine python scripts/desktop_crash.py --endpoint http://127.0.0.1:9224 --exe dist/AccessMaze-hackyard-preview/AccessMaze.exe
+```
 
-Clean packaged application source 504774a passed the real native comparison, fixture,
-approval, recorder, UI focus and worker-crash checks. `native-comparison-verification.json`,
-`portable-startup-verification.json`, `complex-portable-verification.json`,
-`native-startup-verification.json` and `preview-artifact-verification.json` retain actual
-results. `native-validation-attempts.json` preserves earlier failed attempts; none is
-silently described as a pass. Full suite: 102 Python, 6 React and 1 Rust tests.
+These passed against the packaged WebView2/private IPC/frozen worker/Chromium stack
+on the development laptop. Harnesses use owned targets and synthetic input. The CDP
+port is test instrumentation; application code does not enable it.
 
-`demo-competition-verification.json` records an actual isolated initial-page audit with
-zero rule violations, followed by a keyboard task failure on that same broken application,
-the correction/comparable passed retest and a separate environmental draft-loss failure.
-All results are produced by the engine. See status for exact commands, durations and limits.
-At that earlier boundary, broader discovery/profile/replay features remained open; the new feature acceptance below is separate. Independent release gates remain open.
+Run [the demonstration](demo-script.md) to generate reports, a correction diff,
+comparison and private SQLite evidence. Generated JSON reports remain local and are
+ignored by Git. Screenshots in `docs/development/screenshots` come from the application.
 
-Remaining-feature backend verification: **112 Python tests passed (151.64 s)** at 7628688;
-React **9 passed**, including replay approval/input mapping, profile persistence controls,
-and graph-state evidence selection. First real native acceptance is retained in
-native-features-first-verification.json and native-features-first-runs.json; ordinary/instrumented
-shutdown results are separate. Current final artifact/source acceptance is authoritative
-in ../development/status.md, including any later presentation-only increment.
-
-## Final feature acceptance (746eaca)
-
-[Verification ledger](final-feature-verification.json) lists actual commands, raw results,
-source provenance and failed harness attempts. Latest native feature/replay records,
-strict comparison, cancellation and actual worker-crash cleanup passed. Three native
-startup/shutdown samples and a separate ordinary-launch close passed; earlier WebView2
-retention is preserved, without a claimed diagnosis. Screenshot evidence is from real
-WebView2 execution and was visually reviewed.
-
-[Complex frozen worker](final-complex-portable-verification.json),
-[manifest/fixture check](final-portable-integrity-verification.json),
-[standalone demo](final-demo-verification.json) and
-[ZIP CRC/hash](final-preview-artifact-verification.json) identify the exact final source
-and same-machine scope. Layout zoom is emulation; private discovery names cannot be
-reconstructed for replay. No independent gate is inferred from these local passes.
-
-The freshly extracted Unicode/space-path ZIP also passed System32-only worker checks
-and actual native UI startup/normal shutdown. See final-extracted-portable-verification.json
-and final-extracted-native-verification.json. Guarded disposable cleanup was policy-blocked;
-the retained paths and manual action are recorded in the ledger, without a cleanup pass claim.
+Layout zoom is emulation. Browser semantics and keyboard automation are not NVDA
+verification. Local packaging and test passes do not clear the independent release gates.

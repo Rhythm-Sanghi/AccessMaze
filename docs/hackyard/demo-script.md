@@ -21,12 +21,7 @@ application. It requires a launched preview/CDP harness; it is not evidence of h
 recording, NVDA use or onsite work. The existing reproducible engine demonstration below
 continues to use actual findings rather than hardcoded result objects.
 
-
-Current continuation: see [discovery, replay and reusable conditions](remaining-features.md)
-for the implemented workflow, approvals and explicit limits. Baseline **8e074e7**;
-workstation development, not claimed onsite. Native/package acceptance is recorded
-in [engineering status](../development/status.md), separately from older evidence below.
-
+## Reproducible engine demonstration
 
 Prepare locked dependencies and bundled Chromium, then run from the repository root:
 
@@ -60,9 +55,6 @@ expired URLs. Generated reports remain viewable offline. Identify stored evidenc
 historical execution, including its timestamp, whenever it replaces a live demonstration.
 A failed run must remain visible rather than being replaced with fabricated findings.
 
-Latest standalone evidence: `final-demo-verification.json`; generated local reports are in
-`dist/Hackyard-final-feature-evidence`. Regenerate with that directory replaced by a new
-name. Final native feature sequence is `native-features-verification.json`; native strict
-comparison is `native-comparison-verification.json`, both against clean application source
-**746eaca**. First feature acceptance at 7628688 is preserved under
-`native-features-first-{runs,verification}.json`. Test automation is not an onsite human demo.
+The latest local reports are under `dist/Hackyard-final-feature-evidence`; raw native
+reports are also generated locally. They are ignored by Git. Published results and
+tested source commits are in [engineering status](../development/status.md).

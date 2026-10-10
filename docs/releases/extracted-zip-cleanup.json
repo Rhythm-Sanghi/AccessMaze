@@ -1,8 +1,0 @@
-{
-  "zip_extraction": "passed",
-  "extracted_system_only_worker_browser_checks": "passed",
-  "extracted_file_count": 1702,
-  "synthetic_checker_storage_removed": true,
-  "scope": "Same development laptop, temporary extracted copy. Not independent fresh-user/offline/clean-machine verification; real AppData/history preserved.",
-  "extracted_application_directory_removed": true
-}

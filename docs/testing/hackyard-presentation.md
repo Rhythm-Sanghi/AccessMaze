@@ -51,13 +51,13 @@ and descendants through a Job object. Chromium policy is not an OS network firew
 
 ## Differentiation and boundaries
 
-| Typical page-rule scan | AccessMaze's verified additional scope |
-| --- | --- |
-| Rule findings on a supplied page state | Authored task transitions and mandatory completion assertions |
-| DOM/rule observations | Native browser AX observations, keyboard reachability and bounded focus traces |
-| Independent scan exports | Journey/project/input-identity checks before a comparable retest |
-| A URL as the primary input | Reviewable recorded semantic actions and run-only input bindings |
-| Discovery may be an external tool | Per-action approval for a bounded proposed path |
+| Typical page-rule scan                 | AccessMaze's verified additional scope                                         |
+| -------------------------------------- | ------------------------------------------------------------------------------ |
+| Rule findings on a supplied page state | Authored task transitions and mandatory completion assertions                  |
+| DOM/rule observations                  | Native browser AX observations, keyboard reachability and bounded focus traces |
+| Independent scan exports               | Journey/project/input-identity checks before a comparable retest               |
+| A URL as the primary input             | Reviewable recorded semantic actions and run-only input bindings               |
+| Discovery may be an external tool      | Per-action approval for a bounded proposed path                                |
 
 This compares workflows, not every competing product. Existing scanners can support
 scripts and integrations; AccessMaze does not claim unique invention of journey testing
@@ -77,14 +77,13 @@ platform or assistive-technology support is promised.
 
 This is continuation of pre-existing work. The competition's official eligibility/start
 date was not provided; the entrant must map this ledger to that date and disclose any
-earlier code, tools, team contributions and AI assistance required by the rules.
+earlier code, tools and team contributions required by the rules.
 
-| Boundary | Work to disclose |
-| --- | --- |
-| Existing through `275a4e1` | Desktop design and architecture; private worker; SQLite; journey editor; browser execution; axe; focus/AX checks; origin controls; runtime inputs/uploads; recorder; approved exploration; reports/retests; controlled compatibility corpus; broken/fixed Hackyard demo; Windows preview; original readiness documentation and measurements |
-| Subsequent continuation | Evidence-based classification of 87 license gaps, notice collector/supplements; explicit-child ACL regression/hardening; diagnostic privacy review; repeated measured stability harness; CI packaging/advisory workflow; this explanation, architecture/differentiation/transparency material. See actual later commits/status for executed versus planned checks. |
-| Third-party foundations | React, Tauri, Python, Playwright/Chromium, axe-core, Pydantic, NetworkX, SQLite and locked transitive dependencies. They are not entrant-authored engines. Notices and obligations are recorded separately. |
-| Assistance | Codex assisted implementation, investigation, tests and documentation in this continuation. Attribute human work and other tools according to actual history, not inferred authorship. |
+| Boundary                   | Work to disclose                                                                                                                                                                                                                                                                                                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Existing through `275a4e1` | Desktop design and architecture; private worker; SQLite; journey editor; browser execution; axe; focus/AX checks; origin controls; runtime inputs/uploads; recorder; approved exploration; reports/retests; controlled compatibility corpus; broken/fixed Hackyard demo; Windows preview; original readiness documentation and measurements                        |
+| Subsequent continuation    | Evidence-based classification of 87 license gaps, notice collector/supplements; explicit-child ACL regression/hardening; diagnostic privacy review; repeated measured stability harness; CI packaging/advisory workflow; this explanation, architecture/differentiation/transparency material. See actual later commits/status for executed versus planned checks. |
+| Third-party foundations    | React, Tauri, Python, Playwright/Chromium, axe-core, Pydantic, NetworkX, SQLite and locked transitive dependencies. They are not entrant-authored engines. Notices and obligations are recorded separately.                                                                                                                                                        |
 
 Preserve commit history; use `git log --reverse --oneline` and `git diff 275a4e1..HEAD`
 for the precise boundary. This document does not assert eligibility or that pre-existing

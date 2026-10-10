@@ -1,8 +1,0 @@
-{
-  "packaged_website_approval": "passed",
-  "posts": 1,
-  "external_replay": false,
-  "packaged_headed_recorder": "passed",
-  "completion_capture": "Base",
-  "scope": "Owned HTTP server, actual native UI/IPC/browser"
-}

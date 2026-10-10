@@ -58,3 +58,7 @@ backend graph scaling. Native readiness checks cover keyboard navigation, safe e
 alerts, retained input and dialog focus through WebView2/IPC. The
 [NVDA procedure](nvda.md) and [independent Windows procedure](../releases/clean-machine.md)
 remain unexecuted human/independent gates. Engineering status is authoritative.
+
+Generated test reports and machine diagnostics are local outputs, ignored by Git.
+Publish measured results and limitations in engineering status; keep source fixtures,
+tests and legally required audit records in the repository.

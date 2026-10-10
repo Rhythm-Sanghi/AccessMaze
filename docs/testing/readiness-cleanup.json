@@ -1,9 +1,0 @@
-{
-  "owned_desktop_closed": true,
-  "owned_child_processes_exited": 8,
-  "test_ports_closed": [
-    9224,
-    9227
-  ],
-  "package": "AccessMaze-readiness-preview-final"
-}

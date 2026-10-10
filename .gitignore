@@ -22,3 +22,10 @@ engine/dist/
 *.tsbuildinfo
 apps/desktop/src-tauri/icons/*
 !apps/desktop/src-tauri/icons/icon.ico
+
+# Local verification reports; publish results in engineering documentation.
+docs/development/*.json
+docs/hackyard/*.json
+docs/releases/*.json
+docs/testing/*.json
+!docs/testing/license-inventory.json
