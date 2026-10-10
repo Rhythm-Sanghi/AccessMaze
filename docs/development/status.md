@@ -4,6 +4,30 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Internal security follow-up — reproduced failures corrected
+
+Two regressions initially failed on existing behavior: an explicit Everyone read grant
+on an existing SQLite file/screenshot survived root-only hardening, and unexpected
+exception text exposed a synthetic private browser value on stderr. Storage now
+reapplies private DACLs to existing descendants, fails on enumeration/ACL errors and
+refuses child junctions/reparse points. Real Windows tests confirm data is preserved
+and a junction's outside ACL is unchanged. Worker internal/storage/parameter failures
+now use static diagnostics plus correlation UUIDs, without exception text or tracebacks.
+
+An isolated execution of the original `275a4e1` worker also confirmed oversized-frame
+suffix execution and malformed-ID data echo (4 responses, both defects true). The
+fixed worker drains the whole oversized frame in bounded chunks and echoes only
+validated string IDs. A real subprocess regression sees 3 responses, no synthetic
+private value and subsequent healthy IPC.
+
+`pytest engine/tests/test_permissions.py engine/tests/test_worker.py
+engine/tests/test_license_gap_review.py -q`: **12 passed**. The preceding full engine
+suite passed **90 tests in 138.63 s** before the final protocol and packaging additions;
+final suite is rerun below. TypeScript/ESLint, 5 React tests, frontend build, contracts,
+Ruff/format and 1 actual Rust Windows Job test passed. Internal engineering review only;
+independent security, bootstrap diagnostics, hostile browser/OS containment and signing
+remain open. See `../testing/security-review.md`.
+
 ### License gap investigation — original 87 rows classified
 
 Continued from clean `275a4e1`. `docs/legal/license-gap-review.md` and JSON record

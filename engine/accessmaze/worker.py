@@ -7,7 +7,6 @@ import json
 import os
 import sys
 import threading
-import traceback
 from pathlib import Path
 from uuid import UUID, uuid4
 
@@ -23,6 +22,13 @@ from accessmaze.retests import compare_runs
 from accessmaze.runner import RunControl, execute
 from accessmaze.storage import Store
 from accessmaze.templates import template
+
+
+def internal_error(stage):
+    # Exception messages, chained tracebacks and locals can contain browser/credential data.
+    reference = str(uuid4())
+    print(f"AccessMaze internal error at {stage}; reference {reference}", file=sys.stderr)
+    return f"Internal worker error; reference {reference} (see diagnostic log)"
 
 
 def schema_message(error):
@@ -221,15 +227,13 @@ class Worker:
                 try:
                     asyncio.run(start())
                 except Exception:
-                    traceback.print_exc(file=sys.stderr)
+                    message = internal_error("run execution")
                     try:
                         result = self.store.run(run_id)
-                        result.update(
-                            status="failed", error="Unexpected worker error; see diagnostic log"
-                        )
+                        result.update(status="failed", error=message)
                         self.store.save_run(result)
                     except Exception:
-                        traceback.print_exc(file=sys.stderr)
+                        internal_error("failure persistence")
                 finally:
                     ready.set()
                     self.active = None
@@ -300,21 +304,32 @@ def main():
             request_id = None
             try:
                 if len(line) > 8 * 1024 * 1024:
+                    # Discard the rest of this frame; it must not become a second request.
+                    while not line.endswith(b"\n"):
+                        line = sys.stdin.buffer.readline(64 * 1024)
+                        if not line:
+                            break
                     raise ValueError("Request exceeds 8 MiB")
                 raw = json.loads(line)
                 request_id = raw.get("id") if isinstance(raw, dict) else None
+                if not isinstance(request_id, str) or not 1 <= len(request_id) <= 64:
+                    request_id = None
                 request = Request.model_validate(raw)
                 data = worker.dispatch(request)
                 response = {"version": 1, "id": request.id, "result": data}
-            except (ValidationError, ValueError, KeyError, TypeError, OSError) as exc:
+            except (ValidationError, ValueError) as exc:
                 message = schema_message(exc) if isinstance(exc, ValidationError) else str(exc)
                 response = {"version": 1, "id": request_id, "error": {"message": message}}
+            except (KeyError, TypeError, OSError):
+                # These messages may echo imported keys, selected filenames or filesystem paths.
+                message = internal_error("request parameters or storage")
+                response = {"version": 1, "id": request_id, "error": {"message": message}}
             except Exception:
-                traceback.print_exc(file=sys.stderr)
+                message = internal_error("request dispatch")
                 response = {
                     "version": 1,
                     "id": request_id,
-                    "error": {"message": "Internal worker error; see diagnostic log"},
+                    "error": {"message": message},
                 }
             print(json.dumps(response, ensure_ascii=False), flush=True)
     finally:

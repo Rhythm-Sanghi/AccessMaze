@@ -1,12 +1,31 @@
 """Private workspace permissions. Does not encrypt data or resist administrators."""
 
 import os
+import stat
+from pathlib import Path
 
 
 def private_directory(path):
     if os.name != "nt":
         path.chmod(0o700)
         return
+    # Inspect without following links: never tighten ACLs on a junction's external target.
+    paths = [path]
+
+    def fail_walk(error):
+        raise error
+
+    for folder, directories, files in os.walk(path, followlinks=False, onerror=fail_walk):
+        for name in [*directories, *files]:
+            child = Path(folder) / name
+            if child.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+                raise OSError("Storage contains a reparse point; use a private ordinary directory")
+            paths.append(child)
+    for child in paths:
+        _private_windows_path(child)
+
+
+def _private_windows_path(path):
     import ctypes
     from ctypes import wintypes
 
