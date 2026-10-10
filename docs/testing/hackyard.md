@@ -1,5 +1,8 @@
 # Reproducible Hackyard demonstration
 
+Use [presentation and transparency](hackyard-presentation.md) for the three-minute
+sequence, architecture, differentiation, limits and pre-existing/new-work ledger.
+
 From the repository root with locked dependencies and Chromium installed:
 
 ```powershell

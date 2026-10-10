@@ -23,6 +23,20 @@ def file_hash(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+def remove_unused_video_encoder(browser_root):
+    # AccessMaze records semantic journey events, not video. Do not redistribute the
+    # standalone static LGPL encoder installed by Playwright for record_video_dir.
+    root = browser_root.resolve()
+    for path in browser_root.glob("ffmpeg-*"):
+        if not re.fullmatch(r"ffmpeg-\d+", path.name) or path.resolve().parent != root:
+            raise ValueError(
+                "Unexpected encoder path outside packaged browser resources"
+            )
+        if path.is_symlink() or path.is_junction():
+            raise ValueError("Packaged encoder must be an ordinary directory")
+        shutil.rmtree(path)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", default="AccessMaze-portable")
@@ -106,6 +120,7 @@ def main():
         [sys.executable, "-m", "playwright", "install", "chromium"],
         env=environment,
     )
+    remove_unused_video_encoder(resources / "browsers")
     run(
         [
             sys.executable,
@@ -136,6 +151,7 @@ def main():
         "AccessMaze development preview. Run AccessMaze.exe. Requires Windows WebView2.\n"
         "Python, Node and a preinstalled Playwright browser are not required.\n"
         "Unsigned. Clean-machine installation and complete license manifest remain release gates.\n"
+        "Standalone FFmpeg video encoder omitted; journey recording uses semantic events.\n"
         "Use only authorized test sites/accounts. See resources/notices/SECURITY.md.\n",
         encoding="utf-8",
     )

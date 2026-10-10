@@ -8,6 +8,12 @@ uv run --project engine python scripts/package_windows.py
 
 The script builds the Rust release host, freezes Python with PyInstaller and includes
 the Playwright driver, exact full Chromium and headless-shell revision and local axe-core.
+The current recipe removes Playwright's separately installed FFmpeg video encoder:
+AccessMaze records semantic events and never requests video recording. This avoids
+redistributing that unused standalone static binary; it does not clear FFmpeg/codecs
+incorporated inside Chromium or other browser obligations. Older previews still contain
+the standalone encoder and retain their original unresolved source/relink gate.
+Actual frozen fixture/SPA/upload and recorder checks are required after this exclusion.
 It writes `dist/AccessMaze-portable` and refuses to overwrite an existing package.
 Use `--name AccessMaze-preview` to choose another new output directory.
 Keep the entire directory together and launch `AccessMaze.exe`. Windows WebView2

@@ -59,3 +59,12 @@ Primary references: [MPL FAQ](https://www.mozilla.org/en-US/MPL/2.0/FAQ/),
 not these summaries, govern distribution. Resolve missing entries, map source obligations
 to shipped files, archive matching source/build information and obtain qualified
 redistribution review before public release. No license clearance is claimed.
+
+## Follow-up of original missing metadata/notices
+
+All 87 original flags now have per-component evidence and dispositions in
+[the license gap review](../legal/license-gap-review.md). The 627-component inventory
+is retained; non-distributed flags remain visible. Current packaging writes a complete
+original-text notice index and omits the unused standalone FFmpeg video encoder.
+This does not clear incorporated browser codecs, covered native source delivery,
+Microsoft runtime rights, binary provenance or independent redistribution review.

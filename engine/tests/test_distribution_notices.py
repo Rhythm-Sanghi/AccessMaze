@@ -56,6 +56,19 @@ def test_archive_preserves_epoch_dated_notices_and_refuses_overwrite(tmp_path):
         helper.archive_preview(package, archive)
 
 
+def test_packaging_removes_only_unused_standalone_video_encoder(tmp_path):
+    browsers = tmp_path / "resources with spaces"
+    browsers.mkdir()
+    for name in ["ffmpeg-1011", "chromium-1243", "chromium_headless_shell-1243"]:
+        child = browsers / name
+        child.mkdir()
+        (child / "binary").write_bytes(b"test")
+    script("package_windows").remove_unused_video_encoder(browsers)
+    assert not (browsers / "ffmpeg-1011").exists()
+    assert (browsers / "chromium-1243/binary").read_bytes() == b"test"
+    assert (browsers / "chromium_headless_shell-1243/binary").read_bytes() == b"test"
+
+
 @pytest.mark.browser
 @pytest.mark.skipif(os.name != "nt", reason="Windows packaging credits")
 def test_exact_chromium_credits_include_collapsed_licenses(tmp_path):

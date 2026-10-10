@@ -4,7 +4,38 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
-### Internal security follow-up — reproduced failures corrected
+### Release verification pipeline and repeatable stability harness
+
+Workflow now adds manual dispatch, read-only permissions, cancellation/time bounds,
+Windows cargo-audit and a dependent Windows preview build/frozen PowerShell+complex
+browser checks/ZIP CRC+SHA/artifact job. Actual actionlint 1.7.7 and Prettier passed;
+official release archive checksum verified. **Remote Actions NOT RUN**. No GitHub CLI
+or dispatch operation is available in this environment; the read-only connector's
+original-commit query returned no PR-triggered runs only. Exact maintainer actions and
+evidence requirements: `../testing/ci-verification.md`.
+
+The package recipe omits the unused standalone FFmpeg video encoder, avoiding its
+static binary redistribution; semantic journey recording does not request video.
+Chromium incorporated codecs/source obligations and older packages' standalone LGPL
+obligations remain open. Notice/package regressions: **4 passed**, including actual
+Chromium credits. A new preview must verify real recording/browser behavior without it.
+
+The stability harness keeps one Worker alive across cycles, runs actual browser
+journeys/cancellation, verifies SQLite, exports/deletes real artifacts, then repeats
+the real browser/recording/offline/persistence regression battery. Initial harness
+validation completed two cycles of **32 passed each**, persistent accessible/broken
+journeys, SQLite integrity and cleanup, zero surviving children. Exploratory earlier
+run: **619.71 s / 18 cycles**, peak summed harness+children RSS **698.74 MiB**, idle
+handles 206 initially/196 finally, zero cycle-boundary children. Code changed late in
+that exploratory run; raw evidence explicitly disqualifies it as fixed-source stability.
+Final committed-source run is recorded separately. No overnight claim.
+
+Hackyard presentation now includes a three-minute real-result sequence, architecture
+diagram, workflow differentiation, current/future boundaries and pre-existing versus
+continuation work/AI-assistance ledger. Competition start/eligibility must be supplied
+by the entrant. See `../testing/hackyard-presentation.md`; no invented eligibility claim.
+
+### Internal security follow-up â€” reproduced failures corrected
 
 Two regressions initially failed on existing behavior: an explicit Everyone read grant
 on an existing SQLite file/screenshot survived root-only hardening, and unexpected
@@ -28,7 +59,7 @@ Ruff/format and 1 actual Rust Windows Job test passed. Internal engineering revi
 independent security, bootstrap diagnostics, hostile browser/OS containment and signing
 remain open. See `../testing/security-review.md`.
 
-### License gap investigation — original 87 rows classified
+### License gap investigation â€” original 87 rows classified
 
 Continued from clean `275a4e1`. `docs/legal/license-gap-review.md` and JSON record
 every original gap and its evidence. Actual Vite module collection excluded 71 npm
@@ -52,7 +83,7 @@ Chromium/headless incorporated obligations, Microsoft binary provenance and inde
 legal review remain release blockers. Existing packaged artifacts are unchanged; the
 updated notice recipe must be used in a subsequent verified preview.
 
-### Final readiness preview — verified locally, release gates open
+### Final readiness preview â€” verified locally, release gates open
 
 Built `dist/AccessMaze-readiness-preview-final` from clean source **207a09a**, preserving
 all previous previews. `package-manifest.json`: **1,690 hashed files**, dirty=false.
@@ -61,7 +92,7 @@ is present in saved/exportable run evidence. Actual final commands/results:
 
 - `uv run --project engine python scripts/package_windows.py --name AccessMaze-readiness-preview-final`: native release host, frozen Python worker, freshly installed full Chromium/headless shell, dependency inventory/notices and exact browser credits built successfully.
 - `powershell -NoProfile -File scripts/Test-AccessMazePortable.ps1 -Package dist/AccessMaze-readiness-preview-final -Report docs/releases/readiness-final-powershell.json`: hashes/path containment, system-only PATH, three browser fixtures, report identity and EOF passed; worker startup **0.718 s**.
-- `uv run --project engine python scripts/portable_smoke.py --package AccessMaze-readiness-preview-final --complex --report docs/releases/readiness-final-smoke.json`: three fixtures plus 19-step HTTP SPA/upload passed expected outcomes, coverage uncompromised, exact uploaded bytes/one POST and persisted connectivity limitation asserted; worker startup **1.669 s**. Concurrent checks/archive and laptop load produced fixture durations **18.657–26.355 s**, complex run **29.350 s**. This variability is retained, not presented as a performance-budget pass.
+- `uv run --project engine python scripts/portable_smoke.py --package AccessMaze-readiness-preview-final --complex --report docs/releases/readiness-final-smoke.json`: three fixtures plus 19-step HTTP SPA/upload passed expected outcomes, coverage uncompromised, exact uploaded bytes/one POST and persisted connectivity limitation asserted; worker startup **1.669 s**. Concurrent checks/archive and laptop load produced fixture durations **18.657â€“26.355 s**, complex run **29.350 s**. This variability is retained, not presented as a performance-budget pass.
 - Launched final executable with `launch_preview.py`; repeated `desktop_smoke.py`, `desktop_website_smoke.py`, `desktop_readiness.py` and `desktop_crash.py` at test-only port 9224. All passed: native flows, light/dark axe (contrast incomplete), one approved POST/no replay, visible recorder, Tab/Enter/heading and dialog focus, private actionable error/input retention, interruption/restart and **4 Chromium children cleaned**.
 - An actual native Connection recovery fixture run exposed the expected form-state-lost finding and displayed the new offline-emulation limitation. Result: `../testing/desktop-connectivity.json`; screenshot: `screenshots/connectivity-limitation.png`.
 - `uv run --project engine python scripts/archive_preview.py --package dist/AccessMaze-readiness-preview-final --archive dist/AccessMaze-readiness-preview-final.zip --report docs/releases/readiness-final-artifact.json`: **1,691 ZIP files / 391,203,383 bytes**, CRC passed; SHA-256 **da43a6e0303dcd89d4cf6e8cfcb61a8cecef15043ccba8be495d8f4e0dfeb87f**. Unsigned; hash detects corruption, not authenticated provenance.
@@ -80,7 +111,7 @@ security/diagnostic review, the 87 dependency metadata/notice gaps, verified SBO
 matching-source/binary distribution obligations, remote CI and signing remain open.
 See the qualification matrix below. No AT or WCAG certification is claimed.
 
-### Readiness follow-up — in-flight connectivity scope
+### Readiness follow-up â€” in-flight connectivity scope
 
 The 82-test suite passed after adding archive timestamp regression. A subsequent real
 in-flight API probe initially failed its expected-error assertion: offline emulation
@@ -104,7 +135,7 @@ limitation. Archive regression suite: **3 passed**.
 The previously verified `AccessMaze-readiness-preview` at `fcd95a8` is
 preserved; the separately built and verified final preview above includes this correction.
 
-### Readiness milestone 4 — frozen and native Windows revalidation
+### Readiness milestone 4 â€” frozen and native Windows revalidation
 
 Built `dist/AccessMaze-readiness-preview` with
 `uv run --project engine python scripts/package_windows.py --name AccessMaze-readiness-preview`.
@@ -117,7 +148,7 @@ Executed actual packaged checks:
 
 - `powershell -NoProfile -File scripts/Test-AccessMazePortable.ps1 -Package dist/AccessMaze-readiness-preview -Report docs/releases/readiness-portable-powershell.json`: integrity/path containment, system-only PATH, three real fixtures, exports and EOF passed; worker startup **0.662 s**.
 - `uv run --project engine python scripts/portable_smoke.py --package AccessMaze-readiness-preview --complex --report docs/releases/readiness-portable-smoke.json`: three fixtures plus 19-step owned HTTP SPA passed expected outcomes, with exact actual uploaded bytes/one POST and uncompromised coverage; worker startup **0.713 s**. These independent processes ran concurrently on the same laptop, not independent machines.
-- `uv run --project engine python scripts/desktop_startup.py --package AccessMaze-readiness-preview`: three native launches reached connected UI in **4.395 / 1.572 / 1.534 s**, ready summed RSS **437.70–447.93 MiB**, each owned process tree closed. Existing synthetic history, uncontrolled cache, CDP/poll overhead included.
+- `uv run --project engine python scripts/desktop_startup.py --package AccessMaze-readiness-preview`: three native launches reached connected UI in **4.395 / 1.572 / 1.534 s**, ready summed RSS **437.70â€“447.93 MiB**, each owned process tree closed. Existing synthetic history, uncontrolled cache, CDP/poll overhead included.
 - `uv run --project engine python scripts/launch_preview.py --package AccessMaze-readiness-preview`, followed by `desktop_smoke.py --endpoint http://127.0.0.1:9224`: real native three-fixture flows passed; light/dark axe zero violations, contrast **incomplete**. Screenshots visually inspected; existing design retained.
 - `desktop_website_smoke.py --endpoint http://127.0.0.1:9224`: zero POSTs before approval, exactly one after, no replay, visible bundled recorder completion/stop passed.
 - `desktop_readiness.py --endpoint http://127.0.0.1:9224`: actual Tab/Enter navigation and heading focus, private schema-error alert, retained invalid input, dialog initial focus/Escape/return focus passed; only its unique disposable project removed. Initial harness assumptions about navigation text and model-level error locations were corrected against the actual UI; no app defect inferred from those mismatches.
@@ -141,21 +172,21 @@ bytes and overwrite refusal. The verified archive uses the ordinary preview ZIP 
 | Objective / gate | Actual disposition |
 | --- | --- |
 | Repeatable authorized compatibility corpus | Four Chromium paths completed; controlled SPA/API/forms/modal/upload/validation/conditional/offline covered. Broader site classes remain outside coverage. |
-| Finding accuracy | Confirmed false positives/negatives corrected with browser regressions; current full engine suite 83 passed. Native semantics/axe do not prove AT behavior or exhaustively clear findings. |
+| Finding accuracy | Confirmed false positives/negatives corrected with browser regressions; full engine suite 90 passed before final protocol/package additions (final rerun recorded above). Native semantics/axe do not prove AT behavior or exhaustively clear findings. |
 | Hackyard differentiation | Real failure, evidence, native-button correction, comparable retest and recorder draft replay reproduced; synthetic owned target only. |
 | Windows performance | Startup/browser/RSS/handles/backend graph/reports measured locally. Overnight worker/UI soak, UI graph scaling and representative-hardware budgets NOT RUN. |
-| Security | Local source/ACL/credential/retention/origin/isolation/integrity review complete; inherited ACL issue fixed. Independent threat-model, diagnostics privacy and hostile-target containment clearance OPEN. |
-| Dependencies/distribution | 627-component inventory, collected notices, exact full-browser credits and advisory scans complete. 87 metadata/notice gaps, verified SBOM and binary/source obligations OPEN. |
+| Security | Local source/ACL/credential/retention/origin/isolation/integrity review complete; inherited/explicit child ACL and private diagnostic/frame defects fixed with regressions. Independent threat-model, bootstrap diagnostics privacy and hostile-target containment clearance OPEN. |
+| Dependencies/distribution | 627-component inventory, collected notices, exact full-browser credits and advisory scans complete. all original 87 flags classified; required notices recovered. Verified binary SBOM/source obligations remain OPEN. |
 | Portable runtime | Fresh frozen/native/system-PATH tests passed on this developer laptop. Independent clean Windows installation/upgrade/removal/offline qualification NOT RUN. |
 | Human accessibility | Documented NVDA procedure; actual human NVDA/high contrast/manual evaluation NOT RUN. Requires a human tester. |
-| CI / authenticity | Windows CI not executed remotely; package unsigned, authenticated public distribution/signing unverified. No push or publication authorized/performed. |
+| CI / authenticity | Windows CI not executed remotely; package unsigned, authenticated public distribution/signing unverified. No upstream push or publication performed. |
 
 This environment has no independent Windows machine/image or human NVDA tester.
 Those external prerequisites prevent release qualification. Distribution clearance needs
 the documented matching-source/rights review. These unresolved gates must remain open;
 the locally verified artifact is an **unsigned development preview**, not production-ready.
 
-### Readiness milestone 2 — local security, measurements and demonstration
+### Readiness milestone 2 â€” local security, measurements and demonstration
 
 Added repeatable 60-journey Windows benchmark with actual browser startup, resource
 sampling, report timings, three-minute persistent-browser soak and separately labelled
@@ -189,7 +220,7 @@ Manual NVDA and independent Windows procedures are in `../testing/nvda.md` and
 `../releases/clean-machine.md`, all human/independent results explicitly **NOT RUN**.
 No independent machine or human NVDA tester is available in this environment.
 
-### Readiness milestone 3 — redistribution audit
+### Readiness milestone 3 â€” redistribution audit
 
 Inventoried 627 locked/resolved components, copied 775 installed notices and recorded
 87 unresolved declarations/notice sets. Extracted full Chromium's exact binary credits
@@ -206,12 +237,12 @@ found zero vulnerability entries plus two informational warnings outside the res
 Windows graph. See security review. Existing portable artifact remains older source;
 packaging, frozen workflow and native UI revalidation completed in milestone 4 above.
 
-Final source checks for milestones 2–3: full engine suite **81 passed** in 93.55 s;
+Final source checks for milestones 2â€“3: full engine suite **81 passed** in 93.55 s;
 TypeScript/ESLint, **5 React tests**, production build, formatting, Ruff and contracts
 passed. Raw advisory responses are retained in
 `../testing/advisories-{npm,python,rust}.json`. No dependency lockfile was changed.
 
-### Readiness milestone 1 — compatibility corpus and finding accuracy
+### Readiness milestone 1 â€” compatibility corpus and finding accuracy
 
 Completed a controlled multi-step HTTP SPA with a separate CORS API, delayed rendering,
 validation, conditional radio navigation, native modal/return focus, real multipart upload
@@ -233,7 +264,7 @@ one actual controlled upload/POST. Initial incomplete public results are preserv
 `../testing/compatibility.json` and `../testing/compatibility.md`.
 No real NVDA, independent clean-machine or release qualification occurred.
 
-### Continuation milestone 5 — portable verification
+### Continuation milestone 5 â€” portable verification
 
 Prepared: full Chromium for the visible recorder, source/dependency and SHA-256 file
 manifest, systems-only PowerShell checker, and actual native website/recorder smoke
@@ -272,7 +303,7 @@ Archive verification passed for **902 files / 387,878,632 bytes**. The final own
 desktop process was closed and its test-only port 9224 was confirmed closed. All
 source and verification records are committed locally; no upstream publication.
 
-### Continuation milestone 4 — approved website exploration and computed semantics
+### Continuation milestone 4 â€” approved website exploration and computed semantics
 
 Completed: external exploration follows one bounded path, proposing named browser
 buttons/links and requiring a fresh explicit approval for every action. It never resets
@@ -298,7 +329,7 @@ authorization. Ruff passed. No screen-reader or WCAG certification claim is made
 Additional real-browser regressions verify delayed approved POST redirects retain
 only their existing chain permission, unrelated later writes are blocked, and HTTP
 403 navigation produces an inconclusive finding. Dynamic action waits are configurable
-from 1–30 seconds (default 10 seconds). Rust lifecycle test: **1 passed**.
+from 1â€“30 seconds (default 10 seconds). Rust lifecycle test: **1 passed**.
 
 A read-only public HTTPS probe navigated successfully to example.org but correctly
 failed its obsolete expected heading; the current page has no matching heading.
@@ -311,7 +342,7 @@ state identity are bounded, cannot prove equivalence and omit unsupported widget
 Live dynamic changes may safely refuse approval. OS-level focus visibility, closed
 shadow trees, screen-reader behavior and independent clean-machine gates remain.
 
-### Continuation milestone 3 — manual browser recording
+### Continuation milestone 3 â€” manual browser recording
 
 Completed: an isolated, separately authorized visible browser records supported
 semantic clicks, navigation keys and field intents. Typed values, selected file names
@@ -322,7 +353,7 @@ bounds; worker shutdown closes them. Analysis and recording are mutually exclusi
 
 Verification: full suite before the headed lifecycle case **58 passed**; recorder
 regressions including actual visible Windows Chromium **3 passed**. TypeScript/ESLint
-and **3 React tests** passed. Actual record → edit/runtime bindings → fresh-browser
+and **3 React tests** passed. Actual record â†’ edit/runtime bindings â†’ fresh-browser
 replay reached the captured assertion without retaining typed secrets.
 
 The existing default-cache Chromium failed Windows activation (WinError 14001).
@@ -337,7 +368,7 @@ Manual-session scripts may issue writes on authorized origins while open.
 Packaging includes full Chromium as well as its headless shell; the new package's
 visible recorder passed. Independent clean-machine verification remains pending.
 
-### Continuation milestone 2 — run-only account and file inputs
+### Continuation milestone 2 â€” run-only account and file inputs
 
 Completed: named runtime bindings for text/password inputs, labeled-field locators,
 user-selected upload buffers (4 MiB combined), no imported filesystem paths, HTTPS
@@ -359,7 +390,7 @@ SSO popup/iframe handling, browser-native file-picker verification or CAPTCHA by
 Run-input signatures intentionally cease to be comparable after worker restart.
 Dynamic application text requires opt-in evidence capture; redaction remains best effort.
 
-### Continuation milestone 1 — authorized website network policy
+### Continuation milestone 1 â€” authorized website network policy
 
 Completed from preserved commit `c66766d`: exact navigation/API and read-only
 resource permissions; fixed DNS snapshot used by Chromium; effect-window write
@@ -405,7 +436,7 @@ explicit retention cleanup and storage migrations are implemented.
 | TypeScript, ESLint, Ruff, formatting and generated contracts | Passed |
 | Production frontend and Windows release host | Built successfully |
 | npm and Python dependency audits | No known vulnerabilities; local Python project excluded from PyPI lookup |
-| Actual packaged WebView2 → Rust → frozen Python → Chromium | Broken, accessible and conditional journeys passed |
+| Actual packaged WebView2 â†’ Rust â†’ frozen Python â†’ Chromium | Broken, accessible and conditional journeys passed |
 | Desktop axe audit, light and dark | No reported violations; color contrast incomplete and requires manual evaluation |
 | Frozen worker, system-only PATH, temporary directory with spaces | Three fixture runs and report checks passed; startup 1.634 seconds |
 | Real worker crash | Development and packaged host recovery and Chromium cleanup passed |
@@ -423,7 +454,7 @@ measurements recorded above.
 
 ## Milestone and release limits
 
-This is an operational preview across parts of milestones 1–7, with milestone 8
+This is an operational preview across parts of milestones 1â€“7, with milestone 8
 hardening. It does not complete the master specification. Milestone 9 remains gated.
 
 - External exploration is one approved walk; exhaustive coverage, unreachable-state proof and resume after crash remain absent.

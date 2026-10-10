@@ -254,7 +254,7 @@ def audit(output):
         "release_blockers": [
             "Component labels are not a verified redistribution clearance",
             "Chromium/headless-shell exact binary credits and incorporated libraries require review",
-            "FFmpeg static LGPL source/relink obligations require a reproducible corresponding-source plan",
+            "If standalone FFmpeg is distributed, static LGPL source/relink obligations require a corresponding-source plan; current package recipe omits this unused encoder",
             "Microsoft graphics runtime redistribution and exact included binary provenance require review",
             "Verify release module inclusion against inventory; missing installed optional-platform notices do not prove a shipped violation",
         ],

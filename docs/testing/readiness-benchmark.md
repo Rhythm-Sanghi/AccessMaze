@@ -9,9 +9,9 @@ Worker startup was measured before the subsequent permission-hardening change.
 
 | Measurement | Observed |
 | --- | --- |
-| Development worker start, health response, EOF shutdown | 1.062–1.095 s, three fresh processes |
-| Headless Chromium launch | 62.08–64.72 ms, three warm-cache samples |
-| New context and local navigation | 109.20–112.49 ms |
+| Development worker start, health response, EOF shutdown | 1.062â€“1.095 s, three fresh processes |
+| Headless Chromium launch | 62.08â€“64.72 ms, three warm-cache samples |
+| New context and local navigation | 109.20â€“112.49 ms |
 | Sequential fixture journeys | 60, all expected statuses: 24 complete, 36 deliberately defective failures |
 | Median journey by fixture | accessible 1.582 s; broken 1.767 s; errors 1.212 s; recovery 1.100 s; branch 2.396 s |
 | Persistent browser soak | 181.04 s, 88 real page reloads and field edits |
@@ -37,14 +37,20 @@ performance pass is claimed by this five-minute execution.
 
 Packaged follow-up: `uv run --project engine python scripts/desktop_startup.py --package
 AccessMaze-readiness-preview` measured three real WebView2/worker launches to connected
-UI at 4.395 / 1.572 / 1.534 s, with 437.70–447.93 MiB ready summed RSS. Cache state is
+UI at 4.395 / 1.572 / 1.534 s, with 437.70â€“447.93 MiB ready summed RSS. Cache state is
 uncontrolled and CDP polling overhead is included. Owned process trees exited after each
 sample. Frozen worker health startup in separate system-PATH checks was 0.662 and 0.713 s.
 See `desktop-startup.json` and `../releases/readiness-portable-*.json`. Large UI graphs,
 overnight stability and independent hardware remain unverified.
 
 The final 207a09a package also ran under concurrent integrity/worker/archive activity.
-Its preserved results show startup 0.718 / 1.669 s, fixture execution 18.657–26.355 s
+Its preserved results show startup 0.718 / 1.669 s, fixture execution 18.657â€“26.355 s
 and the complex path 29.350 s (`../releases/readiness-final-*.json`). These conditions
 are not comparable to the earlier sequential baseline. The spread demonstrates why
 controlled repeat measurements and reviewed workload budgets remain release gates.
+
+## Sustained regression procedure
+
+Use `uv run --project engine python scripts/extended_stability.py --seconds 600 --output dist/stability-new` from a clean committed tree. The new output directory is exclusive. A persistent in-process Worker executes alternating real fixture journeys/cancellation, checks SQLite integrity, exports a report and deletes actual artifacts. Each cycle also runs a fresh pytest browser battery covering recording, socket interruption/recovery, persistence/backup and retention. Memory/handles include the entire harness and child test processes, not only the application. Idle samples measure the same persistent parent worker. Source fingerprints must remain unchanged. A failed cycle or surviving child fails the measurement.
+
+The initial 60-second harness validation actually completed two cycles of 32 passing tests plus two persistent-worker journeys, SQLite checks and cleanup. The earlier exploratory 619.71-second / 18-cycle run is retained in `stability-exploratory.json`; code/tests changed near its end, so it is not fixed-source qualification. Final committed-source measurements are recorded separately in status. The duration parameter can request an actual overnight run (for example 43200 seconds); no such run is claimed here. Native host crash/Job recovery is separately verified.
