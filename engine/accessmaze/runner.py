@@ -1,12 +1,9 @@
 import asyncio
 import importlib.metadata
-import ipaddress
 import platform
-import socket
 import threading
 import time
 from pathlib import Path
-from urllib.parse import urlsplit
 from uuid import uuid4
 
 import networkx as nx
@@ -14,8 +11,9 @@ from playwright.async_api import Error as BrowserError
 from playwright.async_api import async_playwright
 
 from accessmaze.actions import CheckFailure, cancellable, perform
-from accessmaze.evidence import fingerprint, observe, public_journey, redact
+from accessmaze.evidence import EvidencePrivacy, fingerprint, public_journey, redact
 from accessmaze.exploration import explore
+from accessmaze.network import BrowserPolicy, resolve_host
 from accessmaze.storage import now
 
 
@@ -26,28 +24,13 @@ class RunControl:
 
 
 def check_host(url, allow_local):
-    parsed = urlsplit(url)
-    if parsed.scheme not in {"http", "https"} or parsed.username or parsed.password:
-        raise ValueError("Only HTTP(S) targets without embedded credentials are supported")
-    if not parsed.hostname:
-        raise ValueError("Target hostname is missing")
-    addresses = socket.getaddrinfo(parsed.hostname, parsed.port or 443, type=socket.SOCK_STREAM)
-    if not allow_local and any(
-        not ipaddress.ip_address(item[4][0]).is_global for item in addresses
-    ):
-        raise ValueError(
-            "Private, loopback and reserved networks require local-network authorization"
-        )
-
-
-def origin(url):
-    p = urlsplit(url)
-    return p.scheme, p.hostname, p.port or (443 if p.scheme == "https" else 80)
+    resolve_host(url, allow_local)
 
 
 async def execute(store, project_id, journey, control, fixtures, axe_path: Path, run_id=None):
     run_id = run_id or str(uuid4())
     secrets = [s.value for s in journey.steps if s.action in {"fill", "assert_value"}]
+    privacy = EvidencePrivacy(journey, secrets)
     result = {
         "id": run_id,
         "project_id": project_id,
@@ -72,7 +55,7 @@ async def execute(store, project_id, journey, control, fixtures, axe_path: Path,
             "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
             "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
             "Motion and viewport preferences are applied; usability requires human review.",
-            "Only same-origin requests are allowed. Cross-origin resources may be blocked.",
+            "Only approved origins are allowed; blocked traffic can change behavior.",
             "Screenshots are captured only for bundled synthetic fixtures.",
         ],
     }
@@ -95,10 +78,15 @@ async def execute(store, project_id, journey, control, fixtures, axe_path: Path,
     try:
         if control.cancel.is_set():
             raise asyncio.CancelledError
-        check_host(url, journey.allow_local or journey.target.startswith("fixture://"))
+        policy = BrowserPolicy(journey, url, blocked)
+        await cancellable(policy.prepare(), control)
         async with async_playwright() as pw:
             browser = await cancellable(
-                pw.chromium.launch(headless=True, timeout=min(30000, journey.max_seconds * 1000)),
+                pw.chromium.launch(
+                    headless=True,
+                    args=policy.launch_args,
+                    timeout=min(30000, journey.max_seconds * 1000),
+                ),
                 control,
             )
             result["environment"]["browser"] = browser.version
@@ -114,30 +102,9 @@ async def execute(store, project_id, journey, control, fixtures, axe_path: Path,
                 )
                 context.set_default_timeout(4000)
 
-                async def route_request(route):
-                    request = route.request
-                    if origin(request.url) != origin(url):
-                        blocked.add("Cross-origin request blocked")
-                        await route.abort("blockedbyclient")
-                        return
-                    if request.method not in {"GET", "HEAD", "OPTIONS"}:
-                        # Effects are authorized at run.start before any browser launches.
-                        if not any(s.effect for s in journey.steps):
-                            blocked.add("State-changing request blocked")
-                            await route.abort("blockedbyclient")
-                            return
-                    if journey.profile.network_latency_ms:
-                        await asyncio.sleep(journey.profile.network_latency_ms / 1000)
-                    await route.continue_()
-
-                await context.route("**/*", route_request)
-
-                async def close_socket(socket):
-                    blocked.add("WebSocket connection blocked")
-                    await socket.close()
-
-                await context.route_web_socket("**/*", close_socket)
+                await policy.install(context)
                 page = await context.new_page()
+                await policy.attach(page)
                 # Every popup receives the same context restrictions; no inherited browser profile.
                 result["status"] = "running"
                 save()
@@ -174,6 +141,11 @@ async def execute(store, project_id, journey, control, fixtures, axe_path: Path,
                             audit = await task
                             entry["status"] = "passed"
                             if audit is not None:
+                                if privacy.hide_text:
+                                    for violation in audit["violations"]:
+                                        violation["targets"] = [
+                                            privacy.token(str(t)) for t in violation["targets"]
+                                        ]
                                 entry["audit"] = audit
                                 for violation in audit["violations"]:
                                     result["findings"].append(
@@ -246,7 +218,7 @@ async def execute(store, project_id, journey, control, fixtures, axe_path: Path,
                                 except BrowserError:
                                     result["limitations"].append("Screenshot capture failed")
                             result["findings"].append(finding)
-                        observation = redact(await observe(page), secrets)
+                        observation = await privacy.observe(page)
                         state_id = fingerprint(observation)
                         if state_id not in graph:
                             graph.add_node(state_id, observation=observation, first_step=step.id)
@@ -297,6 +269,10 @@ async def execute(store, project_id, journey, control, fixtures, axe_path: Path,
         if result["steps"] and result["steps"][-1]["status"] == "running":
             result["steps"][-1]["status"] = "interrupted"
         result["limitations"].extend(sorted(blocked))
+        result["coverage_compromised"] = bool(blocked)
+        if blocked:
+            for finding in result["findings"]:
+                finding["verification"] = "inconclusive"
         result["finished_at"] = now()
         result["duration_seconds"] = round(time.monotonic() - started, 3)
         save()

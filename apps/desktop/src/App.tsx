@@ -133,8 +133,28 @@ export default function App() {
   }
   function create(kind: string) {
     setSelected(null);
-    setJourney(structuredClone(templates[kind]));
-    setName(`Scholarship · ${kind}`);
+    const next = structuredClone(
+      templates[kind === "website" ? "accessible" : kind],
+    );
+    if (kind === "website") {
+      next.name = "Website journey";
+      next.target = "https://example.org";
+      next.steps = [
+        next.steps[0],
+        {
+          id: "complete",
+          action: "assert_visible",
+          target: { role: "heading", name: "Example Domain" },
+          value: "",
+          optional: false,
+          effect: false,
+        },
+      ];
+    }
+    setJourney(next);
+    setName(
+      kind === "website" ? "Website investigation" : `Scholarship · ${kind}`,
+    );
     setRun(null);
     setHistory([]);
     setAuthorized(false);

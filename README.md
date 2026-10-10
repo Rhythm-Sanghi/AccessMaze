@@ -24,6 +24,8 @@ for actual verification and remaining release gates.
 - Persisted retest comparisons, consistent ZIP backups and explicit retention cleanup.
 - Synthetic fixtures that demonstrate both successful journeys and observable failures.
 - Light/dark desktop UI with labels, focus indicators and keyboard operation.
+- Website projects with separate navigation/API and read-only resource permissions,
+  DNS pinning, redirect guards and private page-text evidence by default.
 
 ## Limits
 
@@ -35,7 +37,9 @@ possible keyboard path is unavailable. DOM semantics and axe-core do not simulat
 screen reader or certify WCAG conformance. Motion preferences and viewport size are
 applied settings, not automatic usability verdicts. Latency is request delay, not bandwidth
 emulation. Screenshots are enabled only for bundled synthetic fixtures. External targets
-are restricted to one origin, so sites with external assets or authentication may not work.
+use explicitly approved origins. Popups, embedded frames, service workers and WebSockets
+are blocked; these restrictions can change application behavior. Blocked traffic makes
+findings and repair verification inconclusive.
 
 No real assistive-technology integration, credential management, recording assistant,
 PDF export, automatic issue resolution, mobile testing or plugin API is implemented.

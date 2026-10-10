@@ -42,6 +42,17 @@ async def keyboard_reach(page, locator, budget):
 
 
 async def perform(page, context, step, journey, url, axe_path):
+    policy = getattr(context, "_accessmaze_policy", None)
+    if policy:
+        policy.effects = step.effect
+    try:
+        return await _perform(page, context, step, journey, url, axe_path)
+    finally:
+        if policy:
+            policy.effects = False
+
+
+async def _perform(page, context, step, journey, url, axe_path):
     locator = (
         page.get_by_role(step.target.role, name=step.target.name, exact=True)
         if step.target

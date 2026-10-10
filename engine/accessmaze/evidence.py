@@ -1,5 +1,7 @@
 import hashlib
+import hmac
 import json
+import secrets as random_secrets
 from urllib.parse import urlsplit, urlunsplit
 
 
@@ -32,6 +34,33 @@ def public_journey(journey):
 def fingerprint(observation):
     stable = {key: value for key, value in observation.items() if key != "timestamp"}
     return hashlib.sha256(json.dumps(stable, sort_keys=True).encode()).hexdigest()[:16]
+
+
+class EvidencePrivacy:
+    def __init__(self, journey, secrets):
+        self.secrets = secrets
+        self.hide_text = (
+            not journey.target.startswith("fixture://") and not journey.privacy.capture_page_text
+        )
+        self.key = random_secrets.token_bytes(32)
+
+    def token(self, value):
+        digest = hmac.new(self.key, value.encode(), hashlib.sha256).hexdigest()[:12]
+        return f"[private text {digest}]" if value else ""
+
+    async def observe(self, page):
+        data = redact(await observe(page), self.secrets)
+        if self.hide_text:
+            data["title"] = self.token(data["title"])
+            data["headings"] = [self.token(s) for s in data["headings"]]
+            for control in data["controls"]:
+                control["name"] = self.token(control["name"])
+            parsed = urlsplit(data["url"])
+            data["url"] = urlunsplit(
+                (parsed.scheme, parsed.netloc, "/" + self.token(parsed.path), "", "")
+            )
+            data["text_withheld"] = True
+        return data
 
 
 async def observe(page):

@@ -4,6 +4,7 @@ def compare_runs(previous, current):
         previous["project_id"] == current["project_id"]
         and previous["journey"] == current["journey"]
         and previous["id"] != current["id"]
+        and not current.get("coverage_compromised", False)
     )
     records = []
     for finding in previous["findings"]:

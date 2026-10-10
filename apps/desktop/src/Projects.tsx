@@ -147,6 +147,16 @@ export default function Projects({
         </div>
       )}
       <div className="section-heading">
+        <h2>Test your website</h2>
+        <button disabled={disabled} onClick={() => onCreate("website")}>
+          + Website investigation
+        </button>
+      </div>
+      <p className="muted">
+        Start with a target URL and a completion assertion. Review origin
+        permissions before running.
+      </p>
+      <div className="section-heading">
         <h2>Start from a local fixture</h2>
         <span className="mono">OFFLINE READY AFTER SETUP</span>
       </div>

@@ -49,4 +49,25 @@ describe("Journey editing", () => {
     expect(screen.getByLabelText("Keyboard only")).toBeChecked();
     expect(screen.getByLabelText("Time budget (seconds)")).toHaveValue(60);
   });
+  it("keeps website text private by default and exposes exact origin permissions", async () => {
+    const change = vi.fn();
+    render(
+      <JourneyEditor
+        journey={{ ...journey, target: "https://example.org" }}
+        onChange={change}
+      />,
+    );
+    expect(
+      screen.getByLabelText(
+        "Save website headings, control names and URL paths in evidence",
+      ),
+    ).not.toBeChecked();
+    await userEvent
+      .setup()
+      .type(
+        screen.getByLabelText("Additional read-only resource origins"),
+        "https://cdn.example.org",
+      );
+    expect(change).toHaveBeenCalled();
+  });
 });

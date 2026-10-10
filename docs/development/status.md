@@ -4,6 +4,26 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Continuation milestone 1 — authorized website network policy
+
+Completed from preserved commit `c66766d`: exact navigation/API and read-only
+resource permissions; fixed DNS snapshot used by Chromium; effect-window write
+permission; response-stage redirect checks; default-denied popups/embedded frames;
+private website observations; blocked-traffic retest safeguards; website project entry
+and permission controls using the existing design system. See ADR 002.
+
+Commands executed: `uv run --project engine pytest engine/tests -q` **52 passed**;
+`npm run check` passed; `npm test` **3 passed**; contracts regenerated. Real independent
+HTTP servers verified script loading, blocked/allowed POST requests, forbidden server
+redirects and popups. A real browser used a pinned synthetic DNS hostname. External
+observation privacy was tested through the full persisted runner.
+
+Known limits: only one attached page; embedded frames/popups, WebSockets and service
+workers are denied. No system proxy support. Background writes outside explicit
+effect actions are blocked. DNS pinning is not an OS firewall; clean-machine and
+manual accessibility release gates remain open. Existing portable artifacts are the
+previous commit and must not be mistaken for this milestone's source.
+
 Working Windows desktop preview with React/TypeScript, Tauri, a private-stdio Python
 worker, SQLite and real Playwright Chromium journeys. Includes saved projects,
 semantic journey authoring/import/export, runtime budgets, explicit authorization,
@@ -54,7 +74,7 @@ hardening. It does not complete the master specification. Milestone 9 remains ga
 - Recording assistance, uploads, preconditions, arbitrary zoom and advanced pointer profiles remain.
 - Real assistive-technology integration, manual NVDA/high-contrast/keyboard evaluation and full UI performance testing remain.
 - Retests are narrow; human annotations and a full finding lifecycle remain.
-- DNS rebinding/non-HTTP containment and comprehensive security review remain.
+- Broader non-HTTP containment and comprehensive security review remain; DNS is now pinned for approved hosts.
 - Journey inputs are plain text; synthetic data only. Redaction is best effort.
 - Corruption recovery UI, large-history pagination and virtualization remain.
 - The unsigned portable build was tested on this Windows machine with developer tools removed from PATH. Clean-machine installation, upgrade/removal, signing, complete third-party license manifest and SBOM remain unverified.

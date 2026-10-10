@@ -22,6 +22,9 @@ def test_retest_pass_requires_completed_same_configuration():
     old = run("old", "failed", [finding])
     new = run("new")
     assert compare_runs(old, new)["findings"][0]["verdict"] == "passed-retest"
+    new["coverage_compromised"] = True
+    assert compare_runs(old, new)["findings"][0]["verdict"] == "inconclusive"
+    new["coverage_compromised"] = False
     new["status"] = "cancelled"
     assert compare_runs(old, new)["findings"][0]["verdict"] == "inconclusive"
     new["status"] = "completed_with_limitations"

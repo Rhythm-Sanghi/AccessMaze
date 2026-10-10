@@ -32,6 +32,8 @@ export interface Step {
   effect: boolean;
 }
 export interface Journey {
+  privacy?: { capture_page_text: boolean };
+  network?: { navigation_origins: string[]; resource_origins: string[] };
   exploration?: { enabled: boolean; max_depth: number; max_actions: number };
   schema_version: 1;
   name: string;

@@ -92,6 +92,30 @@ class Exploration(StrictModel):
     max_actions: int = Field(default=50, ge=1, le=200)
 
 
+class NetworkPolicy(StrictModel):
+    navigation_origins: list[str] = Field(default_factory=list, max_length=16)
+    resource_origins: list[str] = Field(default_factory=list, max_length=32)
+
+    @model_validator(mode="after")
+    def validate_origins(self):
+        from accessmaze.network import canonical_origin
+
+        for field in ("navigation_origins", "resource_origins"):
+            values = getattr(self, field)
+            normalized = []
+            for value in values:
+                parsed = urlsplit(value)
+                if parsed.path not in {"", "/"} or parsed.query or parsed.fragment:
+                    raise ValueError("Permissions must be exact HTTP(S) origins without paths")
+                normalized.append(canonical_origin(value))
+            setattr(self, field, list(dict.fromkeys(normalized)))
+        return self
+
+
+class Privacy(StrictModel):
+    capture_page_text: bool = False
+
+
 class Journey(StrictModel):
     schema_version: Literal[1] = 1
     name: str = Field(min_length=1, max_length=120)
@@ -102,6 +126,8 @@ class Journey(StrictModel):
     tab_budget: int = Field(default=60, ge=1, le=200)
     allow_local: bool = False
     exploration: Exploration = Field(default_factory=Exploration)
+    network: NetworkPolicy = Field(default_factory=NetworkPolicy)
+    privacy: Privacy = Field(default_factory=Privacy)
 
     @model_validator(mode="after")
     def validate_journey(self):

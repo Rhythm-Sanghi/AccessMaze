@@ -1,4 +1,5 @@
 import type { Action, Journey, Role, Step } from "../../../packages/contracts";
+import NetworkPermissions from "./NetworkPermissions";
 
 const actions: Action[] = [
   "navigate",
@@ -406,6 +407,7 @@ export default function JourneyEditor({
         Viewport sizing does not emulate browser zoom. Reduced motion sets a
         browser preference and requires human evaluation of behavior.
       </p>
+      <NetworkPermissions journey={journey} onChange={onChange} />
     </section>
   );
 }

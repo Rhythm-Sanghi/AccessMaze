@@ -6,8 +6,10 @@ Do not use it to test hostile sites or enter secrets, credentials or real person
 - No remote account, analytics or network analysis endpoint is used.
 - The desktop WebView never loads target pages; fresh Chromium contexts do.
 - Target URLs allow HTTP(S) only. Embedded credentials and target queries are rejected.
-- Private/reserved network targets need explicit authorization; requests are restricted
-  to the configured origin, including redirects. Service workers/downloads are disabled.
+- Private/reserved addresses need explicit authorization. Configured host DNS answers
+  are pinned for the browser lifetime. Exact navigation/API and read-only resource
+  origins are separate permissions. Response interception checks HTTP redirects.
+  Popups/embedded frames, service workers/downloads and WebSockets are disabled.
 - This is not a strong security sandbox. DNS rebinding, WebSocket/WebRTC traffic and
   browser vulnerabilities require additional containment before hostile-target use.
 - Activations and Enter/Space require an effect declaration. Every run requires target
@@ -18,6 +20,8 @@ Do not use it to test hostile sites or enter secrets, credentials or real person
 - Password fields are blocked. Journey input values are plain text in SQLite.
   Run evidence removes those values; screenshots mask form fields and are enabled only
   for synthetic fixtures. Unrelated sensitive text is not guaranteed to be removed.
+- External page text is withheld using per-run tokens by default. Enabling page-text
+  evidence can persist unrelated personal data. Authored labels and target URLs are saved.
 - HTML reports escape target content and disable scripts. CSV neutralizes formula prefixes.
 - Artifact lookups require a run-owned filename and validated UUID directory.
 - Deleting a project cascades saved runs and removes artifact directories. Secure erasure

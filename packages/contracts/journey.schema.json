@@ -26,6 +26,41 @@
       "title": "Exploration",
       "type": "object"
     },
+    "NetworkPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "navigation_origins": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Navigation Origins",
+          "type": "array"
+        },
+        "resource_origins": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Resource Origins",
+          "type": "array"
+        }
+      },
+      "title": "NetworkPolicy",
+      "type": "object"
+    },
+    "Privacy": {
+      "additionalProperties": false,
+      "properties": {
+        "capture_page_text": {
+          "default": false,
+          "title": "Capture Page Text",
+          "type": "boolean"
+        }
+      },
+      "title": "Privacy",
+      "type": "object"
+    },
     "Profile": {
       "additionalProperties": false,
       "properties": {
@@ -212,6 +247,12 @@
     },
     "exploration": {
       "$ref": "#/$defs/Exploration"
+    },
+    "network": {
+      "$ref": "#/$defs/NetworkPolicy"
+    },
+    "privacy": {
+      "$ref": "#/$defs/Privacy"
     }
   },
   "required": [
