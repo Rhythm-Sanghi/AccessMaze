@@ -4,6 +4,28 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Readiness milestone 1 — compatibility corpus and finding accuracy
+
+Completed a controlled multi-step HTTP SPA with a separate CORS API, delayed rendering,
+validation, conditional radio navigation, native modal/return focus, real multipart upload
+and interrupted connectivity. Added opt-in, sequential Selenium and W3C educational
+public cases with documented scope and exact resource permissions. All four final browser
+paths completed without policy-compromised coverage. W3C before exposed seven axe rule
+IDs; after still exposed two. Neither is represented as certified conformance.
+
+Four initial browser regressions failed before fixes. The combined SPA exposed two more
+cases: radio-group arrow navigation and native dialog focus moving to browser chrome.
+Fixed bounded native radio activation/navigation, dynamic fill waits, disabled-target
+classification, unrelated-live-region false negatives, native-validation uncertainty and
+modal page-focus scope/final-move checks. Propagated interaction limitations into reports.
+
+Commands/results: `uv run --project engine pytest engine/tests -q`: **76 passed**;
+`uv run --project engine python scripts/compatibility.py --public`: **4 completed paths**,
+one actual controlled upload/POST. Initial incomplete public results are preserved in
+`../testing/compatibility-initial.json`; corrected results and rationale in
+`../testing/compatibility.json` and `../testing/compatibility.md`.
+No real NVDA, independent clean-machine or release qualification occurred.
+
 ### Continuation milestone 5 — portable verification
 
 Prepared: full Chromium for the visible recorder, source/dependency and SHA-256 file

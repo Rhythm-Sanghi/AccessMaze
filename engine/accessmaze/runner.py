@@ -260,6 +260,9 @@ async def execute(
                                     "audit-unavailable",
                                     "sensitive-field",
                                     "navigation-http",
+                                    "target-disabled",
+                                    "native-validation-unverified",
+                                    "error-discoverability-unverified",
                                 }
                                 else "confirmed-automated",
                                 "actual": failure.actual,
@@ -282,6 +285,11 @@ async def execute(
                         interaction = getattr(context, "_accessmaze_interaction", {})
                         if interaction:
                             entry["interaction"] = privacy.interaction(interaction)
+                            if (
+                                interaction.get("limitation")
+                                and interaction["limitation"] not in result["limitations"]
+                            ):
+                                result["limitations"].append(interaction["limitation"])
                         observation = await privacy.observe(page)
                         state_id = fingerprint(observation)
                         if state_id not in graph:

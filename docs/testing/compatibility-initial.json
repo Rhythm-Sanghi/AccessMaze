@@ -1,0 +1,209 @@
+{
+  "scope": "Real Chromium, isolated contexts; no NVDA or WCAG certification",
+  "public_authorized": true,
+  "cases": [
+    {
+      "case": "Hackyard multi-step compatibility",
+      "status": "completed_with_limitations",
+      "coverage_compromised": false,
+      "seconds": 6.856,
+      "browser": "153.0.8010.12",
+      "steps": [
+        {
+          "id": "open",
+          "status": "passed"
+        },
+        {
+          "id": "validate",
+          "status": "passed"
+        },
+        {
+          "id": "errors",
+          "status": "passed"
+        },
+        {
+          "id": "name",
+          "status": "passed"
+        },
+        {
+          "id": "next",
+          "status": "passed"
+        },
+        {
+          "id": "documents",
+          "status": "passed"
+        },
+        {
+          "id": "international",
+          "status": "passed"
+        },
+        {
+          "id": "reference",
+          "status": "passed"
+        },
+        {
+          "id": "help",
+          "status": "passed"
+        },
+        {
+          "id": "modal",
+          "status": "passed"
+        },
+        {
+          "id": "close",
+          "status": "passed"
+        },
+        {
+          "id": "restore",
+          "status": "passed"
+        },
+        {
+          "id": "offline",
+          "status": "passed"
+        },
+        {
+          "id": "online",
+          "status": "passed"
+        },
+        {
+          "id": "retained",
+          "status": "passed"
+        },
+        {
+          "id": "upload",
+          "status": "passed"
+        },
+        {
+          "id": "send",
+          "status": "passed"
+        },
+        {
+          "id": "done",
+          "status": "passed"
+        },
+        {
+          "id": "audit",
+          "status": "passed"
+        }
+      ],
+      "rules": [],
+      "limitations": [
+        "Authored path only; unvisited branches are not covered.",
+        "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+        "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+        "Motion and viewport preferences are applied; usability requires human review.",
+        "Only approved origins are allowed; blocked traffic can change behavior.",
+        "Screenshots are captured only for bundled synthetic fixtures.",
+        "Programmatic upload; native file-picker accessibility is untested.",
+        "Live-region presence does not prove an announcement",
+        "Modal check covers page focus only; browser chrome/OS focus requires manual review"
+      ],
+      "error": null,
+      "server_observations": {
+        "api_posts": 1,
+        "api_options_requests": 1,
+        "uploaded_bytes": [
+          25
+        ]
+      }
+    },
+    {
+      "case": "Selenium official web form",
+      "status": "completed_with_limitations",
+      "coverage_compromised": true,
+      "seconds": 6.353,
+      "browser": "153.0.8010.12",
+      "steps": [
+        {
+          "id": "open",
+          "status": "passed"
+        },
+        {
+          "id": "text",
+          "status": "passed"
+        },
+        {
+          "id": "submit",
+          "status": "passed"
+        },
+        {
+          "id": "received",
+          "status": "passed"
+        },
+        {
+          "id": "audit",
+          "status": "passed"
+        }
+      ],
+      "rules": [],
+      "limitations": [
+        "Authored path only; unvisited branches are not covered.",
+        "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+        "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+        "Motion and viewport preferences are applied; usability requires human review.",
+        "Only approved origins are allowed; blocked traffic can change behavior.",
+        "Screenshots are captured only for bundled synthetic fixtures.",
+        "Cross-origin request blocked"
+      ],
+      "error": null
+    },
+    {
+      "case": "W3C educational before",
+      "status": "failed",
+      "coverage_compromised": false,
+      "seconds": 12.046,
+      "browser": "153.0.8010.12",
+      "steps": [
+        {
+          "id": "open",
+          "status": "passed"
+        },
+        {
+          "id": "page",
+          "status": "failed"
+        }
+      ],
+      "rules": [
+        "completion-assertion"
+      ],
+      "limitations": [
+        "Authored path only; unvisited branches are not covered.",
+        "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+        "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+        "Motion and viewport preferences are applied; usability requires human review.",
+        "Only approved origins are allowed; blocked traffic can change behavior.",
+        "Screenshots are captured only for bundled synthetic fixtures."
+      ],
+      "error": null
+    },
+    {
+      "case": "W3C educational after",
+      "status": "failed",
+      "coverage_compromised": false,
+      "seconds": 11.275,
+      "browser": "153.0.8010.12",
+      "steps": [
+        {
+          "id": "open",
+          "status": "passed"
+        },
+        {
+          "id": "page",
+          "status": "failed"
+        }
+      ],
+      "rules": [
+        "completion-assertion"
+      ],
+      "limitations": [
+        "Authored path only; unvisited branches are not covered.",
+        "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+        "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+        "Motion and viewport preferences are applied; usability requires human review.",
+        "Only approved origins are allowed; blocked traffic can change behavior.",
+        "Screenshots are captured only for bundled synthetic fixtures."
+      ],
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Hackyard grant application</title>
+<style>
+body{font:18px system-ui;max-width:48rem;margin:3rem auto;padding:1rem;color:#202a33}
+label,button,[role=button]{display:block;margin:1rem 0}input{font:inherit;padding:.4rem}
+:focus-visible{outline:3px solid #245cbe;outline-offset:3px}dialog{padding:2rem}
+</style>
+<main><h1>Hackyard application</h1><p>Controlled compatibility target. Synthetic data only.</p>
+<label for="applicant">Applicant name</label><input id="applicant" autocomplete="off">
+<section id="errors"></section>__CONTINUE__</main>
+<p id="connection" role="status" aria-live="polite">Online</p>
+<script>
+const api='__API__'; let applicant='';
+function next(){
+  const input=document.querySelector('#applicant');
+  if(!input.value){
+    document.querySelector('#errors').innerHTML='<p id="name-error" role="alert">Applicant name is required</p>';
+    input.setAttribute('aria-invalid','true');input.setAttribute('aria-describedby','name-error');return;
+  }
+  applicant=input.value;
+  fetch(api+'/options').then(r=>r.json()).then(()=>setTimeout(documents,300));
+}
+function documents(){
+  history.pushState({},'', '/documents');
+  document.querySelector('main').innerHTML=`<h1>Attach documents</h1>
+    <fieldset><legend>Application route</legend>
+    <label><input type="radio" name="route" value="domestic" checked>Domestic</label>
+    <label><input type="radio" name="route" value="international">International</label></fieldset>
+    <section id="conditional"></section>
+    <label for="document">Supporting document</label><input id="document" type="file">
+    <button id="help" onclick="help.showModal()">Upload help</button>
+    <dialog id="help-dialog" aria-label="Upload help"><p>Use a synthetic text file.</p>
+      <button onclick="help.close()">Close help</button></dialog>
+    <button id="send" onclick="submitApplication()">Submit application</button>`;
+  window.help=document.querySelector('#help-dialog');
+  document.querySelectorAll('[name=route]').forEach(input=>input.onchange=()=>{
+    document.querySelector('#conditional').innerHTML=input.value==='international'?
+      '<label for="reference">Passport reference</label><input id="reference">':'';
+  });
+  document.querySelector('h1').tabIndex=-1;document.querySelector('h1').focus();
+}
+function submitApplication(){
+  const file=document.querySelector('#document').files[0];
+  if(!file)return;
+  const data=new FormData();data.append('applicant',applicant);data.append('document',file);
+  data.append('route',document.querySelector('[name=route]:checked').value);
+  data.append('reference',document.querySelector('#reference')?.value||'');
+  fetch(api+'/submit',{method:'POST',body:data}).then(r=>r.json()).then(()=>{
+    history.pushState({},'', '/complete');
+    document.querySelector('main').innerHTML='<h1>Application received</h1>';
+  });
+}
+addEventListener('offline',()=>document.querySelector('#connection').textContent='Offline; draft retained');
+addEventListener('online',()=>document.querySelector('#connection').textContent='Online; draft retained');
+</script></html>

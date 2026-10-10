@@ -51,6 +51,12 @@ async def keyboard_reach(page, locator, budget):
         )
     trace = {"tab_presses": 0, "focus_history": []}
     page.context._accessmaze_interaction = trace
+    if not await locator.is_enabled():
+        raise CheckFailure(
+            "target-disabled",
+            "Target is currently disabled",
+            "Enable the target or test the prerequisite state before activation",
+        )
     for index in range(budget + 1):
         if len(trace["focus_history"]) < 40:
             trace["focus_history"].append(await focus_description(page))
@@ -58,11 +64,24 @@ async def keyboard_reach(page, locator, budget):
             return
         if index == budget:
             break
-        await page.keyboard.press("Tab")
-        trace["tab_presses"] += 1
+        same_radio_group = await locator.evaluate("""target => {
+          let active=document.activeElement;
+          while(active?.shadowRoot?.activeElement) active=active.shadowRoot.activeElement;
+          return target.matches('input[type=radio]') && target.name &&
+            active?.matches('input[type=radio]') && active.name===target.name &&
+            active.form===target.form && active.getRootNode()===target.getRootNode();
+        }""")
+        if same_radio_group:
+            await page.keyboard.press("ArrowRight")
+            trace["arrow_presses"] = trace.get("arrow_presses", 0) + 1
+        else:
+            await page.keyboard.press("Tab")
+            trace["tab_presses"] += 1
     raise CheckFailure(
         "keyboard-unreachable",
-        f"Target not reached within {budget} Tab presses",
+        f"Target not reached within {budget} Tab presses"
+        if not trace.get("arrow_presses")
+        else f"Target not reached within {budget} keyboard moves (Tab/ArrowRight)",
         "Target reachable through sequential keyboard navigation",
     )
 
@@ -121,6 +140,7 @@ async def _perform(page, context, step, journey, url, axe_path):
                     "Runtime text requires HTTPS",
                     "HTTPS or explicitly authorized local test server",
                 )
+            await locator.wait_for(state="visible")
             if await locator.count() != 1:
                 raise CheckFailure(
                     "target-ambiguous",
@@ -161,7 +181,9 @@ async def _perform(page, context, step, journey, url, axe_path):
         case "activate":
             if journey.profile.keyboard_only:
                 await keyboard_reach(page, locator, journey.tab_budget)
-                await page.keyboard.press("Space" if step.target.role == "checkbox" else "Enter")
+                await page.keyboard.press(
+                    "Space" if step.target.role in {"checkbox", "radio"} else "Enter"
+                )
             else:
                 await locator.click()
         case "press":
@@ -183,14 +205,27 @@ async def _perform(page, context, step, journey, url, axe_path):
                 )
         case "assert_modal":
             await locator.wait_for(state="visible")
-            for key in ["Tab"] * 8 + ["Shift+Tab"] * 8:
-                if not await locator.evaluate("e => e.contains(document.activeElement)"):
+            keys = ["Tab"] * 8 + ["Shift+Tab"] * 8
+            chrome_hops = 0
+            for index in range(len(keys) + 1):
+                focus = await locator.evaluate("""e => ({
+                  inside:e.contains(document.activeElement),pageFocused:document.hasFocus()})""")
+                if not focus["pageFocused"]:
+                    chrome_hops += 1
+                elif not focus["inside"]:
                     raise CheckFailure(
                         "modal-focus-escape",
                         "Keyboard focus is outside the open modal",
                         "Focus enters and remains in the modal while it is open",
                     )
-                await page.keyboard.press(key)
+                if index < len(keys):
+                    await page.keyboard.press(keys[index])
+            context._accessmaze_interaction = {
+                "modal_keyboard_moves": len(keys),
+                "outside_document_focus_observations": chrome_hops,
+                "limitation": "Modal check covers page focus only; "
+                "browser chrome/OS focus requires manual review",
+            }
         case "assert_focus":
             if await locator.count() != 1 or not await locator.evaluate(DEEP_FOCUS):
                 raise CheckFailure(
@@ -207,15 +242,22 @@ async def _perform(page, context, step, journey, url, axe_path):
                 )
         case "assert_errors":
             result = await page.evaluate("""() => {
+              const visible=e=>!!e && e.checkVisibility({
+                checkOpacity:true,checkVisibilityCSS:true});
               const fields=[...document.querySelectorAll('[aria-invalid=true]')]
-                .filter(e=>e.getClientRects().length);
-              return {count:fields.length,associated:fields.every(e=>
-                (e.getAttribute('aria-describedby')||e.getAttribute('aria-errormessage')||'')
-                  .split(/\\s+/).some(id=>{const error=document.getElementById(id);
-                    return error?.getClientRects().length && error.textContent.trim()})),
+                .filter(visible);
+              const errors=fields.map(e=>[
+                e.getAttribute('aria-describedby')||'',e.getAttribute('aria-errormessage')||'']
+                .join(' ').split(/\\s+/).map(id=>document.getElementById(id))
+                .filter(e=>visible(e)&&e.textContent.trim()));
+              const live=[...document.querySelectorAll(
+                '[role=alert],[aria-live=assertive],[aria-live=polite]')]
+                .filter(e=>visible(e)&&e.textContent.trim());
+              return {count:fields.length,associated:errors.every(list=>list.length>0),
                 focus:fields.includes(document.activeElement),
-                live:[...document.querySelectorAll('[role=alert],[aria-live=assertive],[aria-live=polite]')]
-                  .some(e=>e.getClientRects().length && e.textContent.trim())};
+                native_invalid:!!document.querySelector('input:invalid,select:invalid,textarea:invalid'),
+                live:errors.length>0 && errors.every(list=>list.some(error=>live.some(region=>
+                  region.contains(error)||region.textContent.includes(error.textContent.trim()))))};
             }""")
             context._accessmaze_interaction = {
                 "error_semantics": result,
@@ -227,7 +269,11 @@ async def _perform(page, context, step, journey, url, axe_path):
                 or not (result["live"] or result["focus"])
             ):
                 raise CheckFailure(
-                    "error-semantics",
+                    "native-validation-unverified"
+                    if not result["count"] and result["native_invalid"]
+                    else "error-discoverability-unverified"
+                    if result["count"] and result["associated"]
+                    else "error-semantics",
                     f"Validation semantics: {result}",
                     "Visible associated errors with a populated live region "
                     "or focus on an invalid field",
