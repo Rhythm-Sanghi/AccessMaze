@@ -3,8 +3,11 @@ import html
 import io
 import json
 
+from accessmaze.outcomes import task_outcome
+
 
 def export_report(run, format, screenshots=None):
+    run = {**run, "outcome": task_outcome(run)}
     if format == "json":
         return json.dumps(run, ensure_ascii=False, indent=2), "application/json"
     if format == "csv":
@@ -68,6 +71,9 @@ td,th{{border-bottom:1px solid #aaa;text-align:left;padding:8px}}dt{{font-weight
 article{{border-top:1px solid #aaa;margin:24px 0}}pre{{white-space:pre-wrap;overflow-wrap:anywhere}}
 img{{max-width:100%}}</style>
 <h1>{esc(run["journey"]["name"])}</h1><p>Run {esc(run["id"])} · {esc(run["status"])}</p>
+<h2>Task outcome: {esc(run["outcome"]["status"])}</h2>
+<p>{esc(run["outcome"]["reason"])}</p><p>{esc(run["outcome"]["limitation"])}</p>
+<pre>{esc(json.dumps(run["outcome"]["assertions"], indent=2))}</pre>
 <p>Target: {esc(run["journey"]["target"])} · Started: {esc(run["started_at"])}</p>
 <h2>Execution</h2><table><tr><th>Step</th><th>Action</th><th>Status</th></tr>{steps}</table>
 <h2>Findings ({len(run["findings"])})</h2>{findings}<h2>Coverage limitations</h2><ul>{

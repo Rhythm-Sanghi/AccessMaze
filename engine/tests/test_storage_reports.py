@@ -71,7 +71,10 @@ def test_reports_escape_untrusted_text_and_preserve_data():
             }
         ],
     }
-    assert json.loads(export_report(run, "json")[0]) == run
+    exported = json.loads(export_report(run, "json")[0])
+    assert exported["outcome"]["status"] == "incomplete"
+    assert {k: v for k, v in exported.items() if k != "outcome"} == run
+    assert "outcome" not in run
     html = export_report(run, "html")[0]
     assert "<script>evil</script>" not in html
     assert "&lt;script&gt;evil&lt;/script&gt;" in html

@@ -23,6 +23,7 @@ from accessmaze.reports import export_report  # noqa: E402
 from accessmaze.retests import compare_runs  # noqa: E402
 from accessmaze.runner import RunControl, execute  # noqa: E402
 from accessmaze.storage import Store  # noqa: E402
+from accessmaze.templates import template  # noqa: E402
 
 
 def save(path, data):
@@ -105,6 +106,28 @@ async def demonstrate(output):
             save(output / "journey.json", journey.model_dump())
             save(output / "retest.json", comparison)
 
+            # A separate controlled form drops its draft on a real Chromium offline event.
+            recovery = template("recovery")
+            recovery_project = store.save_project(
+                ProjectInput(name="Environmental interruption", journey=recovery)
+            )
+            environment = await execute(
+                store,
+                recovery_project["id"],
+                recovery,
+                RunControl(),
+                fixtures,
+                ROOT / "node_modules/axe-core/axe.min.js",
+            )
+            assert environment["outcome"]["status"] == "blocked", environment
+            assert any(f["rule"] == "form-state-lost" for f in environment["findings"])
+            assert any(not n["observation"]["online"] for n in environment["nodes"])
+            assert environment["nodes"][-1]["observation"]["online"]
+            for format in ["json", "html", "csv"]:
+                content, _ = export_report(environment, format)
+                (output / f"environment.{format}").write_text(content, encoding="utf-8")
+            save(output / "environment-journey.json", recovery.model_dump())
+
             # Real input events feed the product recorder. This is scripted, not a human test.
             recording = Recording(journey)
             policy = BrowserPolicy(journey, app.origin, set())
@@ -167,6 +190,10 @@ async def demonstrate(output):
                 "scope": "Owned HTTP app and actual Chromium; scripted recording, no NVDA claim",
                 "broken_status": broken["status"],
                 "fixed_status": fixed["status"],
+                "broken_outcome": broken["outcome"],
+                "fixed_outcome": fixed["outcome"],
+                "environment_outcome": environment["outcome"],
+                "environment_scope": "Bundled synthetic form; actual Chromium offline/online events, not a physical adapter disconnect or proof about in-flight requests",
                 "retest": comparison,
                 "recorded_replay_status": replay["status"],
                 "server_observations": app.summary(),

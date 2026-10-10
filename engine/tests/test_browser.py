@@ -24,6 +24,8 @@ def test_keyboard_blocker_has_observations_screenshot_and_reproduction(
 ):
     result = run_case(store, project, fixtures, axe_path, "broken")
     assert result["status"] == "failed"
+    assert result["outcome"]["status"] == "blocked"
+    assert result["outcome"]["blocked_step_id"] == "date"
     finding = result["findings"][0]
     assert finding["rule"] == "keyboard-unreachable"
     assert finding["reproduction"] == ["open", "name", "date"]
@@ -35,6 +37,8 @@ def test_keyboard_blocker_has_observations_screenshot_and_reproduction(
 def test_accessible_journey_completes_without_invented_findings(store, project, fixtures, axe_path):
     result = run_case(store, project, fixtures, axe_path, "accessible")
     assert result["status"] == "completed_with_limitations"
+    assert result["outcome"]["status"] == "completed"
+    assert store.run(result["id"])["outcome"] == result["outcome"]
     assert not result["findings"]
     assert all(s["status"] == "passed" for s in result["steps"])
 

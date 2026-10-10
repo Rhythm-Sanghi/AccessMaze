@@ -4,6 +4,49 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Hackyard mission milestone 1 — task outcomes and conservative comparisons
+
+Baseline inspected clean at **9f3222a**. Targeted assessment and measurable remaining
+feature gaps are in `../hackyard/gap-assessment.md`. Existing architecture and design
+system are preserved. This milestone does not complete the larger competition mission.
+
+New runs persist explicit derived task outcomes and mandatory assertion results on
+progress saves. Exports and comparisons derive the same meaning for legacy records.
+A confirmed failed required step blocks completion; missing assertions remain incomplete;
+unknown browser failures and compromised coverage remain inconclusive. Optional/audit
+findings do not automatically mean the task failed. Completion is not conformance.
+
+Comparison now aligns stable step IDs, reports the first recorded status divergence,
+added target identities, outcomes, changed conditions/environment, local state references
+and warnings. Exact affected-target sets distinguish axe findings on different controls;
+private per-run tokens are never matched as stable identities. Missing audit evidence
+cannot verify an axe repair. A changed journey/order/environment remains descriptive,
+not verified repair. Actual Chromium regression confirms the same rule on two different
+controls is not incorrectly labeled persistent. See `../hackyard/comparison-rules.md`.
+The React history workspace shows these records and prevents stale comparison rendering
+when the selected run changes. Its keyboard-driven regression uses actual rendered controls.
+
+The reproducible demo additionally exports a real engine run of a controlled form losing
+its draft after Chromium offline/online events. Its assertion fails with form-state-lost;
+this is explicitly browser emulation, not a physical network-adapter test. The original
+owned HTTP failure/correction/upload and scripted recorder replay remain intact.
+
+Actual commands/results:
+
+- `uv run --project engine pytest engine/tests -q`: **101 passed in 144.67 s**.
+- `npm test`: **6 passed** across three files after adding comparison keyboard/stale-state regression.
+- `npm run check`, `npm run build`, `npm run format:check`, Ruff check/format and contracts check passed; type/lint and formatting repeated after the new UI test passed.
+- Focused outcome/retest/report/browser batch: **20 passed in 18.74 s**; demo/comparison/outcome/retest batch: **10 passed in 29.82 s**.
+- Standalone current-engine demo output: `dist/Hackyard-competition-outcomes`; actual summary is `../hackyard/demo-outcomes-verification.json` (blocked → completed, comparable passed keyboard retest, separate blocked draft-retention assertion, one 25-byte POST).
+
+All nine requested Hackyard documents now exist, with publisher-backed competitor
+research, a dated pre-mission boundary and an onsite ledger that claims no onsite work.
+No exclusivity, competition eligibility, human NVDA or independent release claim is made.
+Native integration of the changed runtime/UI is **pending a new clean-source build**;
+the previous 228ad9c package does not verify this milestone. Reusable profile library,
+broader discovery and dedicated failure replay remain outstanding in the gap assessment.
+
+
 ### Release-validation continuation — verified locally; qualification still blocked
 
 Final application/package source **228ad9c**, built clean with `package_windows.py

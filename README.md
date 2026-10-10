@@ -178,3 +178,6 @@ tracked in [engineering status](docs/development/status.md) and
 [remaining qualification actions](docs/releases/remaining-actions.md).
 The [87-gap license investigation](docs/legal/license-gap-review.md) preserves
 per-component evidence; it is not redistribution clearance.
+
+Hackyard engineering materials: [overview](docs/hackyard/overview.md),
+[mission gaps](docs/hackyard/gap-assessment.md), and [three-case demo](docs/hackyard/demo-script.md).

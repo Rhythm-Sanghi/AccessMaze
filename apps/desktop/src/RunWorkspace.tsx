@@ -76,6 +76,23 @@ export default function RunWorkspace({
           {run.error}
         </p>
       )}
+      {run.outcome && (
+        <section aria-label="Task outcome">
+          <h3>Task outcome: {run.outcome.status}</h3>
+          <p>{run.outcome.reason}</p>
+          {run.outcome.blocked_step_id && (
+            <p className="mono">Blocked step: {run.outcome.blocked_step_id}</p>
+          )}
+          <ul>
+            {run.outcome.assertions.map((a) => (
+              <li key={a.step_id}>
+                {a.step_id}: {a.status}
+              </li>
+            ))}
+          </ul>
+          <p className="muted">{run.outcome.limitation}</p>
+        </section>
+      )}
       {run.approval && run.status === "awaiting_approval" && (
         <section className="run-gate" aria-labelledby="approval-heading">
           <h3 id="approval-heading">Approve one website action</h3>

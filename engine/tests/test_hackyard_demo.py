@@ -15,6 +15,12 @@ def test_demo_records_real_failure_fix_and_replay(tmp_path):
     output = tmp_path / "demo"
     result = asyncio.run(module.demonstrate(output))
     assert result["server_observations"]["api_posts"] == 1
+    assert result["broken_outcome"]["status"] == "blocked"
+    assert result["fixed_outcome"]["status"] == "completed"
+    assert result["environment_outcome"]["status"] == "blocked"
+    environment = json.loads((output / "environment.json").read_text(encoding="utf-8"))
+    assert any(f["rule"] == "form-state-lost" for f in environment["findings"])
+    assert "Task outcome: blocked" in (output / "environment.html").read_text(encoding="utf-8")
     assert "passed-retest" in (output / "retest.json").read_text()
     draft = json.loads((output / "recorded-draft.json").read_text())
     assert any(s["value_from"] for s in draft["steps"])

@@ -16,6 +16,7 @@ from accessmaze.evidence import EvidencePrivacy, fingerprint, public_journey, re
 from accessmaze.exploration import explore
 from accessmaze.inputs import RunInputs
 from accessmaze.network import BrowserPolicy, resolve_host
+from accessmaze.outcomes import task_outcome
 from accessmaze.storage import now
 from accessmaze.website_exploration import explore_website
 
@@ -122,6 +123,7 @@ async def execute(
     blocked = set()
 
     def save():
+        result["outcome"] = task_outcome(result)
         result["nodes"] = [{"id": node, **data} for node, data in graph.nodes(data=True)]
         result["edges"] = [
             {"source": a, "target": b, **data} for a, b, data in graph.edges(data=True)

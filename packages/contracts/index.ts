@@ -106,6 +106,7 @@ export interface Observation {
   reduced_motion: boolean;
 }
 export interface Run {
+  outcome?: TaskOutcome;
   approval?: {
     id: string;
     state_id: string;
@@ -153,6 +154,44 @@ export interface Run {
   }[];
   limitations: string[];
   environment: Record<string, string>;
+}
+export interface TaskOutcome {
+  status: "completed" | "blocked" | "incomplete" | "cancelled" | "inconclusive";
+  reason: string;
+  assertions: { step_id: string; status: string }[];
+  blocked_step_id: string | null;
+  limitation: string;
+}
+export interface RunComparison {
+  previous_id: string;
+  current_id: string;
+  comparable: boolean;
+  findings: {
+    finding_id: string;
+    rule: string;
+    step_id: string;
+    verdict: string;
+  }[];
+  added_findings: { finding_id: string; step_id: string; rule: string }[];
+  steps: {
+    step_id: string;
+    previous_status: string;
+    current_status: string;
+    previous_state_id?: string | null;
+    current_state_id?: string | null;
+  }[];
+  first_divergent_step: {
+    step_id: string;
+    previous_status: string;
+    current_status: string;
+  } | null;
+  previous_outcome: TaskOutcome;
+  current_outcome: TaskOutcome;
+  changed_conditions: string[];
+  environment_changes: string[];
+  warnings: string[];
+  matching_rule: string;
+  limitation: string;
 }
 export type Method =
   | "health"
