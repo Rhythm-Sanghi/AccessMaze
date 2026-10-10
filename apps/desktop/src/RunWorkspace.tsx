@@ -468,7 +468,10 @@ export default function RunWorkspace({
               <p className="mono">
                 {f.rule} / {f.step_id}
               </p>
-              <p>{f.verification}</p>
+              <p>
+                {f.verification} /{" "}
+                {f.classification ?? "historical classification unavailable"}
+              </p>
               <dl>
                 <dt>Actual</dt>
                 <dd>

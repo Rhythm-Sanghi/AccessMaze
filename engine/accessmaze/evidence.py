@@ -39,6 +39,7 @@ def redact(value, secrets):
             "rule",
             "severity",
             "verification",
+            "classification",
             "first_step",
             "value_from",
             "input_signature",

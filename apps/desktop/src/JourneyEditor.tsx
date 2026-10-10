@@ -133,6 +133,23 @@ export default function JourneyEditor({
                 </label>
                 {targeted.has(step.action) && (
                   <>
+                    {journey.network?.embedded_frames && (
+                      <label>
+                        Embedded frame name (optional)
+                        <input
+                          aria-label={`Step ${index + 1} frame name`}
+                          value={step.target?.frame_name ?? ""}
+                          onChange={(e) =>
+                            update(index, {
+                              target: {
+                                ...step.target!,
+                                frame_name: e.target.value || null,
+                              },
+                            })
+                          }
+                        />
+                      </label>
+                    )}
                     <label>
                       Locator
                       <select

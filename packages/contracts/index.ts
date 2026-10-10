@@ -28,7 +28,12 @@ export type Role =
 export interface Step {
   id: string;
   action: Action;
-  target?: { role: Role; name: string; by?: "role" | "label" } | null;
+  target?: {
+    role: Role;
+    name: string;
+    by?: "role" | "label";
+    frame_name?: string | null;
+  } | null;
   value_from?: string | null;
   file_label?: string;
   value: string;
@@ -37,7 +42,12 @@ export interface Step {
 }
 export interface Journey {
   privacy?: { capture_page_text: boolean };
-  network?: { navigation_origins: string[]; resource_origins: string[] };
+  network?: {
+    navigation_origins: string[];
+    resource_origins: string[];
+    mode?: "restricted" | "authorized-application";
+    embedded_frames?: boolean;
+  };
   exploration?: {
     enabled: boolean;
     recover_navigation?: boolean;
@@ -78,6 +88,7 @@ export interface Project {
   updated_at: string;
 }
 export interface Finding {
+  classification?: string;
   id: string;
   step_id: string;
   rule: string;
@@ -125,6 +136,7 @@ export interface Observation {
   reduced_motion: boolean;
 }
 export interface Run {
+  failure?: { classification: string; reason: string };
   replay?: { source_id: string; finding_id: string; verdict?: string };
   outcome?: TaskOutcome;
   approval?: {

@@ -24,6 +24,7 @@ class Target(StrictModel):
         "spinbutton",
     ]
     name: str = Field(min_length=1, max_length=200)
+    frame_name: str | None = Field(default=None, min_length=1, max_length=200)
 
 
 class Step(StrictModel):
@@ -148,6 +149,8 @@ class Exploration(StrictModel):
 
 
 class NetworkPolicy(StrictModel):
+    mode: Literal["restricted", "authorized-application"] = "restricted"
+    embedded_frames: bool = False
     navigation_origins: list[str] = Field(default_factory=list, max_length=16)
     resource_origins: list[str] = Field(default_factory=list, max_length=32)
 
@@ -155,6 +158,8 @@ class NetworkPolicy(StrictModel):
     def validate_origins(self):
         from accessmaze.network import canonical_origin
 
+        if self.embedded_frames and self.mode != "authorized-application":
+            raise ValueError("Embedded frames require authorized-application mode")
         for field in ("navigation_origins", "resource_origins"):
             values = getattr(self, field)
             normalized = []
@@ -223,6 +228,8 @@ class Journey(StrictModel):
             ):
                 raise ValueError("Profile recovery must follow interruption")
         for step in self.steps:
+            if step.target and step.target.frame_name and not self.network.embedded_frames:
+                raise ValueError("Frame targets require explicit embedded-frame permission")
             if step.action == "navigate" and step.value not in {"", "/"}:
                 raise ValueError(
                     "Navigation opens only the configured target; use links for transitions"

@@ -50,7 +50,8 @@ async def keyboard_reach(page, locator, budget):
             "Exactly one visible semantic target",
         )
     trace = {"tab_presses": 0, "focus_history": []}
-    page.context._accessmaze_interaction = trace
+    browser_page = page if hasattr(page, "keyboard") else page.page
+    browser_page.context._accessmaze_interaction = trace
     if not await locator.is_enabled():
         raise CheckFailure(
             "target-disabled",
@@ -72,10 +73,10 @@ async def keyboard_reach(page, locator, budget):
             active.form===target.form && active.getRootNode()===target.getRootNode();
         }""")
         if same_radio_group:
-            await page.keyboard.press("ArrowRight")
+            await browser_page.keyboard.press("ArrowRight")
             trace["arrow_presses"] = trace.get("arrow_presses", 0) + 1
         else:
-            await page.keyboard.press("Tab")
+            await browser_page.keyboard.press("Tab")
             trace["tab_presses"] += 1
     raise CheckFailure(
         "keyboard-unreachable",
@@ -104,20 +105,41 @@ async def perform(page, context, step, journey, url, axe_path):
 
 
 async def _perform(page, context, step, journey, url, axe_path):
+    surface = page
+    if step.target and step.target.frame_name:
+        matches = [frame for frame in page.frames if frame.name == step.target.frame_name]
+        if len(matches) != 1 or matches[0] == page.main_frame:
+            raise CheckFailure(
+                "target-ambiguous", "Named frame absent or ambiguous", "One named embedded frame"
+            )
+        surface = matches[0]
+        policy = getattr(context, "_accessmaze_policy", None)
+        if surface.url == "about:blank":
+            await surface.wait_for_url(lambda value: value != "about:blank")
+        try:
+            origin = canonical_origin(surface.url)
+        except ValueError:
+            origin = None
+        if not journey.network.embedded_frames or not policy or origin not in policy.navigation:
+            raise CheckFailure(
+                "frame-unavailable",
+                "Frame is outside the authorized navigation origins",
+                "Explicit frame permission and an approved HTTP(S) document",
+            )
     inputs = getattr(context, "_accessmaze_inputs", None)
     value = inputs.value(step) if inputs and step.action in {"fill", "assert_value"} else step.value
     policy = getattr(context, "_accessmaze_policy", None)
     secure_input = (
-        page.url.startswith("https://")
-        or (policy and canonical_origin(page.url) in policy.local_origins)
-        if page.url != "about:blank"
+        surface.url.startswith("https://")
+        or (policy and canonical_origin(surface.url) in policy.local_origins)
+        if surface.url != "about:blank"
         else False
     )
     locator = (
         (
-            page.get_by_label(step.target.name, exact=True)
+            surface.get_by_label(step.target.name, exact=True)
             if step.target.by == "label"
-            else page.get_by_role(step.target.role, name=step.target.name, exact=True)
+            else surface.get_by_role(step.target.role, name=step.target.name, exact=True)
         )
         if step.target
         else None
@@ -156,7 +178,7 @@ async def _perform(page, context, step, journey, url, axe_path):
                     "Synthetic non-secret input only",
                 )
             if journey.profile.keyboard_only:
-                await keyboard_reach(page, locator, journey.tab_budget)
+                await keyboard_reach(surface, locator, journey.tab_budget)
                 await page.keyboard.press("ControlOrMeta+A")
                 await page.keyboard.insert_text(value)
             else:
@@ -180,7 +202,7 @@ async def _perform(page, context, step, journey, url, axe_path):
             await field.set_input_files(inputs.files[step.value_from])
         case "activate":
             if journey.profile.keyboard_only:
-                await keyboard_reach(page, locator, journey.tab_budget)
+                await keyboard_reach(surface, locator, journey.tab_budget)
                 await page.keyboard.press(
                     "Space" if step.target.role in {"checkbox", "radio"} else "Enter"
                 )
@@ -193,7 +215,7 @@ async def _perform(page, context, step, journey, url, axe_path):
                 await locator.wait_for(state="visible")
             except BrowserError as exc:
                 raise CheckFailure(
-                    "completion-assertion",
+                    "target-ambiguous" if await locator.count() > 1 else "completion-assertion",
                     "Expected state was not visible in time",
                     f"Visible {step.target.role}: {step.target.name}",
                 ) from exc

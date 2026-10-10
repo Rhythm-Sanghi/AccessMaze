@@ -34,6 +34,20 @@
     "NetworkPolicy": {
       "additionalProperties": false,
       "properties": {
+        "mode": {
+          "default": "restricted",
+          "enum": [
+            "restricted",
+            "authorized-application"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "embedded_frames": {
+          "default": false,
+          "title": "Embedded Frames",
+          "type": "boolean"
+        },
         "navigation_origins": {
           "items": {
             "type": "string"
@@ -276,6 +290,20 @@
           "minLength": 1,
           "title": "Name",
           "type": "string"
+        },
+        "frame_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frame Name"
         }
       },
       "required": [

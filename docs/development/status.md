@@ -156,3 +156,35 @@ and setup-node use their Node 24 v5 actions. Permissions remain contents/read.
 Affected real-browser demo regression: 1 passed in 15.42 s. Ruff and workflow
 Prettier validation passed after formatting. Remote verification of the repair is
 pending; no CI success is inferred from local tests.
+
+
+## Phase A — browser compatibility and failure meaning
+
+Added explicit restricted/authorized-application modes and opt-in embedded-frame
+network navigation at approved navigation origins. Authored steps can select an
+unambiguous named frame. Existing DNS, resource/navigation separation, redirect
+and effect-window checks remain in force. Restricted frames still fail closed;
+read-only resource origins cannot grant frame navigation. New UI controls use the
+existing permission panel and journey editor.
+
+Findings now include an explicit evidence category (accessibility, completion
+assertion, environment, policy, authorization, unavailable state, definition,
+transient execution or inconclusive). Outer execution-budget and preparation
+failures carry separate run failure categories. Ambiguous visible assertions are
+definition errors, rather than confirmed missing completion states.
+
+Commands: `pytest engine/tests/test_browser_capabilities.py
+engine/tests/test_network_policy.py engine/tests/test_hackyard_demo.py -q`
+with the documented local Playwright cache: **7 passed, 25.04 s**. Actual browser
+checks covered an approved cross-origin frame, one approved POST, refusal with
+resource-only approval, restricted frame requests and duplicate frame names.
+`npm run check`, `npm test` (**9 passed, 5.06 s**), Ruff, contract freshness and
+Git whitespace checks passed. Local baseline totals remain recorded separately.
+
+Limits: named-frame steps only; discovery remains on the primary page. Inline
+srcdoc/blank frame targets and complete cross-frame focus/AX verification are
+unsupported. Frame permission controls network navigation, not a hostile-site
+sandbox. Popups, WebSockets, service workers and downloads remain restricted.
+Cross-origin APIs/resources already supported by exact origin permissions retain
+the existing containment tests. No independent security or assistive-technology
+verification is claimed. New source has not yet been packaged or tested natively.

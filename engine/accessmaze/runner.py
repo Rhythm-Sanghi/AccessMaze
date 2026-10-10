@@ -12,6 +12,7 @@ from playwright.async_api import Error as BrowserError
 from playwright.async_api import async_playwright
 
 from accessmaze.actions import CheckFailure, cancellable, perform
+from accessmaze.classification import classify_failure
 from accessmaze.evidence import EvidencePrivacy, fingerprint, public_journey, redact
 from accessmaze.exploration import explore
 from accessmaze.inputs import RunInputs
@@ -126,6 +127,10 @@ async def execute(
     blocked = set()
 
     def save():
+        for finding in result["findings"]:
+            finding["classification"] = classify_failure(
+                finding["rule"], blocked=bool(blocked), verification=finding["verification"]
+            )
         result["outcome"] = task_outcome(result)
         result["nodes"] = [{"id": node, **data} for node, data in graph.nodes(data=True)]
         result["edges"] = [
@@ -187,6 +192,17 @@ async def execute(
                         "Layout zoom emulation changes CSS viewport and device scale; "
                         "it does not operate browser chrome zoom or verify OS magnification."
                     )
+                if journey.network.embedded_frames:
+                    result["limitations"].append(
+                        "Embedded frame network navigation is allowed only at "
+                        "approved navigation origins. "
+                        "Authored named-frame targets are supported; automatic frame discovery, "
+                        "srcdoc targets and complete cross-frame focus/AX verification are not."
+                    )
+                result["limitations"].append(
+                    "Popups, WebSockets, service workers and downloads remain unsupported. "
+                    "Browser automation is not a strong isolation boundary for hostile websites."
+                )
                 context.set_default_timeout(journey.profile.action_timeout_ms)
                 context.set_default_navigation_timeout(min(30000, journey.max_seconds * 1000))
                 context._accessmaze_inputs = inputs
@@ -294,6 +310,7 @@ async def execute(
                                     "sensitive-field",
                                     "navigation-http",
                                     "target-disabled",
+                                    "frame-unavailable",
                                     "native-validation-unverified",
                                     "error-discoverability-unverified",
                                 }
@@ -382,11 +399,19 @@ async def execute(
         if result.get("exploration"):
             result["exploration"]["stop_reason"] = "time-budget"
         result.update(status="failed", error="Configured execution time budget exceeded")
+        result["failure"] = {
+            "classification": "exploration-budget-exhaustion",
+            "reason": result["error"],
+        }
     except (BrowserError, ValueError, OSError) as exc:
         result.update(
             status="failed",
             error=f"{type(exc).__name__}: browser preparation or observation failed",
         )
+        result["failure"] = {
+            "classification": "browser-environment-limitation",
+            "reason": result["error"],
+        }
     finally:
         if result["steps"] and result["steps"][-1]["status"] == "running":
             result["steps"][-1]["status"] = "interrupted"
