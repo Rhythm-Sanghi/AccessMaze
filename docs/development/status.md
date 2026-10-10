@@ -4,6 +4,26 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Native covered-source delivery — byte-verified offline archives
+
+The notice recipe now preserves the original source archives for all five resolved
+MPL native crates (`cssparser`, `cssparser-macros`, `dtoa-short`, `option-ext`, `selectors`).
+Each matches its Cargo.lock SHA-256; **66 published files** match the compiler registry
+sources byte for byte. Notice index links make these sources available offline under
+MPL-2.0. `../legal/covered-source-verification.json` records hashes/counts/provenance.
+Regression rejects changed lock bytes or modified compiler source. Actual
+`pytest engine/tests/test_distribution_notices.py -q`: **5 passed**; actual inventory
+generation: **627 components / 782 notice files / 73 non-distributed raw flags**.
+
+First clean `7738b1a` preview build completed with new security code/notices and omitted
+standalone video encoder. The source-delivery follow-up requires a second final preview
+build; actual frozen/native results and artifact identity are recorded below when complete.
+The full committed engine suite passed **92 tests in 161.63 s**. Fresh npm/Python/Rust
+advisory commands found zero known vulnerability entries; Rust retains the same two
+informational warnings outside the Windows graph, confirmed by `cargo tree -i`.
+No blanket clean all-platform or legal qualification is claimed. Browser/Microsoft
+provenance, browser/axe preferred-source obligations and independent review remain open.
+
 ### Release verification pipeline and repeatable stability harness
 
 Workflow now adds manual dispatch, read-only permissions, cancellation/time bounds,

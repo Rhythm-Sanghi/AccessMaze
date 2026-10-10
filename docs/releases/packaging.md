@@ -89,3 +89,10 @@ including the persisted in-flight connectivity limitation, and native UI/approva
 recorder/keyboard/error/crash checks passed again. Earlier artifacts remain preserved.
 This is still same-machine, unsigned preview validation, with independent clean-machine
 and redistribution gates open. See engineering status for actual results and limitations.
+
+The current notice recipe includes five original MPL-covered native crate source archives
+under resources/notices/dependencies/covered-source, linked from THIRD-PARTY-NOTICES.md.
+They are ordinary gzip tar (.crate) archives, verified against Cargo.lock and every
+published source file used by the compiler. Recipients can extract/read/modify them
+offline under MPL-2.0. Independent review of complete source/rights obligations is still
+required; this action does not clear all incorporated browser binaries.

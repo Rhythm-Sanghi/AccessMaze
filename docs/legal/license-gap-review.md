@@ -114,3 +114,7 @@ Potential incompatibilities / remaining obligations:
 | cargo webview2-com 0.39.1 | genuine redistribution obligation / required notices | original upstream notice preserved |
 | cargo webview2-com-macros 0.8.1 | genuine redistribution obligation / required notices | original upstream notice preserved |
 | cargo webview2-com-sys 0.39.1 | genuine redistribution obligation / required notices | original upstream notice preserved |
+
+## Covered native source delivery follow-up
+
+The audit now preserves the five resolved MPL crate source archives offline, links them from THIRD-PARTY-NOTICES.md, and explicitly makes the covered source available under MPL-2.0. Each original .crate matches Cargo.lock SHA-256 and all 66 published files match the actual compiler registry sources byte for byte. The five archive hashes/counts are in covered-source-verification.json. A regression rejects either a lock checksum mismatch or modified compiler sources. Five distribution tests passed; actual audit still reports 627 components, 782 notices and 73 non-distributed raw flags. Browser incorporated code/source, axe preferred-source review, Microsoft runtime provenance and independent legal clearance remain open. Earlier paragraphs describe the initial review and are superseded only for this native-source delivery action.

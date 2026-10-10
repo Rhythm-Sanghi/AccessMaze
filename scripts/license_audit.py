@@ -7,14 +7,51 @@ import json
 import shutil
 import subprocess
 import sys
+import tarfile
 import tomllib
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def preserve_covered_source(folder, checksum, output):
+    """Preserve the published crate only after checking lock bytes and compiled sources."""
+    archive = folder.parents[2] / "cache" / folder.parent.name / f"{folder.name}.crate"
+    if digest(archive) != checksum:
+        raise ValueError("Covered source archive does not match Cargo.lock")
+    count = 0
+    with tarfile.open(archive, "r:gz") as packed:
+        for member in packed.getmembers():
+            relative = PurePosixPath(member.name).relative_to(folder.name)
+            if relative.is_absolute() or ".." in relative.parts:
+                raise ValueError("Unsafe covered source archive path")
+            if member.isdir():
+                continue
+            if not member.isfile():
+                raise ValueError(
+                    "Covered source archive contains a link or special file"
+                )
+            if (folder / Path(relative)).read_bytes() != packed.extractfile(
+                member
+            ).read():
+                raise ValueError(
+                    "Compiled covered source differs from published archive"
+                )
+            count += 1
+    target = output / "covered-source" / archive.name
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(archive, target)
+    return {
+        "path": target.relative_to(output).as_posix(),
+        "sha256": checksum,
+        "verified_source_files": count,
+        "license": "MPL-2.0",
+        "scope": "Unmodified published source archive; compiled registry files matched byte for byte",
+    }
 
 
 def notices(folder):
@@ -140,6 +177,7 @@ def audit(output):
         )
     )
     resolved = {n["id"] for n in cargo["resolve"]["nodes"]}
+    cargo_lock = tomllib.loads((ROOT / "apps/desktop/src-tauri/Cargo.lock").read_text())
     for package in cargo["packages"]:
         if package["id"] not in resolved or package["name"] == "accessmaze":
             continue
@@ -152,6 +190,17 @@ def audit(output):
             scope="resolved Windows graph, includes build dependencies",
             source=package["source"],
         )
+        if "MPL-2.0" in (package["license"] or ""):
+            locked = next(
+                p
+                for p in cargo_lock["package"]
+                if p["name"] == package["name"]
+                and p["version"] == package["version"]
+                and p.get("source") == package["source"]
+            )
+            records[-1]["covered_source"] = preserve_covered_source(
+                Path(package["manifest_path"]).parent, locked["checksum"], output
+            )
         supplements = ROOT / "docs/legal/upstream/provenance.json"
         if supplements.is_file():
             for evidence in json.loads(supplements.read_text(encoding="utf-8")):
@@ -257,6 +306,7 @@ def audit(output):
             "If standalone FFmpeg is distributed, static LGPL source/relink obligations require a corresponding-source plan; current package recipe omits this unused encoder",
             "Microsoft graphics runtime redistribution and exact included binary provenance require review",
             "Verify release module inclusion against inventory; missing installed optional-platform notices do not prove a shipped violation",
+            "MPL native crate sources are included and byte-verified; independent legal review of all covered-source and browser delivery obligations remains required",
         ],
     }
     (output / "inventory.json").write_text(
@@ -281,6 +331,10 @@ def audit(output):
         for notice in component["notices"]:
             lines.append(
                 f"- [{notice['path']}]({notice['path']}) — SHA-256 `{notice['sha256']}`"
+            )
+        if source := component.get("covered_source"):
+            lines.append(
+                f"- Covered source, made available under MPL-2.0: [{source['path']}]({source['path']}) — SHA-256 `{source['sha256']}`. Original .crate is a gzip tar archive; extract with tar to read/modify it offline."
             )
         if not component["notices"]:
             lines.append(

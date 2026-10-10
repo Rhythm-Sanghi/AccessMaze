@@ -1,7 +1,10 @@
 import asyncio
+import hashlib
 import importlib.util
+import io
 import json
 import os
+import tarfile
 import zipfile
 from pathlib import Path
 
@@ -67,6 +70,29 @@ def test_packaging_removes_only_unused_standalone_video_encoder(tmp_path):
     assert not (browsers / "ffmpeg-1011").exists()
     assert (browsers / "chromium-1243/binary").read_bytes() == b"test"
     assert (browsers / "chromium_headless_shell-1243/binary").read_bytes() == b"test"
+
+
+def test_covered_source_delivery_refuses_lock_or_compiled_source_mismatch(tmp_path):
+    source = tmp_path / "registry/src/index/example-1.0"
+    source.mkdir(parents=True)
+    (source / "lib.rs").write_bytes(b"// original covered source")
+    archive = tmp_path / "registry/cache/index/example-1.0.crate"
+    archive.parent.mkdir(parents=True)
+    with tarfile.open(archive, "w:gz") as packed:
+        info = tarfile.TarInfo("example-1.0/lib.rs")
+        info.size = len((source / "lib.rs").read_bytes())
+        packed.addfile(info, io.BytesIO((source / "lib.rs").read_bytes()))
+    checksum = hashlib.sha256(archive.read_bytes()).hexdigest()
+    helper = script("license_audit")
+    output = tmp_path / "output"
+    result = helper.preserve_covered_source(source, checksum, output)
+    assert result["verified_source_files"] == 1
+    assert (output / result["path"]).read_bytes() == archive.read_bytes()
+    with pytest.raises(ValueError, match="Cargo.lock"):
+        helper.preserve_covered_source(source, "0" * 64, output)
+    (source / "lib.rs").write_bytes(b"// local modification")
+    with pytest.raises(ValueError, match="Compiled covered source differs"):
+        helper.preserve_covered_source(source, checksum, output)
 
 
 @pytest.mark.browser
