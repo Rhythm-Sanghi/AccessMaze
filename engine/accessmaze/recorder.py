@@ -201,7 +201,10 @@ class Recorder:
                         await recording.attach(context, page)
                         # Manual session effects are separately authorized before launching.
                         policy.effects = True
-                        await page.goto(self.target, wait_until="domcontentloaded")
+                        context.set_default_timeout(recording.journey.profile.action_timeout_ms)
+                        await cancellable(
+                            page.goto(self.target, wait_until="domcontentloaded"), recording
+                        )
                         recording.status = "recording"
                         while (
                             not recording.stop.is_set()
@@ -215,7 +218,7 @@ class Recorder:
                                 break
                             if recording.capture.is_set():
                                 recording.capture.clear()
-                                await recording.capture_completion(page)
+                                await cancellable(recording.capture_completion(page), recording)
                             await asyncio.sleep(0.1)
             except TimeoutError:
                 recording.warnings.add("Recording reached its time bound")

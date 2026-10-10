@@ -12,6 +12,10 @@ script. `uv run --project engine pytest engine/tests/test_package_integrity.py -
 **1 passed**, exercising valid hashes, altered files and path-escape rejection through
 the actual PowerShell script. Ruff, diff checks and Python/npm production dependency
 audits passed (no known vulnerabilities; editable local project skipped by pip-audit).
+Full engine suite including package integrity: **68 passed**. A subsequent real
+headed recorder cancellation regression also passed (**4 recorder tests**): stopping
+during a deliberately held initial HTTP response closes promptly, without waiting
+for the response. Initial navigation and completion capture are now cancellable.
 The new frozen/native build is being verified; these checks do not establish an
 independent clean-machine installation or package authenticity/signing.
 

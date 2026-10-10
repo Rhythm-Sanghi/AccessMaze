@@ -143,3 +143,54 @@ def test_headed_recorder_worker_lifecycle_on_windows(tmp_path):
         assert not any(p.is_running() for p in children)
     finally:
         worker.close()
+
+
+@pytest.mark.browser
+def test_recorder_stop_cancels_slow_initial_navigation():
+    import sys
+    import threading
+    import time
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    from accessmaze.recorder import Recorder
+
+    if sys.platform != "win32":
+        pytest.skip("Actual visible Windows recorder")
+    requested = threading.Event()
+    release = threading.Event()
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            requested.set()
+            release.wait(10)
+            try:
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(b"<h1>Slow</h1>")
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+
+        def log_message(self, *args):
+            pass
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    journey = template()
+    journey.target = f"http://127.0.0.1:{server.server_port}"
+    journey.allow_local = True
+    recorder = Recorder(journey, journey.target)
+    try:
+        recorder.start()
+        assert requested.wait(8), recorder.recording.snapshot()
+        started = time.monotonic()
+        recorder.close()
+        assert not recorder.thread.is_alive()
+        assert recorder.recording.status == "stopped"
+        assert time.monotonic() - started < 3, "Stop waited for the slow target response"
+    finally:
+        release.set()
+        recorder.close()
+        server.shutdown()
+        server.server_close()
+        thread.join()
