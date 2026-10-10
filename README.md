@@ -26,6 +26,8 @@ for actual verification and remaining release gates.
 - Light/dark desktop UI with labels, focus indicators and keyboard operation.
 - Website projects with separate navigation/API and read-only resource permissions,
   DNS pinning, redirect guards and private page-text evidence by default.
+- Run-only credential/text bindings and user-selected file uploads; saved definitions
+  contain binding names and field labels, never credentials or file paths.
 
 ## Limits
 
@@ -41,9 +43,10 @@ use explicitly approved origins. Popups, embedded frames, service workers and We
 are blocked; these restrictions can change application behavior. Blocked traffic makes
 findings and repair verification inconclusive.
 
-No real assistive-technology integration, credential management, recording assistant,
+No real assistive-technology integration, persistent credential management, recording assistant,
 PDF export, automatic issue resolution, mobile testing or plugin API is implemented.
-Use synthetic input only; journey inputs are plain text on disk. Do not test hostile
+Use dedicated test accounts and synthetic input; literal journey inputs are plain text
+on disk. Passwords must use run-only bindings. Do not test hostile
 websites or production workflows with consequential effects.
 
 ## Windows development

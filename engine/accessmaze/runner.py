@@ -13,6 +13,7 @@ from playwright.async_api import async_playwright
 from accessmaze.actions import CheckFailure, cancellable, perform
 from accessmaze.evidence import EvidencePrivacy, fingerprint, public_journey, redact
 from accessmaze.exploration import explore
+from accessmaze.inputs import RunInputs
 from accessmaze.network import BrowserPolicy, resolve_host
 from accessmaze.storage import now
 
@@ -27,9 +28,22 @@ def check_host(url, allow_local):
     resolve_host(url, allow_local)
 
 
-async def execute(store, project_id, journey, control, fixtures, axe_path: Path, run_id=None):
+async def execute(
+    store,
+    project_id,
+    journey,
+    control,
+    fixtures,
+    axe_path: Path,
+    run_id=None,
+    inputs=None,
+    input_key=None,
+):
     run_id = run_id or str(uuid4())
-    secrets = [s.value for s in journey.steps if s.action in {"fill", "assert_value"}]
+    inputs = inputs or RunInputs(journey, key=input_key)
+    secrets = [
+        s.value for s in journey.steps if s.action in {"fill", "assert_value"}
+    ] + inputs.secrets
     privacy = EvidencePrivacy(journey, secrets)
     result = {
         "id": run_id,
@@ -37,6 +51,7 @@ async def execute(store, project_id, journey, control, fixtures, axe_path: Path,
         "status": "preparing",
         "started_at": now(),
         "journey": public_journey(journey),
+        "input_signature": inputs.signature,
         "steps": [],
         "findings": [],
         "nodes": [],
@@ -101,6 +116,11 @@ async def execute(store, project_id, journey, control, fixtures, axe_path: Path,
                     accept_downloads=False,
                 )
                 context.set_default_timeout(4000)
+                context._accessmaze_inputs = inputs
+                if inputs.files:
+                    result["limitations"].append(
+                        "Programmatic upload; native file-picker accessibility is untested."
+                    )
 
                 await policy.install(context)
                 page = await context.new_page()

@@ -10,7 +10,8 @@ export type Action =
   | "offline"
   | "online"
   | "wait"
-  | "audit";
+  | "audit"
+  | "upload";
 export type Role =
   | "button"
   | "link"
@@ -26,7 +27,9 @@ export type Role =
 export interface Step {
   id: string;
   action: Action;
-  target?: { role: Role; name: string } | null;
+  target?: { role: Role; name: string; by?: "role" | "label" } | null;
+  value_from?: string | null;
+  file_label?: string;
   value: string;
   optional: boolean;
   effect: boolean;
@@ -94,6 +97,7 @@ export interface Observation {
   reduced_motion: boolean;
 }
 export interface Run {
+  input_signature?: string | null;
   exploration?: {
     actions: {
       step_id: string;

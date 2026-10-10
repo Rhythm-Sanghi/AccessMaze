@@ -4,6 +4,28 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Continuation milestone 2 — run-only account and file inputs
+
+Completed: named runtime bindings for text/password inputs, labeled-field locators,
+user-selected upload buffers (4 MiB combined), no imported filesystem paths, HTTPS
+or approved private-address transport for sensitive input, and per-worker HMAC input
+signatures so changed runtime data cannot verify a repair. Values/files never enter
+project JSON, run records or backups. Context cookies remain ephemeral. Known input
+values and filenames are redacted from evidence. Short secrets no longer damage
+run IDs/status metadata. Effect actions have a documented 250 ms event-request grace.
+Local axe instrumentation now works through CDP without changing target CSP.
+
+Commands: full Python suite **56 passed**; TypeScript/ESLint passed; **3 React tests
+passed**; production frontend build passed; Prettier passed; contracts regenerated.
+The actual browser regression follows an approved cross-origin login redirect,
+submits a password, receives an HTTP-only cookie and sends a multipart upload.
+Assertions check actual received bytes and absence of sensitive values in persistence.
+
+Limits: dedicated test accounts only; no personal-profile import, stored credentials,
+SSO popup/iframe handling, browser-native file-picker verification or CAPTCHA bypass.
+Run-input signatures intentionally cease to be comparable after worker restart.
+Dynamic application text requires opt-in evidence capture; redaction remains best effort.
+
 ### Continuation milestone 1 — authorized website network policy
 
 Completed from preserved commit `c66766d`: exact navigation/API and read-only
@@ -71,11 +93,11 @@ This is an operational preview across parts of milestones 1–7, with milestone 
 hardening. It does not complete the master specification. Milestone 9 remains gated.
 
 - General external-site discovery, unreachable-state proof and resume after crash are absent.
-- Recording assistance, uploads, preconditions, arbitrary zoom and advanced pointer profiles remain.
+- Recording assistance, preconditions, arbitrary zoom and advanced pointer profiles remain; runtime uploads are now supported.
 - Real assistive-technology integration, manual NVDA/high-contrast/keyboard evaluation and full UI performance testing remain.
 - Retests are narrow; human annotations and a full finding lifecycle remain.
 - Broader non-HTTP containment and comprehensive security review remain; DNS is now pinned for approved hosts.
-- Journey inputs are plain text; synthetic data only. Redaction is best effort.
+- Literal journey inputs remain plain text; credentials must use run-only bindings. Redaction is best effort.
 - Corruption recovery UI, large-history pagination and virtualization remain.
 - The unsigned portable build was tested on this Windows machine with developer tools removed from PATH. Clean-machine installation, upgrade/removal, signing, complete third-party license manifest and SBOM remain unverified.
 - CI is configured but has not run on GitHub. No upstream push or publication occurred.

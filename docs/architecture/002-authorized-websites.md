@@ -18,7 +18,8 @@ default to denied. Popups and embedded document navigations are unsupported.
 Service workers, downloads and WebSockets remain disabled. These are application
 controls, not an OS network sandbox or protection against browser vulnerabilities.
 
-Write permission exists only while an effect-declared authored action executes.
+Write permission exists while an effect-declared authored action executes and for
+250 ms afterward to let requests scheduled by its DOM event reach interception.
 Background writes outside that window are blocked, potentially changing application
 behavior. GET can also have external effects; user authorization remains required.
 If traffic is blocked, findings are inconclusive and repair comparisons cannot pass.
@@ -36,3 +37,12 @@ Sources: [Playwright routing](https://playwright.dev/python/docs/api/class-route
 Further milestones must reuse these controls for authentication, recording and
 exploration. No arbitrary imported code, persistent personal browser profiles or
 unreviewed recorder replay is allowed.
+
+Run-only input bindings contain names, never values or paths, in saved definitions.
+Text and selected file buffers pass through private IPC and exist in memory during
+execution. Password fields require run-only bindings. Files are bounded to 4 MiB
+combined and set with Playwright's buffer API; imported paths cannot read disk.
+Sensitive input requires HTTPS or explicitly approved private-address origins.
+HMAC signatures use an ephemeral per-worker key; repair comparison refuses changed
+inputs and comparisons across worker restarts rather than storing reusable secrets.
+Native file chooser accessibility is outside this programmatic upload check.

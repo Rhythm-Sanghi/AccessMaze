@@ -16,8 +16,11 @@ Do not use it to test hostile sites or enter secrets, credentials or real person
   authorization, and effectful runs require explicit additional authorization.
   GET requests can have effects too; use synthetic targets and inspect every action.
 - Imported definitions use strict schemas, bounded strings/budgets and semantic targets.
-  Arbitrary scripts, commands, file navigation and file upload are unsupported.
-- Password fields are blocked. Journey input values are plain text in SQLite.
+  Arbitrary scripts, commands and file navigation are unsupported. Uploads accept only
+  selected buffers with path-free names, bounded to 4 MiB combined per run.
+- Password fields require run-only input bindings and HTTPS or an approved private
+  test origin. Values and file buffers are in memory only; cookies use isolated ephemeral
+  contexts. Saved literal journey input values are plain text in SQLite.
   Run evidence removes those values; screenshots mask form fields and are enabled only
   for synthetic fixtures. Unrelated sensitive text is not guaranteed to be removed.
 - External page text is withheld using per-run tokens by default. Enabling page-text

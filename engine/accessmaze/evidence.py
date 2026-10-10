@@ -12,6 +12,8 @@ def safe_url(url):
 
 def redact(value, secrets):
     if isinstance(value, str):
+        if value == "[redacted]":
+            return value
         for secret in sorted(set(secrets), key=len, reverse=True):
             if secret:
                 value = value.replace(secret, "[redacted]")
@@ -19,7 +21,30 @@ def redact(value, secrets):
     if isinstance(value, list):
         return [redact(item, secrets) for item in value]
     if isinstance(value, dict):
-        return {key: redact(item, secrets) for key, item in value.items()}
+        metadata = {
+            "id",
+            "project_id",
+            "step_id",
+            "state_id",
+            "source",
+            "target",
+            "status",
+            "action",
+            "role",
+            "by",
+            "rule",
+            "severity",
+            "verification",
+            "first_step",
+            "value_from",
+            "input_signature",
+        }
+        return {
+            key: item
+            if key in metadata and not isinstance(item, (dict, list))
+            else redact(item, secrets)
+            for key, item in value.items()
+        }
     return value
 
 

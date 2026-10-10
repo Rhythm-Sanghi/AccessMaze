@@ -14,6 +14,7 @@ const actions: Action[] = [
   "online",
   "wait",
   "audit",
+  "upload",
 ];
 const roles: Role[] = [
   "button",
@@ -113,7 +114,8 @@ export default function JourneyEditor({
                       const action = e.target.value as Action;
                       update(index, {
                         action,
-                        effect: action === "activate",
+                        effect: ["activate", "upload"].includes(action),
+                        value_from: null,
                         target: targeted.has(action)
                           ? { role: "button", name: "Target name" }
                           : null,
@@ -128,6 +130,24 @@ export default function JourneyEditor({
                 {targeted.has(step.action) && (
                   <>
                     <label>
+                      Locator
+                      <select
+                        aria-label={`Step ${index + 1} locator`}
+                        value={step.target?.by ?? "role"}
+                        onChange={(e) =>
+                          update(index, {
+                            target: {
+                              ...step.target!,
+                              by: e.target.value as "role" | "label",
+                            },
+                          })
+                        }
+                      >
+                        <option value="role">Role and name</option>
+                        <option value="label">Field label</option>
+                      </select>
+                    </label>
+                    <label>
                       Role
                       <select
                         aria-label={`Step ${index + 1} role`}
@@ -135,6 +155,7 @@ export default function JourneyEditor({
                         onChange={(e) =>
                           update(index, {
                             target: {
+                              ...step.target,
                               role: e.target.value as Role,
                               name: step.target?.name ?? "",
                             },
@@ -154,6 +175,7 @@ export default function JourneyEditor({
                         onChange={(e) =>
                           update(index, {
                             target: {
+                              ...step.target,
                               role: step.target?.role ?? "button",
                               name: e.target.value,
                             },
@@ -163,18 +185,49 @@ export default function JourneyEditor({
                     </label>
                   </>
                 )}
-                {["fill", "press", "assert_value", "wait"].includes(
-                  step.action,
-                ) && (
+                {step.action === "upload" && (
                   <label>
-                    Value
+                    File input label
                     <input
-                      aria-label={`Step ${index + 1} value`}
-                      value={step.value}
-                      onChange={(e) => update(index, { value: e.target.value })}
+                      aria-label={`Step ${index + 1} file label`}
+                      value={step.file_label ?? ""}
+                      onChange={(e) =>
+                        update(index, { file_label: e.target.value })
+                      }
                     />
                   </label>
                 )}
+                {["fill", "assert_value", "upload"].includes(step.action) && (
+                  <label>
+                    Run-only input key (optional for text)
+                    <input
+                      aria-label={`Step ${index + 1} runtime key`}
+                      value={step.value_from ?? ""}
+                      placeholder="test_password"
+                      onChange={(e) =>
+                        update(index, {
+                          value_from: e.target.value || null,
+                          value: e.target.value ? "" : step.value,
+                        })
+                      }
+                    />
+                  </label>
+                )}
+                {!step.value_from &&
+                  ["fill", "press", "assert_value", "wait"].includes(
+                    step.action,
+                  ) && (
+                    <label>
+                      Value
+                      <input
+                        aria-label={`Step ${index + 1} value`}
+                        value={step.value}
+                        onChange={(e) =>
+                          update(index, { value: e.target.value })
+                        }
+                      />
+                    </label>
+                  )}
               </div>
               <div className="step-options">
                 <label className="check">

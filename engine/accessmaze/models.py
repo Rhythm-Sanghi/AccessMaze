@@ -9,6 +9,7 @@ class StrictModel(BaseModel):
 
 
 class Target(StrictModel):
+    by: Literal["role", "label"] = "role"
     role: Literal[
         "button",
         "link",
@@ -40,14 +41,25 @@ class Step(StrictModel):
         "online",
         "wait",
         "audit",
+        "upload",
     ]
     target: Target | None = None
     value: str = Field(default="", max_length=2000)
     optional: bool = False
     effect: bool = False
+    value_from: str | None = Field(default=None, pattern=r"^[a-zA-Z][a-zA-Z0-9_-]{0,63}$")
+    file_label: str = Field(default="", max_length=200)
 
     @model_validator(mode="after")
     def validate_action(self):
+        if self.value_from and self.action not in {"fill", "assert_value", "upload"}:
+            raise ValueError("Runtime inputs are supported for fill, assert_value and upload")
+        if self.value_from and self.value:
+            raise ValueError("Runtime inputs cannot contain a saved literal value")
+        if self.action == "upload" and (
+            not self.value_from or not self.file_label or not self.effect
+        ):
+            raise ValueError("Upload requires a file label, runtime input and effect declaration")
         if (
             self.action in {"fill", "activate", "assert_visible", "assert_value", "assert_modal"}
             and not self.target
@@ -76,6 +88,22 @@ class Step(StrictModel):
         if self.action == "press" and self.value in {"Enter", "Space"} and not self.effect:
             raise ValueError("Enter/Space must declare a potentially state-changing effect")
         return self
+
+
+class RuntimeFile(StrictModel):
+    name: str = Field(min_length=1, max_length=120)
+    base64: str = Field(max_length=6 * 1024**2)
+
+    @model_validator(mode="after")
+    def filename_only(self):
+        if any(c in self.name for c in "/\\:\x00\r\n") or self.name in {".", ".."}:
+            raise ValueError("Upload name must be a filename without a path")
+        return self
+
+
+class RuntimeInputs(StrictModel):
+    values: dict[str, str] = Field(default_factory=dict, max_length=100)
+    files: dict[str, RuntimeFile] = Field(default_factory=dict, max_length=20)
 
 
 class Profile(StrictModel):

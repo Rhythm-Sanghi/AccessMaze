@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Journey, Project, Run } from "../../../packages/contracts";
 import { desktopAvailable, download, request } from "./api";
 import JourneyEditor from "./JourneyEditor";
+import RunInputs, { emptyInputs, type Inputs } from "./RunInputs";
 import Projects from "./Projects";
 import RunHistory from "./RunHistory";
 import Reports from "./Reports";
@@ -31,6 +32,7 @@ export default function App() {
   const [ready, setReady] = useState(false);
   const [authorized, setAuthorized] = useState(false);
   const [effects, setEffects] = useState(false);
+  const [inputs, setInputs] = useState<Inputs>(emptyInputs);
   const [confirmation, setConfirmation] = useState<Project | null>(null);
   const [theme, setTheme] = useState(
     localStorage.getItem("accessmaze-theme") ?? "light",
@@ -116,6 +118,7 @@ export default function App() {
     }
   }
   function choose(project: Project) {
+    setInputs(emptyInputs());
     if (activeRun(run)) {
       setError("Stop the active analysis before switching projects.");
       return;
@@ -132,6 +135,7 @@ export default function App() {
     );
   }
   function create(kind: string) {
+    setInputs(emptyInputs());
     setSelected(null);
     const next = structuredClone(
       templates[kind === "website" ? "accessible" : kind],
@@ -182,7 +186,9 @@ export default function App() {
       project_id: saved.id,
       authorized,
       allow_effects: effects,
+      inputs,
     });
+    setInputs(emptyInputs());
     setRun(await request<Run>("run.get", { id: started.id }));
     setPage("analysis");
   }
@@ -392,7 +398,21 @@ export default function App() {
                     }}
                   />
                 </div>
-                <JourneyEditor journey={journey} onChange={setJourney} />
+                <JourneyEditor
+                  journey={journey}
+                  onChange={(value) => {
+                    setJourney(value);
+                    setInputs(emptyInputs());
+                    setAuthorized(false);
+                    setEffects(false);
+                  }}
+                />
+                <RunInputs
+                  journey={journey}
+                  inputs={inputs}
+                  onChange={setInputs}
+                  onError={setError}
+                />
                 <div className="run-gate">
                   <h2>Run authorization</h2>
                   <label className="check">

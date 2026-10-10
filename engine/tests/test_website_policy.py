@@ -22,6 +22,8 @@ def website(routes):
         def do_GET(self):
             received.append((self.command, self.path))
             status, headers, body = routes.get(self.path, (404, {}, "missing"))
+            if callable(body):
+                status, headers, body = body(self)
             self.send_response(status)
             for key, value in headers.items():
                 self.send_header(key, value)

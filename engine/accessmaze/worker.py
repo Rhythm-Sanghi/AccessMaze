@@ -14,6 +14,7 @@ from uuid import UUID, uuid4
 from pydantic import ValidationError
 
 from accessmaze.fixtures import FixtureServer
+from accessmaze.inputs import RunInputs
 from accessmaze.maintenance import backup, prune
 from accessmaze.models import Journey, ProjectInput, Request
 from accessmaze.reports import export_report
@@ -34,6 +35,7 @@ class Worker:
         self.active = None
         self.control = None
         self.thread = None
+        self.input_key = os.urandom(32)
 
     def dispatch(self, request):
         params = request.params
@@ -100,6 +102,7 @@ class Worker:
                 raise ValueError("Confirm that you are authorized to test this target")
             project = self.store.project(params["project_id"])
             journey = Journey.model_validate(project["journey"])
+            inputs = RunInputs(journey, params.get("inputs"), self.input_key)
             if (
                 any(step.effect for step in journey.steps) or journey.exploration.enabled
             ) and params.get("allow_effects") is not True:
@@ -122,6 +125,7 @@ class Worker:
                             self.fixtures,
                             self.axe,
                             run_id,
+                            inputs,
                         )
                     )
                     await asyncio.sleep(0)
@@ -204,11 +208,11 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
     worker = Worker(args.storage, args.resources)
     try:
-        while line := sys.stdin.buffer.readline(1024 * 1024 + 1):
+        while line := sys.stdin.buffer.readline(8 * 1024 * 1024 + 1):
             request_id = None
             try:
-                if len(line) > 1024 * 1024:
-                    raise ValueError("Request exceeds 1 MiB")
+                if len(line) > 8 * 1024 * 1024:
+                    raise ValueError("Request exceeds 8 MiB")
                 raw = json.loads(line)
                 request_id = raw.get("id") if isinstance(raw, dict) else None
                 request = Request.model_validate(raw)

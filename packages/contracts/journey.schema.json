@@ -120,7 +120,8 @@
             "offline",
             "online",
             "wait",
-            "audit"
+            "audit",
+            "upload"
           ],
           "title": "Action",
           "type": "string"
@@ -151,6 +152,25 @@
           "default": false,
           "title": "Effect",
           "type": "boolean"
+        },
+        "value_from": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value From"
+        },
+        "file_label": {
+          "default": "",
+          "maxLength": 200,
+          "title": "File Label",
+          "type": "string"
         }
       },
       "required": [
@@ -163,6 +183,15 @@
     "Target": {
       "additionalProperties": false,
       "properties": {
+        "by": {
+          "default": "role",
+          "enum": [
+            "role",
+            "label"
+          ],
+          "title": "By",
+          "type": "string"
+        },
         "role": {
           "enum": [
             "button",

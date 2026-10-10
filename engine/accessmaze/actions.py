@@ -2,6 +2,8 @@ import asyncio
 
 from playwright.async_api import Error as BrowserError
 
+from accessmaze.network import canonical_origin
+
 
 async def cancellable(coroutine, control):
     task = asyncio.create_task(coroutine)
@@ -46,15 +48,33 @@ async def perform(page, context, step, journey, url, axe_path):
     if policy:
         policy.effects = step.effect
     try:
-        return await _perform(page, context, step, journey, url, axe_path)
+        result = await _perform(page, context, step, journey, url, axe_path)
+        if policy and step.effect:
+            # Allow requests scheduled by the DOM event to reach interception before
+            # closing this action's permission window. This grace is bounded.
+            await asyncio.sleep(0.25)
+        return result
     finally:
         if policy:
             policy.effects = False
 
 
 async def _perform(page, context, step, journey, url, axe_path):
+    inputs = getattr(context, "_accessmaze_inputs", None)
+    value = inputs.value(step) if inputs and step.action in {"fill", "assert_value"} else step.value
+    policy = getattr(context, "_accessmaze_policy", None)
+    secure_input = (
+        page.url.startswith("https://")
+        or (policy and canonical_origin(page.url) in policy.local_origins)
+        if page.url != "about:blank"
+        else False
+    )
     locator = (
-        page.get_by_role(step.target.role, name=step.target.name, exact=True)
+        (
+            page.get_by_label(step.target.name, exact=True)
+            if step.target.by == "label"
+            else page.get_by_role(step.target.role, name=step.target.name, exact=True)
+        )
         if step.target
         else None
     )
@@ -62,13 +82,21 @@ async def _perform(page, context, step, journey, url, axe_path):
         case "navigate":
             await page.goto(url, wait_until="domcontentloaded")
         case "fill":
+            if step.value_from and not secure_input:
+                raise CheckFailure(
+                    "sensitive-field",
+                    "Runtime text requires HTTPS",
+                    "HTTPS or explicitly authorized local test server",
+                )
             if await locator.count() != 1:
                 raise CheckFailure(
                     "target-ambiguous",
                     "Text field is absent or ambiguous",
                     "One matching text field",
                 )
-            if await locator.get_attribute("type") == "password":
+            if await locator.get_attribute("type") == "password" and (
+                not step.value_from or not inputs
+            ):
                 raise CheckFailure(
                     "sensitive-field",
                     "Password interaction blocked",
@@ -77,9 +105,26 @@ async def _perform(page, context, step, journey, url, axe_path):
             if journey.profile.keyboard_only:
                 await keyboard_reach(page, locator, journey.tab_budget)
                 await page.keyboard.press("ControlOrMeta+A")
-                await page.keyboard.insert_text(step.value)
+                await page.keyboard.insert_text(value)
             else:
-                await locator.fill(step.value)
+                await locator.fill(value)
+        case "upload":
+            if not secure_input:
+                raise CheckFailure(
+                    "upload-input",
+                    "Uploads require HTTPS",
+                    "HTTPS or explicitly authorized local test server",
+                )
+            if not inputs:
+                raise CheckFailure(
+                    "upload-input", "Runtime file input missing", "Choose a file for this run"
+                )
+            field = page.get_by_label(step.file_label, exact=True)
+            if await field.count() != 1 or await field.get_attribute("type") != "file":
+                raise CheckFailure(
+                    "upload-input", "File input absent or ambiguous", "One labeled file input"
+                )
+            await field.set_input_files(inputs.files[step.value_from])
         case "activate":
             if journey.profile.keyboard_only:
                 await keyboard_reach(page, locator, journey.tab_budget)
@@ -114,7 +159,7 @@ async def _perform(page, context, step, journey, url, axe_path):
                     )
                 await page.keyboard.press("Tab")
         case "assert_value":
-            if await locator.count() != 1 or await locator.input_value() != step.value:
+            if await locator.count() != 1 or await locator.input_value() != value:
                 raise CheckFailure(
                     "form-state-lost",
                     "Field does not retain the expected value",
@@ -150,7 +195,24 @@ async def _perform(page, context, step, journey, url, axe_path):
                     "Bundled axe-core script is missing",
                     "Install npm dependencies before running an audit",
                 )
-            await page.add_script_tag(content=axe_path.read_text(encoding="utf-8"))
+            # Instrument the isolated target through CDP without changing its CSP.
+            session = await context.new_cdp_session(page)
+            try:
+                injected = await session.send(
+                    "Runtime.evaluate",
+                    {
+                        "expression": axe_path.read_text(encoding="utf-8"),
+                        "allowUnsafeEvalBlockedByCSP": True,
+                    },
+                )
+                if "exceptionDetails" in injected:
+                    raise CheckFailure(
+                        "audit-unavailable",
+                        "axe injection failed",
+                        "Audit instrumentation available",
+                    )
+            finally:
+                await session.detach()
             return await page.evaluate("""async () => {
               const r=await axe.run(document, {resultTypes:['violations','incomplete']});
               return {violations:r.violations.map(v=>({id:v.id,impact:v.impact,

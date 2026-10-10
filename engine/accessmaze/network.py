@@ -50,6 +50,7 @@ class BrowserPolicy:
         self.resources = self.navigation | set(journey.network.resource_origins)
         self.effects = False
         self.resolver_rules = []
+        self.local_origins = set()
 
     async def prepare(self):
         allow_local = self.journey.allow_local or self.journey.target.startswith("fixture://")
@@ -61,6 +62,8 @@ class BrowserPolicy:
                 allow_local if url == canonical_origin(self.target) else self.journey.allow_local
             )
             addresses = await asyncio.to_thread(resolve_host, url, local)
+            if local and all(not address.is_global for address in addresses):
+                self.local_origins.add(url)
             hosts.setdefault(host, addresses[0])
         self.resolver_rules = [
             f"MAP {host} {'[' + str(ip) + ']' if ip.version == 6 else ip}"
