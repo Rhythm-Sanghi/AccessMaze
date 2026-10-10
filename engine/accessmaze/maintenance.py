@@ -7,25 +7,37 @@ import zipfile
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+from accessmaze.permissions import private_directory
 from accessmaze.storage import now
 
 
 def backup(store):
     files = [path for path in (store.root / "artifacts").rglob("*.png") if not path.is_symlink()]
-    database = store.root / "accessmaze.sqlite"
-    if database.stat().st_size + sum(path.stat().st_size for path in files) > 25 * 1024**2:
-        raise ValueError(
-            "Workspace exceeds the 25 MiB in-app backup limit; use an offline directory copy"
+    limit = 25 * 1024**2
+    error = "Workspace exceeds the 25 MiB in-app backup limit; use an offline directory copy"
+    artifact_bytes = sum(path.stat().st_size for path in files)
+    with store.connect() as source:
+        # Logical pages include committed WAL data that the main file omits.
+        database_bytes = (
+            source.execute("PRAGMA page_count").fetchone()[0]
+            * source.execute("PRAGMA page_size").fetchone()[0]
         )
+    if database_bytes + artifact_bytes > limit:
+        raise ValueError(error)
     output = io.BytesIO()
     with tempfile.TemporaryDirectory(prefix="AccessMaze backup ") as directory:
+        private_directory(Path(directory))
         target = Path(directory) / "accessmaze.sqlite"
         with store.connect() as source:
             destination = sqlite3.connect(target)
             try:
                 source.backup(destination)
+                database_schema = destination.execute("PRAGMA user_version").fetchone()[0]
             finally:
                 destination.close()
+        # Recheck the consistent snapshot in case a writer grew it after preflight.
+        if target.stat().st_size + sum(path.stat().st_size for path in files) > limit:
+            raise ValueError(error)
         with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
             archive.write(target, "accessmaze.sqlite")
             archive.writestr(
@@ -33,6 +45,8 @@ def backup(store):
                 json.dumps(
                     {
                         "schema_version": 3,
+                        "database_schema_version": database_schema,
+                        "contains_plaintext_human_notes": True,
                         "created_at": now(),
                         "contains_plaintext_journey_inputs": True,
                     }

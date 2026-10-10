@@ -14,7 +14,7 @@ from playwright.async_api import async_playwright
 
 from accessmaze.actions import CheckFailure, cancellable, perform
 from accessmaze.classification import classify_failure
-from accessmaze.evidence import EvidencePrivacy, fingerprint, public_journey, redact
+from accessmaze.evidence import EvidencePrivacy, fingerprint, public_journey, redact_run
 from accessmaze.exploration import explore
 from accessmaze.inputs import RunInputs
 from accessmaze.network import BrowserPolicy, resolve_host
@@ -142,7 +142,7 @@ async def execute(
             {"source": a, "target": b, **data} for a, b, data in graph.edges(data=True)
         ]
         result["reachability"] = analyze_reachability(result)
-        store.save_run(redact(result, secrets))
+        store.save_run(redact_run(result, secrets))
 
     save()
     if on_ready:

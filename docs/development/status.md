@@ -306,3 +306,28 @@ results, native rendering measurements, peak memory or accepted release budgets.
 **7 passed, 2.11 s**. `npm run check` passed; React **12 passed** including out-of-order
 history responses and keyboard paging. Ruff, Prettier and contract checks passed.
 New history UI still requires native-package acceptance; polling remains periodic.
+
+
+## Phase D — confirmed backup and redaction defects
+
+Added regressions before fixing two internally reproduced defects. With an open
+SQLite reader and 26 MiB committed in the WAL, the old backup accepted a workspace
+above its 25 MiB limit. The check now uses logical database pages and rechecks the
+consistent snapshot before compression. Backup temporary storage receives private
+permissions; the manifest distinguishes archive format 3 from actual database
+schema 4 and explicitly warns about plaintext human notes.
+
+A real browser run with runtime input `a` corrupted executable hashes, state IDs
+and reproduction references through substring redaction. Generated structural
+references, host environment versions/hashes and audit engine metadata now remain
+intact; page names, descriptions and input values still undergo redaction. This
+fix protects evidence integrity, not a claim of encryption or hostile-site isolation.
+
+Before fixes: `pytest test_maintenance.py test_runtime_inputs.py -q`:
+**3 failed, 5 passed, 17.88 s**, including both reproduced defects and missing schema
+metadata. After fixes: `pytest test_maintenance.py test_runtime_inputs.py
+ test_investigation.py -q --junitxml=dist/security-after.xml`: **15 passed, 38.06 s**,
+including actual private login/upload, single-character input, retained/withheld
+replay, SQLite WAL and restored snapshot integrity. Two initial attempted commands
+named nonexistent privacy test files and ran no tests; these are not counted as
+verification. This is internal regression review, not an independent security audit.
