@@ -113,6 +113,7 @@ export interface Run {
   };
   input_signature?: string | null;
   exploration?: {
+    mode?: "approved-walk";
     actions: {
       step_id: string;
       kind: string;

@@ -142,8 +142,17 @@ export default function RunWorkspace({
           {run.exploration && (
             <>
               <h3>Branch discovery</h3>
-              <p>{run.exploration.actions.length} replay/discovery actions</p>
-              <p>Stopped: {run.exploration.stop_reason}</p>
+              <p>
+                {run.exploration.actions.length}{" "}
+                {run.exploration.mode === "approved-walk"
+                  ? "approved website actions"
+                  : "replay/discovery actions"}
+              </p>
+              <p>
+                {run.exploration.stop_reason === "running"
+                  ? "Exploration in progress"
+                  : `Stopped: ${run.exploration.stop_reason}`}
+              </p>
               <p>
                 {run.exploration.pending_branches.length} bounded frontier
                 states or actions

@@ -79,6 +79,7 @@ async def main():
                 full_page=True,
             )
             await approve.click()
+            await approve.wait_for(state="hidden")
             await page.get_by_role(
                 "button", name="Approve button: Remain", exact=True
             ).wait_for()

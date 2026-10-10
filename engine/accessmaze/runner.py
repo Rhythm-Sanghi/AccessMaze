@@ -101,6 +101,9 @@ async def execute(
         },
         "limitations": [
             "Bounded fixture button discovery; unvisited branches are not covered."
+            if journey.exploration.enabled and journey.target.startswith("fixture://")
+            else "Website exploration requires approval for each action; "
+            "unvisited branches are not covered."
             if journey.exploration.enabled
             else "Authored path only; unvisited branches are not covered.",
             "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",

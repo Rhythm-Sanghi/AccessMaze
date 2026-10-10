@@ -26,10 +26,12 @@ and temporary storage containing spaces, runs three real Chromium fixture journe
 checks JSON report identity and orderly EOF shutdown. It preserves the uniquely named
 storage directory for diagnosis. No Python/Node installation is needed by this check.
 
-The local `dist/AccessMaze-preview` build passed real WebView2/IPC/browser journeys,
+The local `dist/AccessMaze-web-preview` build at `677a57a` passed real WebView2/IPC/browser journeys,
 worker crash recovery and a frozen-worker test using only Windows system tools on
 PATH, a temporary working directory containing spaces and bundled browser resources.
-See `portable-smoke.json`, `../testing/desktop-crash.json` and engineering status.
+It also passed native per-action website approval and visible recorder checks.
+See `portable-smoke.json`, `portable-powershell.json`, `../testing/desktop-website.json`,
+`../testing/desktop-crash.json` and engineering status.
 This is same-machine verification, not a clean-machine installation test.
 
 The preview is unsigned. Required gates before a release candidate:

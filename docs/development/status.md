@@ -4,7 +4,7 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
-### Continuation milestone 5 — portable verification (in progress)
+### Continuation milestone 5 — portable verification
 
 Prepared: full Chromium for the visible recorder, source/dependency and SHA-256 file
 manifest, systems-only PowerShell checker, and actual native website/recorder smoke
@@ -12,12 +12,28 @@ script. `uv run --project engine pytest engine/tests/test_package_integrity.py -
 **1 passed**, exercising valid hashes, altered files and path-escape rejection through
 the actual PowerShell script. Ruff, diff checks and Python/npm production dependency
 audits passed (no known vulnerabilities; editable local project skipped by pip-audit).
-Full engine suite including package integrity: **68 passed**. A subsequent real
-headed recorder cancellation regression also passed (**4 recorder tests**): stopping
+Full engine suite including package integrity and cancellation: **69 passed**.
+Headed recorder regressions passed (**4 recorder tests**): stopping
 during a deliberately held initial HTTP response closes promptly, without waiting
 for the response. Initial navigation and completion capture are now cancellable.
-The new frozen/native build is being verified; these checks do not establish an
-independent clean-machine installation or package authenticity/signing.
+Built `dist/AccessMaze-web-preview` from clean commit `677a57a`. Every frozen
+AccessMaze Python module was compared against current-source bytecode and matched.
+Actual packaged verification commands/results:
+
+- `powershell -NoProfile -File scripts/Test-AccessMazePortable.ps1 -Package dist/AccessMaze-web-preview -Report docs/releases/portable-powershell.json`: hashes/path containment, system-only PATH, three Chromium journeys, JSON identity and EOF shutdown passed; startup **0.397 s**.
+- `uv run --project engine python scripts/portable_smoke.py --package AccessMaze-web-preview`: three frozen journeys and report checks passed; startup **0.556 s** (separate run).
+- `uv run --project engine python scripts/desktop_smoke.py --endpoint http://127.0.0.1:9224`: real native UI/IPC journeys passed; light/dark axe no violations, contrast incomplete.
+- `uv run --project engine python scripts/desktop_website_smoke.py --endpoint http://127.0.0.1:9224`: owned HTTP app, zero POSTs before approval, one after approval, no reset/replay, bundled visible recorder completion capture/stop passed. The first attempt exposed a test-harness timing error, corrected by waiting for the original proposal to disappear.
+- `uv run --project engine python scripts/desktop_crash.py --endpoint http://127.0.0.1:9224 --exe dist/AccessMaze-web-preview/AccessMaze.exe`: worker restart/interrupted evidence and cleanup of **4** Chromium processes passed.
+- `uv run --project engine python scripts/benchmark.py`: **15** sequential real Chromium runs, **402.8 MiB** peak / **375.92 MiB** median summed RSS. Shared pages count per process; no UI startup or stress claim.
+
+Screenshots and raw JSON contain actual local execution. The test-only WebView2
+debugging port is not enabled by product code; the owned test app was closed.
+These results do not establish independent clean-machine installation, signing,
+manual assistive-technology behavior or release readiness.
+
+Final review corrected fixture-only wording in website coverage and the in-progress
+exploration display. A fresh package is being built with those reporting corrections.
 
 ### Continuation milestone 4 — approved website exploration and computed semantics
 
@@ -81,8 +97,8 @@ Limits: captures a supported subset; select/custom widgets, address-bar navigati
 dialogs and embedded/popup workflows require manual editing or are unsupported.
 Labels/completion text can contain personal information and must be reviewed.
 Manual-session scripts may issue writes on authorized origins while open.
-Packaging now includes full Chromium as well as its headless shell; a newly packaged
-build and independent clean-machine verification are still pending.
+Packaging includes full Chromium as well as its headless shell; the new package's
+visible recorder passed. Independent clean-machine verification remains pending.
 
 ### Continuation milestone 2 — run-only account and file inputs
 

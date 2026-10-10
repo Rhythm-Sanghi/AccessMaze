@@ -79,6 +79,8 @@ def test_website_walk_waits_for_each_approval_and_never_replays(store, fixtures,
             assert hits.count(("GET", "/")) == 1, "External workflow was reset or replayed"
             assert "Advance privately" not in json.dumps(result)
             assert "approval" not in result
+            assert not any("fixture button discovery" in s for s in result["limitations"])
+            assert any("requires approval for each action" in s for s in result["limitations"])
 
     asyncio.run(exercise())
 
