@@ -47,7 +47,7 @@ def test_real_failure_replay_and_correction_preserve_history(store, fixtures, ax
             inputs=RunInputs(prepared, {"values": values}),
             replay=provenance.copy(),
         )
-        assert corrected["replay"]["verdict"] == "not-reproduced-in-this-run"
+        assert corrected["replay"]["verdict"] == "environment-changed"
         assert store.run(original["id"]) == original
         cancelled = RunControl()
         cancelled.cancel.set()

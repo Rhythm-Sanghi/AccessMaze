@@ -26,6 +26,13 @@
           "minimum": 1,
           "title": "Max Actions",
           "type": "integer"
+        },
+        "max_states": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 2,
+          "title": "Max States",
+          "type": "integer"
         }
       },
       "title": "Exploration",
@@ -280,7 +287,15 @@
             "alert",
             "dialog",
             "radio",
-            "spinbutton"
+            "spinbutton",
+            "tab",
+            "menuitem",
+            "menuitemcheckbox",
+            "menuitemradio",
+            "option",
+            "switch",
+            "treeitem",
+            "listbox"
           ],
           "title": "Role",
           "type": "string"
@@ -304,6 +319,44 @@
           ],
           "default": null,
           "title": "Frame Name"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TargetScope"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "element_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z][A-Za-z0-9_:.\\-]{0,159}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Element Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
         }
       },
       "required": [
@@ -311,6 +364,39 @@
         "name"
       ],
       "title": "Target",
+      "type": "object"
+    },
+    "TargetScope": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "form",
+            "group",
+            "dialog",
+            "region",
+            "tablist",
+            "menu",
+            "listbox",
+            "radiogroup",
+            "tree",
+            "toolbar"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "name"
+      ],
+      "title": "TargetScope",
       "type": "object"
     }
   },

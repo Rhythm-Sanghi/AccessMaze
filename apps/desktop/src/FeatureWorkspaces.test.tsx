@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { request } from "./api";
@@ -93,16 +93,20 @@ it("keeps historical evidence separate and requires approval before real replay 
   vi.mocked(request).mockImplementation(async (method) =>
     method === "run.replay.prepare"
       ? { journey }
-      : method === "run.start"
-        ? { id: "live" }
-        : next,
+      : method === "project.save"
+        ? { id: "editable", name: "Editable replay", journey }
+        : method === "run.start"
+          ? { id: "live" }
+          : next,
   );
   const onStarted = vi.fn();
+  const onAuthored = vi.fn();
   render(
     <FailureReplay
       original={original}
       current={original}
       onStarted={onStarted}
+      onAuthored={onAuthored}
     />,
   );
   const user = userEvent.setup();
@@ -119,6 +123,15 @@ it("keeps historical evidence separate and requires approval before real replay 
   expect(start).toBeDisabled();
   expect(screen.getByText(/input: fresh_name/)).toBeVisible();
   expect(screen.getByLabelText("fresh_name")).toBeVisible();
+  await user.click(
+    screen.getByRole("button", { name: "Save as an editable journey" }),
+  );
+  await waitFor(() =>
+    expect(onAuthored).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "editable" }),
+    ),
+  );
+  expect(request).not.toHaveBeenCalledWith("run.start", expect.anything());
   await user.click(screen.getByLabelText(/I authorize this target/));
   start.focus();
   await user.keyboard("{Enter}");

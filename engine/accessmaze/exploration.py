@@ -75,6 +75,9 @@ async def explore(page, context, journey, url, axe_path, graph, root, result, co
 
     try:
         while queue:
+            if len(graph) >= config.max_states:
+                progress["stop_reason"] = "state-budget"
+                break
             source, path = queue.popleft()
             if source in expanded:
                 continue
@@ -92,6 +95,13 @@ async def explore(page, context, journey, url, axe_path, graph, root, result, co
               .filter(n=>n && n.length<=200).sort().slice(0,30)""")
             expanded.add(source)
             for index, name in enumerate(sorted(set(candidates))):
+                if len(graph) >= config.max_states:
+                    unfinished.extend(
+                        {"state_id": source, "path": [n], "reason": "state-budget"}
+                        for n in candidates[index:]
+                    )
+                    progress["stop_reason"] = "state-budget"
+                    break
                 if index and not await restore(path):
                     unfinished.extend(
                         {
@@ -107,8 +117,14 @@ async def explore(page, context, journey, url, axe_path, graph, root, result, co
                 if fingerprint(before) != source:
                     result["limitations"].append("Exploration replay diverged; branch skipped")
                     continue
+                sequence = len(progress["actions"]) + 1
+                used_ids = {s.id for s in journey.steps} | {
+                    a["step_id"] for a in progress["actions"]
+                }
+                while f"explore-{sequence}" in used_ids:
+                    sequence += 1
                 step = Step(
-                    id=f"explore-{len(progress['actions']) + 1}",
+                    id=f"explore-{sequence}",
                     action="activate",
                     effect=True,
                     target={"role": "button", "name": name},
@@ -151,6 +167,8 @@ async def explore(page, context, journey, url, axe_path, graph, root, result, co
                             "id": str(uuid4()),
                             "step_id": step.id,
                             "rule": failure.code,
+                            "target_identity": step.target.model_dump(),
+                            "replay_steps": [s.model_dump() for s in [*path, step]],
                             "title": failure.actual,
                             "severity": "moderate",
                             "verification": "confirmed-automated"

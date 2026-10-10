@@ -118,6 +118,10 @@ export default function RunHistory({
             comparison.previous_id === previous && (
               <>
                 <h3>Task outcome</h3>
+                <p role="status">
+                  {comparison.verdict?.replaceAll("-", " ") ??
+                    "Historical verdict unavailable"}
+                </p>
                 <p>
                   Baseline: {comparison.previous_outcome.status} · Candidate:{" "}
                   {comparison.current_outcome.status}
@@ -218,6 +222,7 @@ export default function RunHistory({
                         <th>Baseline</th>
                         <th>Candidate</th>
                         <th>Observed states</th>
+                        <th>Focus / controls</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -229,6 +234,10 @@ export default function RunHistory({
                           <td className="mono">
                             {s.previous_state_id?.slice(0, 8) ?? "—"} /{" "}
                             {s.current_state_id?.slice(0, 8) ?? "—"}
+                          </td>
+                          <td>
+                            {s.focus_change ?? "Unavailable"} /{" "}
+                            {s.control_change ?? "Unavailable"}
                           </td>
                         </tr>
                       ))}

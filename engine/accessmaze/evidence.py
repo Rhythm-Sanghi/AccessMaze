@@ -167,7 +167,7 @@ async def observe(page):
 async def observe_document(page):
     data = await page.evaluate("""() => {
       const controls = [...document.querySelectorAll(
-        'button,input,select,textarea,a[href],[role=button],[role=dialog],[role=alert],[role=status]'
+        'button,input,select,textarea,a[href],[role]'
       )].slice(0,200).map(e=>({
         tag:e.tagName.toLowerCase(), role:e.getAttribute('role'),
         name:((e.getAttribute('aria-labelledby')||'').split(/\\s+/)
@@ -181,7 +181,8 @@ async def observe_document(page):
           ? e.getAttribute('aria-expanded') : null,
         selected:['true','false'].includes(e.getAttribute('aria-selected'))
           ? e.getAttribute('aria-selected') : null,
-        disabled:e.matches(':disabled'), visible:!!e.getClientRects().length,
+        disabled:e.matches(':disabled') || e.getAttribute('aria-disabled')==='true',
+        visible:!!e.getClientRects().length,
         invalid:e.getAttribute('aria-invalid'), populated:!!e.value,
         focused:e===document.activeElement
       }));

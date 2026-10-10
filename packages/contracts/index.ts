@@ -24,7 +24,15 @@ export type Role =
   | "alert"
   | "dialog"
   | "radio"
-  | "spinbutton";
+  | "spinbutton"
+  | "tab"
+  | "menuitem"
+  | "menuitemcheckbox"
+  | "menuitemradio"
+  | "option"
+  | "switch"
+  | "treeitem"
+  | "listbox";
 export interface Step {
   id: string;
   action: Action;
@@ -33,6 +41,22 @@ export interface Step {
     name: string;
     by?: "role" | "label";
     frame_name?: string | null;
+    element_id?: string | null;
+    description?: string | null;
+    scope?: {
+      role:
+        | "form"
+        | "group"
+        | "dialog"
+        | "region"
+        | "tablist"
+        | "menu"
+        | "listbox"
+        | "radiogroup"
+        | "tree"
+        | "toolbar";
+      name: string;
+    } | null;
   } | null;
   value_from?: string | null;
   file_label?: string;
@@ -53,6 +77,7 @@ export interface Journey {
     recover_navigation?: boolean;
     max_depth: number;
     max_actions: number;
+    max_states?: number;
   };
   schema_version: 1;
   name: string;
@@ -89,6 +114,7 @@ export interface Project {
 }
 export interface Finding {
   classification?: string;
+  replay_recipe?: { schema_version: 1; available: boolean; reason: string };
   id: string;
   step_id: string;
   rule: string;
@@ -139,6 +165,28 @@ export interface Run {
   failure?: { classification: string; reason: string };
   replay?: { source_id: string; finding_id: string; verdict?: string };
   outcome?: TaskOutcome;
+  reachability?: {
+    schema_version: 1;
+    status: string;
+    reachable_observed_states: number;
+    observed_states: number;
+    unexplored_frontier: {
+      state_id: string;
+      path: string[];
+      reason?: string;
+    }[];
+    blocking_attempts: {
+      step_id: string;
+      finding_ids: string[];
+      chronological_prerequisites: string[];
+    }[];
+    objectives: {
+      step_id: string;
+      status: string;
+      shortest_observed_state_path?: string[] | null;
+    }[];
+    limitation: string;
+  };
   approval?: {
     id: string;
     state_id: string;
@@ -180,7 +228,13 @@ export interface Run {
     interaction?: Record<string, unknown>;
   }[];
   findings: Finding[];
-  nodes: { id: string; observation: Observation; first_step: string }[];
+  nodes: {
+    id: string;
+    observation: Observation;
+    first_step: string;
+    navigation_state_id?: string;
+    interaction_state_id?: string;
+  }[];
   edges: {
     source: string;
     target: string;
@@ -199,6 +253,7 @@ export interface TaskOutcome {
   limitation: string;
 }
 export interface RunComparison {
+  verdict?: string;
   previous_id: string;
   current_id: string;
   comparable: boolean;
@@ -214,6 +269,8 @@ export interface RunComparison {
     previous_status: string;
     current_status: string;
     previous_state_id?: string | null;
+    focus_change?: string;
+    control_change?: string;
     current_state_id?: string | null;
   }[];
   first_divergent_step: {

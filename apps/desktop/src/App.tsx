@@ -526,6 +526,11 @@ export default function App() {
                 key={(replaySource ?? run).id}
                 original={replaySource ?? run}
                 current={run}
+                onAuthored={(project) => {
+                  choose(project);
+                  setPage("journey");
+                  void refresh();
+                }}
                 onStarted={(next) => {
                   setInputs(emptyInputs());
                   setReplaySource(replaySource ?? run);

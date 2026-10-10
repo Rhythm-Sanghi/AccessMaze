@@ -19,7 +19,9 @@ from accessmaze.inputs import RunInputs
 from accessmaze.network import BrowserPolicy, resolve_host
 from accessmaze.outcomes import task_outcome
 from accessmaze.profiles import apply_conditions
-from accessmaze.replay import replay_verdict
+from accessmaze.reachability import analyze_reachability
+from accessmaze.replay import replay_recipe, replay_verdict
+from accessmaze.state_identity import annotate_states
 from accessmaze.storage import now
 from accessmaze.website_exploration import explore_website
 
@@ -131,11 +133,14 @@ async def execute(
             finding["classification"] = classify_failure(
                 finding["rule"], blocked=bool(blocked), verification=finding["verification"]
             )
+            finding["replay_recipe"] = replay_recipe(result, finding)
         result["outcome"] = task_outcome(result)
+        annotate_states(graph)
         result["nodes"] = [{"id": node, **data} for node, data in graph.nodes(data=True)]
         result["edges"] = [
             {"source": a, "target": b, **data} for a, b, data in graph.edges(data=True)
         ]
+        result["reachability"] = analyze_reachability(result)
         store.save_run(redact(result, secrets))
 
     save()
@@ -298,6 +303,9 @@ async def execute(
                                 "id": str(uuid4()),
                                 "step_id": step.id,
                                 "rule": failure.code,
+                                "target_identity": step.target.model_dump()
+                                if step.target
+                                else None,
                                 "title": failure.actual,
                                 "severity": "moderate" if step.optional else "serious",
                                 "verification": "inconclusive"

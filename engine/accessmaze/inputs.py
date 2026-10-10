@@ -38,8 +38,15 @@ class RunInputs:
                 "buffer": content,
             }
         self.signature = None
-        if text_keys or file_keys:
-            payload = json.dumps(data.model_dump(), sort_keys=True).encode()
+        literals = {
+            s.id: s.value
+            for s in journey.steps
+            if s.action in {"fill", "assert_value"} and not s.value_from
+        }
+        if text_keys or file_keys or literals:
+            payload = json.dumps(
+                {"runtime": data.model_dump(), "literals": literals}, sort_keys=True
+            ).encode()
             self.signature = hmac.new(
                 key or secrets.token_bytes(32), payload, hashlib.sha256
             ).hexdigest()

@@ -8,6 +8,22 @@ class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class TargetScope(StrictModel):
+    role: Literal[
+        "form",
+        "group",
+        "dialog",
+        "region",
+        "tablist",
+        "menu",
+        "listbox",
+        "radiogroup",
+        "tree",
+        "toolbar",
+    ]
+    name: str = Field(min_length=1, max_length=200)
+
+
 class Target(StrictModel):
     by: Literal["role", "label"] = "role"
     role: Literal[
@@ -22,9 +38,20 @@ class Target(StrictModel):
         "dialog",
         "radio",
         "spinbutton",
+        "tab",
+        "menuitem",
+        "menuitemcheckbox",
+        "menuitemradio",
+        "option",
+        "switch",
+        "treeitem",
+        "listbox",
     ]
     name: str = Field(min_length=1, max_length=200)
     frame_name: str | None = Field(default=None, min_length=1, max_length=200)
+    scope: TargetScope | None = None
+    element_id: str | None = Field(default=None, pattern=r"^[A-Za-z][A-Za-z0-9_:.\-]{0,159}$")
+    description: str | None = Field(default=None, min_length=1, max_length=200)
 
 
 class Step(StrictModel):
@@ -146,6 +173,7 @@ class Exploration(StrictModel):
     recover_navigation: bool = False
     max_depth: int = Field(default=2, ge=1, le=4)
     max_actions: int = Field(default=50, ge=1, le=200)
+    max_states: int = Field(default=100, ge=2, le=500)
 
 
 class NetworkPolicy(StrictModel):

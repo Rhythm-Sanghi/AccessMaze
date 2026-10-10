@@ -188,3 +188,47 @@ sandbox. Popups, WebSockets, service workers and downloads remain restricted.
 Cross-origin APIs/resources already supported by exact origin permissions retain
 the existing containment tests. No independent security or assistive-technology
 verification is claimed. New source has not yet been packaged or tested natively.
+
+
+## Phase B — discovery, replay and graph investigation
+
+Added intersecting named semantic scopes, stable IDs and ARIA description constraints
+with explicit ambiguity refusal and locator provenance. Discovery now offers tabs,
+menu items/checkable menu items, switches, options, tree items and custom comboboxes
+alongside the existing actions. Roving composites and active-descendant ownership
+use actual bounded keyboard navigation; unsupported native-select/container actions,
+ambiguous targets and unavailable states remain frontier entries. Navigation and
+interaction IDs are separate; full focus observations remain in the graph. Explicit
+state budgets supplement action/depth/time bounds for websites and controlled fixtures.
+
+Version-1 recipes retain supported approved discovery paths with permission/profile
+requirements and observation references. Controlled fixture recipes use observed
+prerequisites. External recipes require explicitly retained page text; withheld names
+are never reconstructed. All replay needs fresh authorization and runtime inputs.
+The replay panel can save a separate editable project. Target/environment changes and
+unmatched input signatures cannot claim matched-condition non-reproduction.
+
+Graph analysis records actual objective witnesses, blocking attempts, chronological
+prerequisites, shortest state paths, up to three observed alternatives per state and
+unknown frontiers. Search is bounded to 1,000 edges. Paths do not automatically become
+replay recipes or prove global unreachability. Comparison adds overall conservative
+verdicts and focus/control changes. A verified comparison defect was fixed: signatures
+now cover redacted saved literal inputs, so different plaintext no longer appears
+comparable. Discovery target identities are also retained or explicitly unmatchable.
+
+Acceptance: full `pytest engine/tests -q --junitxml=dist/phase-b-suite.xml`:
+**121 passed, 175.26 s**. After controlled-fixture recipe/state-bound additions,
+`pytest test_investigation.py test_exploration.py test_accessibility_semantics.py
+ test_browser_capabilities.py -q`: **15 passed, 43.61 s**. Final collision-safe step
+IDs and bounded alternatives: `pytest test_investigation.py test_reachability.py -q`:
+**8 passed, 17.81 s**. Actual Chromium checks cover roving tabs, active-descendant
+options, ARIA descriptions, duplicate scoped buttons, focus identity, retained/private
+recipes, real broken/corrected replay, input-signature mismatch and state exhaustion.
+`npm run check`, `npm test` (**9 passed, 5.42 s**), formatting, Ruff and contract checks
+passed. React replay regression verifies saving an editable draft does not execute it.
+Architecture/limits: [004-investigation-evidence.md](../architecture/004-investigation-evidence.md).
+
+Remote PR run [38073119309](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38073119309)
+at `6f2360d`: Linux and Windows check jobs completed successfully; packaging was still
+running when recorded. This does not verify the later Phase B source. Native/portable
+verification of the new UI remains pending. No new independent release gate is cleared.
