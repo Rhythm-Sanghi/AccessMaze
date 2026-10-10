@@ -84,6 +84,7 @@ export interface Journey {
   target: string;
   steps: Step[];
   profile: {
+    schema_version?: 1;
     action_timeout_ms?: number;
     keyboard_only: boolean;
     reduced_motion: boolean;
@@ -291,6 +292,9 @@ export type Method =
   | "profile.list"
   | "profile.save"
   | "profile.delete"
+  | "review.list"
+  | "review.save"
+  | "review.delete"
   | "project.list"
   | "project.save"
   | "project.delete"
@@ -325,4 +329,23 @@ export interface SavedProfile {
   name: string;
   profile: Journey["profile"];
   updated_at: string;
+}
+
+export interface HumanReview {
+  id?: string;
+  updated_at?: string;
+  schema_version: 1;
+  run_id: string;
+  step_id: string;
+  finding_id: string | null;
+  status: "planned" | "observed" | "inconclusive" | "verified-human";
+  performed_by_human: boolean;
+  assistive_technology: string;
+  browser: string;
+  os: string;
+  settings: string;
+  action: string;
+  expected: string;
+  actual: string;
+  notes: string;
 }

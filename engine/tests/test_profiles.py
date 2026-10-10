@@ -162,6 +162,7 @@ def test_version_two_migration_keeps_runs_and_partial_discovery(store, project):
     )
     with store.connect() as db:
         db.execute("DROP TABLE profiles")
+        db.execute("DROP TABLE human_reviews")
         db.execute("PRAGMA user_version=2")
     migrated = Store(store.root)
     migrated.recover()

@@ -15,7 +15,7 @@ from pydantic import ValidationError
 from accessmaze.fixtures import FixtureServer
 from accessmaze.inputs import RunInputs
 from accessmaze.maintenance import backup, prune
-from accessmaze.models import Journey, ProfileInput, ProjectInput, Request
+from accessmaze.models import HumanReview, Journey, ProfileInput, ProjectInput, Request
 from accessmaze.profiles import apply_conditions
 from accessmaze.recorder import Recorder
 from accessmaze.replay import prepare_replay, replay_verdict
@@ -141,6 +141,20 @@ class Worker:
             return self.recorder.recording.snapshot()
         if method == "profile.list":
             return self.store.profiles()
+        if method == "review.list":
+            UUID(params["run_id"])
+            return self.store.reviews(params["run_id"])
+        if method == "review.save":
+            if params.get("id"):
+                UUID(params["id"])
+            return self.store.save_review(
+                HumanReview.model_validate(params["review"]), params.get("id")
+            )
+        if method == "review.delete":
+            UUID(params["run_id"])
+            UUID(params["id"])
+            self.store.delete_review(params["run_id"], params["id"])
+            return {"ok": True}
         if method == "profile.save":
             profile_id = params.get("id")
             if profile_id:
@@ -289,6 +303,7 @@ class Worker:
             return {"ok": True}
         if method == "report.export":
             run = self.store.run(params["id"])
+            run["human_reviews"] = self.store.reviews(run["id"])
             screenshots = {}
             if params["format"] == "html":
                 for finding in run["findings"][:10]:

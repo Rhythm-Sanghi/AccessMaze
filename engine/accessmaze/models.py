@@ -144,6 +144,7 @@ class RuntimeInputs(StrictModel):
 
 
 class Profile(StrictModel):
+    schema_version: Literal[1] = 1
     action_timeout_ms: int = Field(default=10000, ge=1000, le=30000)
     keyboard_only: bool = True
     reduced_motion: bool = False
@@ -270,6 +271,49 @@ class ProjectInput(StrictModel):
     journey: Journey
 
 
+class HumanReview(StrictModel):
+    schema_version: Literal[1] = 1
+    run_id: str = Field(pattern=r"^[0-9a-fA-F-]{36}$")
+    step_id: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,64}$")
+    finding_id: str | None = Field(default=None, max_length=64)
+    status: Literal["planned", "observed", "inconclusive", "verified-human"] = "planned"
+    performed_by_human: bool = False
+    assistive_technology: str = Field(default="", max_length=200)
+    browser: str = Field(default="", max_length=200)
+    os: str = Field(default="", max_length=200)
+    settings: str = Field(default="", max_length=2000)
+    action: str = Field(default="", max_length=2000)
+    expected: str = Field(default="", max_length=2000)
+    actual: str = Field(default="", max_length=4000)
+    notes: str = Field(default="", max_length=4000)
+
+    @model_validator(mode="after")
+    def validate_verification(self):
+        from uuid import UUID
+
+        UUID(self.run_id)
+        if self.status in {"observed", "verified-human"} and (
+            not self.performed_by_human
+            or not all(
+                getattr(self, field).strip()
+                for field in (
+                    "assistive_technology",
+                    "browser",
+                    "os",
+                    "settings",
+                    "action",
+                    "expected",
+                    "actual",
+                )
+            )
+        ):
+            raise ValueError(
+                "Human observation requires attestation, exact testing context, "
+                "action, expected and actual behavior"
+            )
+        return self
+
+
 class Request(StrictModel):
     version: Literal[1]
     id: str = Field(min_length=1, max_length=64)
@@ -278,6 +322,9 @@ class Request(StrictModel):
         "profile.list",
         "profile.save",
         "profile.delete",
+        "review.list",
+        "review.save",
+        "review.delete",
         "project.list",
         "project.save",
         "project.delete",

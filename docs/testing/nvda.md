@@ -1,5 +1,9 @@
 # Manual NVDA verification procedure
 
+The Analysis workspace can prepare and retain this procedure using the
+[human investigation workflow](human-investigation.md). Preparation stays planned;
+only actual human observations can be attested. No NVDA execution is automated.
+
 Status: **NOT RUN**. Chromium AX snapshots, axe checks and scripted keyboard events
 are not NVDA verification. A human tester with NVDA and the packaged application must
 complete this procedure. Record failures and uncertainty; do not infer conformance.

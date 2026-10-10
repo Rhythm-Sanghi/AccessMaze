@@ -232,3 +232,35 @@ Remote PR run [38073119309](https://github.com/Rhythm-Sanghi/AccessMaze/actions/
 at `6f2360d`: Linux and Windows check jobs completed successfully; packaging was still
 running when recorded. This does not verify the later Phase B source. Native/portable
 verification of the new UI remains pending. No new independent release gate is cleared.
+
+
+## Phase C — human investigation and versioned profile batches
+
+Added a collapsed, keyboard-operable manual investigation panel with planned,
+observed, inconclusive and tester-attested verified-human records. Exact context,
+action, expected/actual observations and attestation are required for observed or
+verified-human status. NVDA preparation always starts planned with no actual result.
+Manual records remain separate from automated findings/outcomes/retests; JSON/HTML
+exports label them explicitly. SQLite schema 4 preserves existing run JSON and adds
+FK-cascaded manual records. Plaintext retention/export and upgrade rollback limits
+are documented in [human-investigation.md](../testing/human-investigation.md).
+Actual NVDA evaluation remains **NOT RUN**.
+
+Profiles now use version-1 snapshots. `scripts/profile_batch.py` runs 1–8 reviewed
+profiles sequentially, with a maximum 1,800-second execution budget, fresh contexts,
+explicit repeated-effect authorization, private outputs and no automatic retry or
+discovery. Condition differences remain descriptive/inconclusive for repair claims.
+Layout emulation remains explicitly distinct from real browser/text zoom.
+See [profile-batches.md](../testing/profile-batches.md).
+
+Commands/results: human review, profiles, lifecycle and storage/report regressions:
+**15 passed, 14.82 s**. New batch/manual integration checks: **3 passed, 6.46 s**,
+including actual keyboard-versus-pointer execution and authorization before output.
+React: **10 passed, 4.41 s**, including unverified NVDA preparation and save without
+browser execution. `npm run check`, Prettier, Ruff and contracts passed.
+Actual CLI batch used `--seconds 120 --authorized --allow-effects`: two profiles in
+**5.467 s**, keyboard task blocked (3.548 s), pointer task completed (1.881 s),
+comparison `inconclusive-different-conditions`. Raw local evidence:
+`dist/Profile-batch-readiness/batch.json`; no credentials or generated results are
+added to the repository. Comparative benchmark work remains in progress; native UI
+and packaging verification for schema 4 remain pending.

@@ -90,6 +90,12 @@
     "Profile": {
       "additionalProperties": false,
       "properties": {
+        "schema_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
         "action_timeout_ms": {
           "default": 10000,
           "maximum": 30000,

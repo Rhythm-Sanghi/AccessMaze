@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Journey, Project, Run } from "../../../packages/contracts";
 import { desktopAvailable, download, request } from "./api";
 import FailureReplay from "./FailureReplay";
+import HumanReviewPanel from "./HumanReviewPanel";
 import JourneyEditor from "./JourneyEditor";
 import RunInputs, { emptyInputs, type Inputs } from "./RunInputs";
 import RecorderPanel from "./RecorderPanel";
@@ -538,6 +539,9 @@ export default function App() {
                 }}
               />
             )}
+          {page === "analysis" && run && (
+            <HumanReviewPanel key={run.id} run={run} />
+          )}
           {(page === "analysis" || page === "reports") && (
             <RunHistory
               history={history}

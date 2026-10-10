@@ -79,6 +79,9 @@ img{{max-width:100%}}</style>
 <h2>Findings ({len(run["findings"])})</h2>{findings}<h2>Coverage limitations</h2><ul>{
                 limitations
             }</ul>
+<h2>Human observations — separate from automation</h2>
+<p>These are tester-entered records. Planned checks do not establish verification.</p>
+<pre>{esc(json.dumps(run.get("human_reviews", []), indent=2))}</pre>
 <h2>Configuration and provenance</h2><pre>{
                 esc(
                     json.dumps(
@@ -93,6 +96,7 @@ img{{max-width:100%}}</style>
                             "nodes": run.get("nodes", []),
                             "edges": run.get("edges", []),
                             "exploration": run.get("exploration"),
+                            "reachability": run.get("reachability"),
                         },
                         indent=2,
                     )

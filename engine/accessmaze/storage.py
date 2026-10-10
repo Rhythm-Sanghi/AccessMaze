@@ -20,7 +20,7 @@ class Store:
         (self.root / "artifacts").mkdir(exist_ok=True)
         with self.connect() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version > 3:
+            if version > 4:
                 raise RuntimeError("Database was created by a newer AccessMaze version")
             if version == 0:
                 db.executescript("""
@@ -39,6 +39,7 @@ class Store:
                     PRAGMA user_version=1;
                     COMMIT;
                 """)
+
             if version < 2:
                 db.executescript("""
                     BEGIN IMMEDIATE;
@@ -62,6 +63,64 @@ class Store:
                     PRAGMA user_version=3;
                     COMMIT;
                 """)
+
+            if version < 4:
+                db.executescript("""
+                    BEGIN IMMEDIATE;
+                    CREATE TABLE human_reviews (
+                        id TEXT PRIMARY KEY, run_id TEXT NOT NULL REFERENCES runs(id)
+                        ON DELETE CASCADE, result TEXT NOT NULL, updated_at TEXT NOT NULL
+                    );
+                    CREATE INDEX reviews_by_run ON human_reviews(run_id, updated_at);
+                    PRAGMA user_version=4;
+                    COMMIT;
+                """)
+
+    def reviews(self, run_id):
+        self.run(run_id)
+        with self.connect() as db:
+            rows = db.execute(
+                "SELECT * FROM human_reviews WHERE run_id=? ORDER BY updated_at,id", (run_id,)
+            ).fetchall()
+        return [
+            {"id": row["id"], "updated_at": row["updated_at"], **json.loads(row["result"])}
+            for row in rows
+        ]
+
+    def save_review(self, review, review_id=None):
+        run = self.run(review.run_id)
+        valid_steps = {s["id"] for s in run["journey"]["steps"]} | {
+            a["step_id"] for a in run.get("exploration", {}).get("actions", [])
+        }
+        if review.step_id not in valid_steps:
+            raise ValueError("Human review must reference a step in this run")
+        if review.finding_id and review.finding_id not in {f["id"] for f in run["findings"]}:
+            raise ValueError("Linked automated finding does not belong to this run")
+        with self.connect() as db:
+            if review_id:
+                existing = db.execute(
+                    "SELECT run_id FROM human_reviews WHERE id=?", (review_id,)
+                ).fetchone()
+                if not existing or existing["run_id"] != review.run_id:
+                    raise ValueError("Human review does not belong to this run")
+            elif (
+                db.execute(
+                    "SELECT count(*) FROM human_reviews WHERE run_id=?", (review.run_id,)
+                ).fetchone()[0]
+                >= 100
+            ):
+                raise ValueError("A run can retain at most 100 human observations")
+            review_id = review_id or str(uuid4())
+            db.execute(
+                "INSERT INTO human_reviews VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET "
+                "result=excluded.result,updated_at=excluded.updated_at",
+                (review_id, review.run_id, review.model_dump_json(), now()),
+            )
+        return next(r for r in self.reviews(review.run_id) if r["id"] == review_id)
+
+    def delete_review(self, run_id, review_id):
+        with self.connect() as db:
+            db.execute("DELETE FROM human_reviews WHERE id=? AND run_id=?", (review_id, run_id))
 
     def profiles(self):
         with self.connect() as db:
