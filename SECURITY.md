@@ -1,7 +1,8 @@
 # Security
 
 This is an early development build for synthetic fixtures and authorized test sites.
-Do not use it to test hostile sites or enter secrets, credentials or real personal data.
+Use dedicated test accounts and synthetic data. Do not test hostile sites, import
+personal browser profiles or enter production secrets or unrelated personal data.
 
 - No remote account, analytics or network analysis endpoint is used.
 - The desktop WebView never loads target pages; fresh Chromium contexts do.
