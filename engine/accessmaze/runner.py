@@ -1,0 +1,303 @@
+import asyncio
+import importlib.metadata
+import ipaddress
+import platform
+import socket
+import threading
+import time
+from pathlib import Path
+from urllib.parse import urlsplit
+from uuid import uuid4
+
+import networkx as nx
+from playwright.async_api import Error as BrowserError
+from playwright.async_api import async_playwright
+
+from accessmaze.actions import CheckFailure, cancellable, perform
+from accessmaze.evidence import fingerprint, observe, public_journey, redact
+from accessmaze.exploration import explore
+from accessmaze.storage import now
+
+
+class RunControl:
+    def __init__(self):
+        self.cancel = threading.Event()
+        self.pause = threading.Event()
+
+
+def check_host(url, allow_local):
+    parsed = urlsplit(url)
+    if parsed.scheme not in {"http", "https"} or parsed.username or parsed.password:
+        raise ValueError("Only HTTP(S) targets without embedded credentials are supported")
+    if not parsed.hostname:
+        raise ValueError("Target hostname is missing")
+    addresses = socket.getaddrinfo(parsed.hostname, parsed.port or 443, type=socket.SOCK_STREAM)
+    if not allow_local and any(
+        not ipaddress.ip_address(item[4][0]).is_global for item in addresses
+    ):
+        raise ValueError(
+            "Private, loopback and reserved networks require local-network authorization"
+        )
+
+
+def origin(url):
+    p = urlsplit(url)
+    return p.scheme, p.hostname, p.port or (443 if p.scheme == "https" else 80)
+
+
+async def execute(store, project_id, journey, control, fixtures, axe_path: Path, run_id=None):
+    run_id = run_id or str(uuid4())
+    secrets = [s.value for s in journey.steps if s.action in {"fill", "assert_value"}]
+    result = {
+        "id": run_id,
+        "project_id": project_id,
+        "status": "preparing",
+        "started_at": now(),
+        "journey": public_journey(journey),
+        "steps": [],
+        "findings": [],
+        "nodes": [],
+        "edges": [],
+        "environment": {
+            "engine": "0.1.0",
+            "playwright": importlib.metadata.version("playwright"),
+            "python": platform.python_version(),
+            "os": platform.platform(),
+            "networkx": importlib.metadata.version("networkx"),
+        },
+        "limitations": [
+            "Bounded fixture button discovery; unvisited branches are not covered."
+            if journey.exploration.enabled
+            else "Authored path only; unvisited branches are not covered.",
+            "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+            "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+            "Motion and viewport preferences are applied; usability requires human review.",
+            "Only same-origin requests are allowed. Cross-origin resources may be blocked.",
+            "Screenshots are captured only for bundled synthetic fixtures.",
+        ],
+    }
+    graph = nx.MultiDiGraph()
+    previous = None
+    started = time.monotonic()
+    url = (
+        fixtures.url(journey.target) if journey.target.startswith("fixture://") else journey.target
+    )
+    blocked = set()
+
+    def save():
+        result["nodes"] = [{"id": node, **data} for node, data in graph.nodes(data=True)]
+        result["edges"] = [
+            {"source": a, "target": b, **data} for a, b, data in graph.edges(data=True)
+        ]
+        store.save_run(redact(result, secrets))
+
+    save()
+    try:
+        if control.cancel.is_set():
+            raise asyncio.CancelledError
+        check_host(url, journey.allow_local or journey.target.startswith("fixture://"))
+        async with async_playwright() as pw:
+            browser = await cancellable(
+                pw.chromium.launch(headless=True, timeout=min(30000, journey.max_seconds * 1000)),
+                control,
+            )
+            result["environment"]["browser"] = browser.version
+            try:
+                context = await browser.new_context(
+                    viewport={
+                        "width": journey.profile.viewport_width,
+                        "height": journey.profile.viewport_height,
+                    },
+                    reduced_motion="reduce" if journey.profile.reduced_motion else "no-preference",
+                    service_workers="block",
+                    accept_downloads=False,
+                )
+                context.set_default_timeout(4000)
+
+                async def route_request(route):
+                    request = route.request
+                    if origin(request.url) != origin(url):
+                        blocked.add("Cross-origin request blocked")
+                        await route.abort("blockedbyclient")
+                        return
+                    if request.method not in {"GET", "HEAD", "OPTIONS"}:
+                        # Effects are authorized at run.start before any browser launches.
+                        if not any(s.effect for s in journey.steps):
+                            blocked.add("State-changing request blocked")
+                            await route.abort("blockedbyclient")
+                            return
+                    if journey.profile.network_latency_ms:
+                        await asyncio.sleep(journey.profile.network_latency_ms / 1000)
+                    await route.continue_()
+
+                await context.route("**/*", route_request)
+
+                async def close_socket(socket):
+                    blocked.add("WebSocket connection blocked")
+                    await socket.close()
+
+                await context.route_web_socket("**/*", close_socket)
+                page = await context.new_page()
+                # Every popup receives the same context restrictions; no inherited browser profile.
+                result["status"] = "running"
+                save()
+                async with asyncio.timeout(
+                    max(0, journey.max_seconds - (time.monotonic() - started))
+                ):
+                    for index, step in enumerate(journey.steps):
+                        while control.pause.is_set() and not control.cancel.is_set():
+                            result["status"] = "paused"
+                            save()
+                            await asyncio.sleep(0.1)
+                        if control.cancel.is_set():
+                            raise asyncio.CancelledError
+                        result["status"] = "running"
+                        entry = {
+                            "id": step.id,
+                            "action": step.action,
+                            "status": "running",
+                            "timestamp": now(),
+                            "index": index,
+                        }
+                        result["steps"].append(entry)
+                        save()
+                        failure = None
+                        task = asyncio.create_task(
+                            perform(page, context, step, journey, url, axe_path)
+                        )
+                        try:
+                            while not task.done():
+                                if control.cancel.is_set():
+                                    task.cancel()
+                                    raise asyncio.CancelledError
+                                await asyncio.sleep(0.05)
+                            audit = await task
+                            entry["status"] = "passed"
+                            if audit is not None:
+                                entry["audit"] = audit
+                                for violation in audit["violations"]:
+                                    result["findings"].append(
+                                        {
+                                            "id": str(uuid4()),
+                                            "step_id": step.id,
+                                            "rule": violation["id"],
+                                            "title": violation["description"],
+                                            "severity": violation["impact"] or "moderate",
+                                            "verification": "inconclusive"
+                                            if blocked
+                                            else "confirmed-automated",
+                                            "actual": violation,
+                                            "expected": "axe-core rule passes",
+                                            "timestamp": now(),
+                                            "reproduction": [
+                                                s.id for s in journey.steps[: index + 1]
+                                            ],
+                                            "remediation": violation["helpUrl"],
+                                        }
+                                    )
+                                if audit["incomplete"]:
+                                    result["limitations"].append(
+                                        "axe-core returned checks needing human review"
+                                    )
+                        except CheckFailure as exc:
+                            failure = exc
+                        except BrowserError:
+                            failure = CheckFailure(
+                                "browser-action",
+                                "Browser interaction failed or timed out",
+                                "Target action completes within the configured timeout",
+                            )
+                        finally:
+                            if not task.done():
+                                task.cancel()
+                                await asyncio.gather(task, return_exceptions=True)
+                        if failure:
+                            entry["status"] = "skipped" if step.optional else "failed"
+                            finding = {
+                                "id": str(uuid4()),
+                                "step_id": step.id,
+                                "rule": failure.code,
+                                "title": failure.actual,
+                                "severity": "moderate" if step.optional else "serious",
+                                "verification": "inconclusive"
+                                if blocked
+                                or failure.code
+                                in {
+                                    "browser-action",
+                                    "target-ambiguous",
+                                    "audit-unavailable",
+                                    "sensitive-field",
+                                }
+                                else "confirmed-automated",
+                                "actual": failure.actual,
+                                "expected": failure.expected,
+                                "timestamp": now(),
+                                "reproduction": [s.id for s in journey.steps[: index + 1]],
+                                "remediation": "Inspect the step and target; rerun after repair.",
+                            }
+                            if journey.target.startswith("fixture://"):
+                                filename = f"step-{index}.png"
+                                try:
+                                    await page.screenshot(
+                                        path=store.artifact_dir(run_id) / filename,
+                                        mask=[page.locator("input,textarea,[contenteditable]")],
+                                    )
+                                    finding["screenshot"] = filename
+                                except BrowserError:
+                                    result["limitations"].append("Screenshot capture failed")
+                            result["findings"].append(finding)
+                        observation = redact(await observe(page), secrets)
+                        state_id = fingerprint(observation)
+                        if state_id not in graph:
+                            graph.add_node(state_id, observation=observation, first_step=step.id)
+                        if previous is not None:
+                            graph.add_edge(
+                                previous,
+                                state_id,
+                                step_id=step.id,
+                                status=entry["status"],
+                                cycle=nx.has_path(graph, state_id, previous),
+                            )
+                        previous = state_id
+                        entry["state_id"] = state_id
+                        save()
+                        if failure and not step.optional:
+                            result["status"] = "failed"
+                            break
+                    else:
+                        if journey.exploration.enabled:
+                            result["limitations"].append(
+                                "Discovery is limited to named buttons on resettable fixtures."
+                            )
+                            await explore(
+                                page,
+                                context,
+                                journey,
+                                url,
+                                axe_path,
+                                graph,
+                                previous,
+                                result,
+                                control,
+                                save,
+                            )
+                        result["status"] = "completed_with_limitations"
+            finally:
+                await browser.close()
+    except asyncio.CancelledError:
+        result["status"] = "cancelled"
+    except TimeoutError:
+        result.update(status="failed", error="Configured execution time budget exceeded")
+    except (BrowserError, ValueError, OSError) as exc:
+        result.update(
+            status="failed",
+            error=f"{type(exc).__name__}: browser preparation or observation failed",
+        )
+    finally:
+        if result["steps"] and result["steps"][-1]["status"] == "running":
+            result["steps"][-1]["status"] = "interrupted"
+        result["limitations"].extend(sorted(blocked))
+        result["finished_at"] = now()
+        result["duration_seconds"] = round(time.monotonic() - started, 3)
+        save()
+    return store.run(run_id)

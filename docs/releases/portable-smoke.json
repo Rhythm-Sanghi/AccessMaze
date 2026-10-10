@@ -1,0 +1,28 @@
+{
+  "frozen_worker": "passed",
+  "system_path_only": true,
+  "working_directory": "temporary path with spaces",
+  "browser_resources": "portable bundled revision",
+  "worker_startup_seconds": 1.634,
+  "runs": [
+    {
+      "fixture": "accessible",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 3.47
+    },
+    {
+      "fixture": "broken",
+      "status": "failed",
+      "findings": 1,
+      "seconds": 3.786
+    },
+    {
+      "fixture": "conditional",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 3.731
+    }
+  ],
+  "limitation": "Same Windows machine; not a clean-machine installation test."
+}

@@ -1,0 +1,147 @@
+{
+  "platform": "Windows-11-10.0.26220-SP0",
+  "python": "3.13.9",
+  "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+  "logical_cpus": 12,
+  "machine_ram_gib": 15.66,
+  "scope": "15 sequential Chromium fixture runs, 0.1s RSS sampling; no UI startup measurement",
+  "rss_sum_peak_mib": 398.38,
+  "rss_sum_median_mib": 330.91,
+  "measurements": [
+    {
+      "iteration": 1,
+      "fixture": "accessible",
+      "seconds": 1.212,
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "export_ms": 0.098,
+      "project_load_ms": 4.179
+    },
+    {
+      "iteration": 1,
+      "fixture": "broken",
+      "seconds": 2.243,
+      "status": "failed",
+      "findings": 1,
+      "export_ms": 0.442,
+      "project_load_ms": 10.972
+    },
+    {
+      "iteration": 1,
+      "fixture": "errors",
+      "seconds": 1.248,
+      "status": "failed",
+      "findings": 1,
+      "export_ms": 0.136,
+      "project_load_ms": 32.086
+    },
+    {
+      "iteration": 1,
+      "fixture": "recovery",
+      "seconds": 2.703,
+      "status": "failed",
+      "findings": 1,
+      "export_ms": 0.283,
+      "project_load_ms": 60.075
+    },
+    {
+      "iteration": 1,
+      "fixture": "branch",
+      "seconds": 4.607,
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "export_ms": 0.199,
+      "project_load_ms": 51.587
+    },
+    {
+      "iteration": 2,
+      "fixture": "accessible",
+      "seconds": 2.469,
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "export_ms": 0.162,
+      "project_load_ms": 36.615
+    },
+    {
+      "iteration": 2,
+      "fixture": "broken",
+      "seconds": 4.871,
+      "status": "failed",
+      "findings": 1,
+      "export_ms": 0.201,
+      "project_load_ms": 60.538
+    },
+    {
+      "iteration": 2,
+      "fixture": "errors",
+      "seconds": 1.881,
+      "status": "failed",
+      "findings": 1,
+      "export_ms": 0.171,
+      "project_load_ms": 50.553
+    },
+    {
+      "iteration": 2,
+      "fixture": "recovery",
+      "seconds": 2.136,
+      "status": "failed",
+      "findings": 1,
+      "export_ms": 0.194,
+      "project_load_ms": 81.851
+    },
+    {
+      "iteration": 2,
+      "fixture": "branch",
+      "seconds": 2.428,
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "export_ms": 0.228,
+      "project_load_ms": 105.477
+    },
+    {
+      "iteration": 3,
+      "fixture": "accessible",
+      "seconds": 2.194,
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "export_ms": 0.146,
+      "project_load_ms": 88.949
+    },
+    {
+      "iteration": 3,
+      "fixture": "broken",
+      "seconds": 3.135,
+      "status": "failed",
+      "findings": 1,
+      "export_ms": 0.163,
+      "project_load_ms": 64.611
+    },
+    {
+      "iteration": 3,
+      "fixture": "errors",
+      "seconds": 1.441,
+      "status": "failed",
+      "findings": 1,
+      "export_ms": 0.15,
+      "project_load_ms": 85.042
+    },
+    {
+      "iteration": 3,
+      "fixture": "recovery",
+      "seconds": 1.456,
+      "status": "failed",
+      "findings": 1,
+      "export_ms": 0.141,
+      "project_load_ms": 57.572
+    },
+    {
+      "iteration": 3,
+      "fixture": "branch",
+      "seconds": 2.166,
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "export_ms": 0.199,
+      "project_load_ms": 117.158
+    }
+  ]
+}

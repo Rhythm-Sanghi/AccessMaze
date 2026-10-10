@@ -1,0 +1,23 @@
+{
+  "name": "accessmaze",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "apps/desktop"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/desktop",
+    "desktop": "npm run tauri -w apps/desktop -- dev",
+    "build": "npm run build -w apps/desktop",
+    "test": "npm run test -w apps/desktop",
+    "check": "npm run check -w apps/desktop",
+    "format": "prettier --write apps/desktop/src packages/contracts .github *.json",
+    "format:check": "prettier --check apps/desktop/src packages/contracts .github *.json",
+    "contracts": "uv run --project engine python scripts/contracts.py"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2",
+    "axe-core": "4.10.3"
+  }
+}

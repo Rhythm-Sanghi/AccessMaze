@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "method": {
+      "enum": [
+        "health",
+        "project.list",
+        "project.save",
+        "project.delete",
+        "project.archive",
+        "run.start",
+        "run.get",
+        "run.list",
+        "run.cancel",
+        "run.pause",
+        "run.resume",
+        "run.compare",
+        "report.export",
+        "evidence.read",
+        "storage.backup",
+        "storage.prune"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "params": {
+      "additionalProperties": true,
+      "title": "Params",
+      "type": "object"
+    }
+  },
+  "required": [
+    "version",
+    "id",
+    "method"
+  ],
+  "title": "Request",
+  "type": "object"
+}

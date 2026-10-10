@@ -1,0 +1,224 @@
+{
+  "$defs": {
+    "Exploration": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "default": false,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "max_depth": {
+          "default": 2,
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Max Depth",
+          "type": "integer"
+        },
+        "max_actions": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Max Actions",
+          "type": "integer"
+        }
+      },
+      "title": "Exploration",
+      "type": "object"
+    },
+    "Profile": {
+      "additionalProperties": false,
+      "properties": {
+        "keyboard_only": {
+          "default": true,
+          "title": "Keyboard Only",
+          "type": "boolean"
+        },
+        "reduced_motion": {
+          "default": false,
+          "title": "Reduced Motion",
+          "type": "boolean"
+        },
+        "viewport_width": {
+          "default": 1280,
+          "maximum": 3840,
+          "minimum": 320,
+          "title": "Viewport Width",
+          "type": "integer"
+        },
+        "viewport_height": {
+          "default": 800,
+          "maximum": 2160,
+          "minimum": 240,
+          "title": "Viewport Height",
+          "type": "integer"
+        },
+        "network_latency_ms": {
+          "default": 0,
+          "maximum": 3000,
+          "minimum": 0,
+          "title": "Network Latency Ms",
+          "type": "integer"
+        }
+      },
+      "title": "Profile",
+      "type": "object"
+    },
+    "Step": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "navigate",
+            "fill",
+            "activate",
+            "press",
+            "assert_visible",
+            "assert_value",
+            "assert_errors",
+            "assert_modal",
+            "offline",
+            "online",
+            "wait",
+            "audit"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Target"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value": {
+          "default": "",
+          "maxLength": 2000,
+          "title": "Value",
+          "type": "string"
+        },
+        "optional": {
+          "default": false,
+          "title": "Optional",
+          "type": "boolean"
+        },
+        "effect": {
+          "default": false,
+          "title": "Effect",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "action"
+      ],
+      "title": "Step",
+      "type": "object"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "button",
+            "link",
+            "textbox",
+            "checkbox",
+            "combobox",
+            "heading",
+            "status",
+            "alert",
+            "dialog",
+            "radio",
+            "spinbutton"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "name"
+      ],
+      "title": "Target",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "target": {
+      "maxLength": 2048,
+      "title": "Target",
+      "type": "string"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/Step"
+      },
+      "maxItems": 100,
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    },
+    "profile": {
+      "$ref": "#/$defs/Profile"
+    },
+    "max_seconds": {
+      "default": 60,
+      "maximum": 300,
+      "minimum": 1,
+      "title": "Max Seconds",
+      "type": "integer"
+    },
+    "tab_budget": {
+      "default": 60,
+      "maximum": 200,
+      "minimum": 1,
+      "title": "Tab Budget",
+      "type": "integer"
+    },
+    "allow_local": {
+      "default": false,
+      "title": "Allow Local",
+      "type": "boolean"
+    },
+    "exploration": {
+      "$ref": "#/$defs/Exploration"
+    }
+  },
+  "required": [
+    "name",
+    "target",
+    "steps"
+  ],
+  "title": "Journey",
+  "type": "object"
+}

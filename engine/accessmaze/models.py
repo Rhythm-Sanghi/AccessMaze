@@ -1,0 +1,169 @@
+from typing import Literal
+from urllib.parse import urlsplit
+
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+
+class StrictModel(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+
+class Target(StrictModel):
+    role: Literal[
+        "button",
+        "link",
+        "textbox",
+        "checkbox",
+        "combobox",
+        "heading",
+        "status",
+        "alert",
+        "dialog",
+        "radio",
+        "spinbutton",
+    ]
+    name: str = Field(min_length=1, max_length=200)
+
+
+class Step(StrictModel):
+    id: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,64}$")
+    action: Literal[
+        "navigate",
+        "fill",
+        "activate",
+        "press",
+        "assert_visible",
+        "assert_value",
+        "assert_errors",
+        "assert_modal",
+        "offline",
+        "online",
+        "wait",
+        "audit",
+    ]
+    target: Target | None = None
+    value: str = Field(default="", max_length=2000)
+    optional: bool = False
+    effect: bool = False
+
+    @model_validator(mode="after")
+    def validate_action(self):
+        if (
+            self.action in {"fill", "activate", "assert_visible", "assert_value", "assert_modal"}
+            and not self.target
+        ):
+            raise ValueError(f"{self.action} requires a semantic target")
+        if self.action == "press" and self.value not in {
+            "Tab",
+            "Shift+Tab",
+            "Enter",
+            "Space",
+            "Escape",
+            "ArrowDown",
+            "ArrowUp",
+            "ArrowLeft",
+            "ArrowRight",
+            "Home",
+            "End",
+        }:
+            raise ValueError("Unsupported keyboard key")
+        if self.action == "wait" and (not self.value.isdigit() or int(self.value) > 10000):
+            raise ValueError("Wait must be milliseconds between 0 and 10000")
+        if self.action == "activate" and not self.effect:
+            raise ValueError(
+                "Activation must explicitly declare a potentially state-changing effect"
+            )
+        if self.action == "press" and self.value in {"Enter", "Space"} and not self.effect:
+            raise ValueError("Enter/Space must declare a potentially state-changing effect")
+        return self
+
+
+class Profile(StrictModel):
+    keyboard_only: bool = True
+    reduced_motion: bool = False
+    viewport_width: int = Field(default=1280, ge=320, le=3840)
+    viewport_height: int = Field(default=800, ge=240, le=2160)
+    network_latency_ms: int = Field(default=0, ge=0, le=3000)
+
+
+class Exploration(StrictModel):
+    enabled: bool = False
+    max_depth: int = Field(default=2, ge=1, le=4)
+    max_actions: int = Field(default=50, ge=1, le=200)
+
+
+class Journey(StrictModel):
+    schema_version: Literal[1] = 1
+    name: str = Field(min_length=1, max_length=120)
+    target: str = Field(max_length=2048)
+    steps: list[Step] = Field(min_length=1, max_length=100)
+    profile: Profile = Field(default_factory=Profile)
+    max_seconds: int = Field(default=60, ge=1, le=300)
+    tab_budget: int = Field(default=60, ge=1, le=200)
+    allow_local: bool = False
+    exploration: Exploration = Field(default_factory=Exploration)
+
+    @model_validator(mode="after")
+    def validate_journey(self):
+        if self.exploration.enabled and not self.target.startswith("fixture://"):
+            raise ValueError("Branch discovery currently supports bundled synthetic fixtures only")
+        parsed = urlsplit(self.target)
+        if self.target not in {
+            "fixture://accessible",
+            "fixture://broken",
+            "fixture://errors",
+            "fixture://recovery",
+            "fixture://modal",
+            "fixture://conditional",
+            "fixture://branch",
+            "fixture://slow",
+        }:
+            if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+                raise ValueError("Target must be an HTTP(S) URL or a bundled fixture")
+            if parsed.username or parsed.password or parsed.query or parsed.fragment:
+                raise ValueError(
+                    "Credentials, query strings and fragments are not allowed in targets"
+                )
+            if not self.allow_local and parsed.hostname in {"localhost", "127.0.0.1", "::1"}:
+                raise ValueError("Local targets require explicit local-network authorization")
+        if len({step.id for step in self.steps}) != len(self.steps):
+            raise ValueError("Step IDs must be unique")
+        if self.steps[0].action != "navigate":
+            raise ValueError("The first step must navigate to the configured target")
+        if not any(step.action.startswith("assert_") and not step.optional for step in self.steps):
+            raise ValueError("A journey requires at least one mandatory completion assertion")
+        for step in self.steps:
+            if step.action == "navigate" and step.value not in {"", "/"}:
+                raise ValueError(
+                    "Navigation opens only the configured target; use links for transitions"
+                )
+        return self
+
+
+class ProjectInput(StrictModel):
+    name: str = Field(min_length=1, max_length=120)
+    journey: Journey
+
+
+class Request(StrictModel):
+    version: Literal[1]
+    id: str = Field(min_length=1, max_length=64)
+    method: Literal[
+        "health",
+        "project.list",
+        "project.save",
+        "project.delete",
+        "project.archive",
+        "run.start",
+        "run.get",
+        "run.list",
+        "run.cancel",
+        "run.pause",
+        "run.resume",
+        "run.compare",
+        "report.export",
+        "evidence.read",
+        "storage.backup",
+        "storage.prune",
+    ]
+    params: dict = Field(default_factory=dict)

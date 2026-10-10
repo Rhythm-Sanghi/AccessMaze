@@ -1,0 +1,14 @@
+{
+  "light": {
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  },
+  "dark": {
+    "violations": [],
+    "incomplete": [
+      "color-contrast"
+    ]
+  }
+}

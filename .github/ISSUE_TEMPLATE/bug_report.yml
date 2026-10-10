@@ -1,0 +1,16 @@
+name: Bug report
+description: Report an observable failure with reproducible evidence
+body:
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Steps, version, OS and synthetic journey. Remove all sensitive information.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
