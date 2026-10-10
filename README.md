@@ -87,6 +87,32 @@ uv run --project engine python scripts/package_windows.py
 
 Keep the output directory together and run `AccessMaze.exe` inside it.
 
+## Authorized website investigations
+
+Choose **Projects → Website investigation**, enter an authorized HTTP(S) URL and
+replace the completion assertion with the actual task outcome. Add exact origins
+for login/API navigation separately from read-only CDN resources. Private/loopback
+targets require their additional authorization. Blocked traffic can invalidate findings.
+
+Use **Run-only input key** for credentials and selected uploads; provide values/files
+in the run-input panel. These are cleared after starting, never saved in the project,
+and need to be supplied again for a fresh run. Uploads are limited to 4 MiB combined.
+Use dedicated test accounts. Fresh browser contexts do not import personal cookies.
+
+For recording, review origin permissions, authorize the separate manual session,
+then open the visible browser. Perform the task, capture a unique visible H1 as its
+completion condition, stop and review the draft in the editor. Supported fields become
+runtime bindings. Review labels for personal information and remove unwanted steps.
+Unsupported widgets and address-bar navigation require manual editing; drafts are
+discarded after worker restart unless reviewed and saved.
+
+Optional website exploration begins after authored completion. It proposes buttons
+and links, waits for approval before each action and follows one bounded path.
+Approve only authorized effects; finish or emergency-stop at any time. It never
+resets an external workflow. Waiting for approval counts toward the time budget.
+Page text stays private by default; computed browser semantics do not establish
+screen-reader behavior or WCAG conformance.
+
 ## Actual desktop screenshots
 
 ![Keyboard blocker with observed evidence](docs/development/screenshots/keyboard-blocker.png)
@@ -128,9 +154,9 @@ JSON schemas. Architecture choices and source research are in
 
 ## Roadmap and contribution
 
-Next work includes broader branch exploration, stronger network isolation,
-recording assistance and upload workflows, full desktop
-accessibility evaluation, portable packaging verification and clean-machine installation.
+Next work includes broader dynamic-application coverage, stronger network isolation,
+more recording/authoring coverage, full desktop accessibility evaluation,
+license/SBOM review and independent clean-machine installation.
 Release gates remain open until tested. Extensibility follows a reliable core.
 
 AccessMaze source uses the MIT license. axe-core is separately licensed MPL-2.0;

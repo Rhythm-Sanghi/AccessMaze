@@ -15,6 +15,12 @@ Do not use it to test hostile sites or enter secrets, credentials or real person
 - Activations and Enter/Space require an effect declaration. Every run requires target
   authorization, and effectful runs require explicit additional authorization.
   GET requests can have effects too; use synthetic targets and inspect every action.
+- External exploration requires approval of each specific proposed action and never
+  resets/replays an external workflow. Bounded fingerprints can refuse observed changes;
+  they cannot guarantee identical hidden state or prevent all concurrent application changes.
+- Recording has separate target/manual-session authorization. Background scripts may
+  write to approved navigation/API origins during that session. Typed values/files are
+  not captured, but labels and explicitly captured completion text require privacy review.
 - Imported definitions use strict schemas, bounded strings/budgets and semantic targets.
   Arbitrary scripts, commands and file navigation are unsupported. Uploads accept only
   selected buffers with path-free names, bounded to 4 MiB combined per run.
