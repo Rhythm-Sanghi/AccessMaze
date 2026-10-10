@@ -16,15 +16,17 @@ Full engine suite including package integrity and cancellation: **69 passed**.
 Headed recorder regressions passed (**4 recorder tests**): stopping
 during a deliberately held initial HTTP response closes promptly, without waiting
 for the response. Initial navigation and completion capture are now cancellable.
-Built `dist/AccessMaze-web-preview` from clean commit `677a57a`. Every frozen
+Built `dist/AccessMaze-web-preview` from clean commit `677a57a`, then repeated the
+build as `dist/AccessMaze-web-preview-final` from clean commit `2285147` with reporting
+corrections and updated guidance. Both earlier previews are preserved. Every frozen
 AccessMaze Python module was compared against current-source bytecode and matched.
 Actual packaged verification commands/results:
 
-- `powershell -NoProfile -File scripts/Test-AccessMazePortable.ps1 -Package dist/AccessMaze-web-preview -Report docs/releases/portable-powershell.json`: hashes/path containment, system-only PATH, three Chromium journeys, JSON identity and EOF shutdown passed; startup **0.397 s**.
-- `uv run --project engine python scripts/portable_smoke.py --package AccessMaze-web-preview`: three frozen journeys and report checks passed; startup **0.556 s** (separate run).
+- `powershell -NoProfile -File scripts/Test-AccessMazePortable.ps1 -Package dist/AccessMaze-web-preview-final -Report docs/releases/portable-powershell.json`: hashes/path containment, system-only PATH, three Chromium journeys, JSON identity and EOF shutdown passed; startup **0.797 s** (initial build **0.397 s**).
+- `uv run --project engine python scripts/portable_smoke.py --package AccessMaze-web-preview-final`: three frozen journeys and report checks passed; startup **0.945 s** (initial build **0.556 s**, separate runs).
 - `uv run --project engine python scripts/desktop_smoke.py --endpoint http://127.0.0.1:9224`: real native UI/IPC journeys passed; light/dark axe no violations, contrast incomplete.
 - `uv run --project engine python scripts/desktop_website_smoke.py --endpoint http://127.0.0.1:9224`: owned HTTP app, zero POSTs before approval, one after approval, no reset/replay, bundled visible recorder completion capture/stop passed. The first attempt exposed a test-harness timing error, corrected by waiting for the original proposal to disappear.
-- `uv run --project engine python scripts/desktop_crash.py --endpoint http://127.0.0.1:9224 --exe dist/AccessMaze-web-preview/AccessMaze.exe`: worker restart/interrupted evidence and cleanup of **4** Chromium processes passed.
+- `uv run --project engine python scripts/desktop_crash.py --endpoint http://127.0.0.1:9224 --exe dist/AccessMaze-web-preview-final/AccessMaze.exe`: worker restart/interrupted evidence and cleanup of **4** Chromium processes passed.
 - `uv run --project engine python scripts/benchmark.py`: **15** sequential real Chromium runs, **402.8 MiB** peak / **375.92 MiB** median summed RSS. Shared pages count per process; no UI startup or stress claim.
 
 Screenshots and raw JSON contain actual local execution. The test-only WebView2
@@ -33,7 +35,13 @@ These results do not establish independent clean-machine installation, signing,
 manual assistive-technology behavior or release readiness.
 
 Final review corrected fixture-only wording in website coverage and the in-progress
-exploration display. A fresh package is being built with those reporting corrections.
+exploration display. The final package passed all native/portable checks again,
+including assertions for the corrected labels. Targeted website regressions: **3 passed**;
+TypeScript/ESLint, **5 React tests**, production build, formatting and contracts passed.
+Its ZIP archive, CRC and SHA-256 record are in `../releases/preview-artifact.json`.
+Archive verification passed for **902 files / 387,878,632 bytes**. The final owned
+desktop process was closed and its test-only port 9224 was confirmed closed. All
+source and verification records are committed locally; no upstream publication.
 
 ### Continuation milestone 4 — approved website exploration and computed semantics
 

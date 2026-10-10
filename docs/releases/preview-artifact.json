@@ -1,0 +1,10 @@
+{
+  "archive": "dist/AccessMaze-web-preview-final.zip",
+  "bytes": 387878632,
+  "sha256": "49999c4d0c7470e1a5b4165b773db4ceda76f6e76a0ee0280304a31b1460564f",
+  "zip_crc": "passed",
+  "files": 902,
+  "source_commit": "2285147b1ed3e866d4c2d5588f547a5629437a4e",
+  "source_dirty": false,
+  "scope": "Unsigned development preview; independent clean-machine and manual accessibility gates remain open."
+}

@@ -3,25 +3,25 @@
   "system_path_only": true,
   "working_directory": "temporary path with spaces",
   "browser_resources": "portable bundled revision",
-  "worker_startup_seconds": 0.556,
+  "worker_startup_seconds": 0.945,
   "runs": [
     {
       "fixture": "accessible",
       "status": "completed_with_limitations",
       "findings": 0,
-      "seconds": 1.957
+      "seconds": 2.846
     },
     {
       "fixture": "broken",
       "status": "failed",
       "findings": 1,
-      "seconds": 1.928
+      "seconds": 2.425
     },
     {
       "fixture": "conditional",
       "status": "completed_with_limitations",
       "findings": 0,
-      "seconds": 2.366
+      "seconds": 2.991
     }
   ],
   "limitation": "Same Windows machine; not a clean-machine installation test."

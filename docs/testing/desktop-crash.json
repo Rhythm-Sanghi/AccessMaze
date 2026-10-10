@@ -3,5 +3,5 @@
   "run_marked_interrupted": true,
   "chromium_processes_cleaned": 4,
   "scope": "Real Windows desktop and Windows job object",
-  "executable": "dist\\AccessMaze-web-preview\\AccessMaze.exe"
+  "executable": "dist\\AccessMaze-web-preview-final\\AccessMaze.exe"
 }
