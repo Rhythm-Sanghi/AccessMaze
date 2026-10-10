@@ -25,6 +25,52 @@ from accessmaze.storage import Store
 from accessmaze.templates import template
 
 
+def schema_message(error):
+    # Locations may contain attacker-controlled mapping keys. Expose only schema fields/indices.
+    fields = {
+        "version",
+        "id",
+        "method",
+        "params",
+        "project",
+        "name",
+        "journey",
+        "target",
+        "steps",
+        "action",
+        "role",
+        "by",
+        "value",
+        "value_from",
+        "effect",
+        "network",
+        "navigation_origins",
+        "resource_origins",
+        "privacy",
+        "profile",
+        "max_seconds",
+        "max_states",
+        "max_depth",
+        "allow_local",
+        "file_label",
+        "values",
+        "files",
+    }
+    locations = []
+    for item in error.errors(include_input=False, include_context=False)[:4]:
+        location = ".".join(
+            str(part) if isinstance(part, int) or part in fields else "[field]"
+            for part in item["loc"]
+        )
+        locations.append(location or "journey")
+    return (
+        "Invalid request schema at "
+        + ", ".join(locations)
+        + ". Review required fields, semantic targets, completion assertions"
+        " and effect declarations."
+    )
+
+
 class Worker:
     def __init__(self, root: Path, resources: Path):
         development_browsers = resources / ".accessmaze" / "browsers"
@@ -261,7 +307,7 @@ def main():
                 data = worker.dispatch(request)
                 response = {"version": 1, "id": request.id, "result": data}
             except (ValidationError, ValueError, KeyError, TypeError, OSError) as exc:
-                message = "Invalid request schema" if isinstance(exc, ValidationError) else str(exc)
+                message = schema_message(exc) if isinstance(exc, ValidationError) else str(exc)
                 response = {"version": 1, "id": request_id, "error": {"message": message}}
             except Exception:
                 traceback.print_exc(file=sys.stderr)

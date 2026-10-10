@@ -4,6 +4,62 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Readiness milestone 2 — local security, measurements and demonstration
+
+Added repeatable 60-journey Windows benchmark with actual browser startup, resource
+sampling, report timings, three-minute persistent-browser soak and separately labelled
+synthetic graph scaling. Completed 60 expected fixture outcomes and 88 reloads over
+181.04 seconds; peak summed RSS 421.74 MiB. See `../testing/readiness-benchmark.md` and
+raw JSON for machine, timing scope and uncontrolled background activity. Overnight
+stability, native large-graph UI performance and representative hardware remain gates.
+
+Actual Windows ACL inspection found inherited access for another local group. Storage
+now applies current-user/SYSTEM/Administrators-only protected inheritable permissions;
+Windows regression verifies removal of seeded broad access and database inheritance.
+Schema errors now identify safe fields and repair guidance without exposing input values.
+Review and advisory results are in `../testing/security-review.md`; explicit child ACL
+exceptions and private diagnostics remain review items. No encryption, secure erase or
+hostile-site sandbox claim.
+
+Executed `uv run --project engine python scripts/hackyard_demo.py --output
+dist/Hackyard-readiness-demo`: real keyboard failure, native-button correction,
+comparable passed retest, 19-step completion, one actual 25-byte multipart upload;
+product recorder draft captured from scripted browser events and replayed successfully.
+Reports/SQLite/diff are retained locally; summary/procedure are in
+`../testing/hackyard-demo.json` and `../testing/hackyard.md`.
+
+`uv run --project engine pytest engine/tests -q`: **79 passed** in 87.46 s after
+permission/error/demo changes. Ruff/contracts/diff checks passed. The distribution
+notice regressions separately passed **2 tests**. One attempted test invocation from
+the Cargo directory selected global Python and failed in an unrelated pytest plugin;
+the corrected repository-root invocation passed.
+
+Manual NVDA and independent Windows procedures are in `../testing/nvda.md` and
+`../releases/clean-machine.md`, all human/independent results explicitly **NOT RUN**.
+No independent machine or human NVDA tester is available in this environment.
+
+### Readiness milestone 3 — redistribution audit (package verification pending)
+
+Inventoried 627 locked/resolved components, copied 772 installed notices and recorded
+87 unresolved declarations/notice sets. Extracted full Chromium's exact binary credits
+offline, including 754 collapsed license sections; added a real-browser regression.
+Packaging now includes inventory/notices, readable axe source and standalone credits.
+`../architecture/dependencies.md` and `../testing/license-inventory.json` document scope
+and unresolved binary/source obligations. Generator initially failed decoding Cargo's
+UTF-8 through the Windows default codepage; explicit UTF-8 corrected it. Full notice
+coverage, verified SBOM, FFmpeg source/relink plan, Microsoft DLL distribution rights
+and headless-shell provenance remain release blockers.
+
+Actual npm/Python audits found no known advisories (editable project skipped); Rust audit
+found zero vulnerability entries plus two informational warnings outside the resolved
+Windows graph. See security review. Existing portable artifact remains older source;
+new packaging, frozen workflow and native UI revalidation are pending below.
+
+Final source checks for milestones 2–3: full engine suite **81 passed** in 93.55 s;
+TypeScript/ESLint, **5 React tests**, production build, formatting, Ruff and contracts
+passed. Raw advisory responses are retained in
+`../testing/advisories-{npm,python,rust}.json`. No dependency lockfile was changed.
+
 ### Readiness milestone 1 — compatibility corpus and finding accuracy
 
 Completed a controlled multi-step HTTP SPA with a separate CORS API, delayed rendering,

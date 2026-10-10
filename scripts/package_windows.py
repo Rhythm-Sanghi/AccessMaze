@@ -106,6 +106,32 @@ def main():
         [sys.executable, "-m", "playwright", "install", "chromium"],
         env=environment,
     )
+    run(
+        [
+            sys.executable,
+            "scripts/license_audit.py",
+            "--output",
+            str(notices / "dependencies"),
+        ]
+    )
+    run(
+        [
+            sys.executable,
+            "scripts/browser_credits.py",
+            "--browsers",
+            str(resources / "browsers"),
+            "--output",
+            str(notices / "chromium"),
+        ],
+        env=environment,
+    )
+    # Preserve the readable MPL-covered source alongside the unmodified minified script.
+    shutil.copy2(ROOT / "node_modules/axe-core/axe.js", notices / "axe-core-source.js")
+    for folder in ["testing", "releases"]:
+        destination = notices / "procedures" / folder
+        destination.mkdir(parents=True)
+        for source in (ROOT / "docs" / folder).glob("*.md"):
+            shutil.copy2(source, destination / source.name)
     (output / "PREVIEW.txt").write_text(
         "AccessMaze development preview. Run AccessMaze.exe. Requires Windows WebView2.\n"
         "Python, Node and a preinstalled Playwright browser are not required.\n"

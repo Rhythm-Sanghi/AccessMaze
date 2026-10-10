@@ -59,3 +59,27 @@ def test_stdio_invalid_message_does_not_kill_worker(tmp_path):
     assert responses[0]["error"]
     assert responses[1]["id"] == "good"
     assert responses[1]["result"]["version"] == 1
+
+
+def test_stdio_schema_error_is_actionable_without_exposing_input(tmp_path):
+    private = "private-password-should-not-appear"
+    process = subprocess.run(
+        [sys.executable, "-m", "accessmaze.worker", "--storage", str(tmp_path)],
+        input=json.dumps(
+            {
+                "version": 1,
+                "id": "invalid",
+                "method": "project.save",
+                "params": {"project": {"name": "Synthetic", "journey": {"target": private}}},
+            }
+        )
+        + "\n",
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=15,
+    )
+    assert process.returncode == 0
+    message = json.loads(process.stdout)["error"]["message"]
+    assert "target" in message and "Review required fields" in message
+    assert private not in process.stdout + process.stderr

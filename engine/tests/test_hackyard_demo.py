@@ -1,0 +1,23 @@
+import asyncio
+import importlib.util
+import json
+from pathlib import Path
+
+import pytest
+
+
+@pytest.mark.browser
+def test_demo_records_real_failure_fix_and_replay(tmp_path):
+    path = Path(__file__).resolve().parents[2] / "scripts/hackyard_demo.py"
+    spec = importlib.util.spec_from_file_location("hackyard_demo", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    output = tmp_path / "demo"
+    result = asyncio.run(module.demonstrate(output))
+    assert result["server_observations"]["api_posts"] == 1
+    assert "passed-retest" in (output / "retest.json").read_text()
+    draft = json.loads((output / "recorded-draft.json").read_text())
+    assert any(s["value_from"] for s in draft["steps"])
+    assert (output / "correction.diff").read_text().count("+<") > 0
+    with pytest.raises(FileExistsError):
+        asyncio.run(module.demonstrate(output))

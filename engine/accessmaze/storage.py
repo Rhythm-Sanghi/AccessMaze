@@ -5,6 +5,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
 
+from accessmaze.permissions import private_directory
+
 
 def now():
     return datetime.now(UTC).isoformat()
@@ -14,6 +16,7 @@ class Store:
     def __init__(self, root: Path):
         self.root = root.resolve()
         self.root.mkdir(parents=True, exist_ok=True)
+        private_directory(self.root)
         (self.root / "artifacts").mkdir(exist_ok=True)
         with self.connect() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]

@@ -2,10 +2,13 @@
 
 import json
 import argparse
+import base64
+from contextlib import ExitStack
 import os
 import subprocess
 import tempfile
 import time
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,6 +17,14 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--package", default="AccessMaze-portable")
+    parser.add_argument(
+        "--complex",
+        action="store_true",
+        help="Also run the owned HTTP SPA/upload corpus",
+    )
+    parser.add_argument(
+        "--report", type=Path, default=ROOT / "docs/releases/portable-smoke.json"
+    )
     args = parser.parse_args()
     package = ROOT / "dist" / args.package
     environment = {
@@ -30,7 +41,10 @@ def main():
         if key in os.environ
     }
     environment["PATH"] = str(Path(os.environ["SystemRoot"]) / "System32")
-    with tempfile.TemporaryDirectory(prefix="AccessMaze portable smoke ") as directory:
+    with (
+        ExitStack() as stack,
+        tempfile.TemporaryDirectory(prefix="AccessMaze portable smoke ") as directory,
+    ):
         started = time.perf_counter()
         process = subprocess.Popen(
             [
@@ -77,10 +91,36 @@ def main():
         try:
             health = request("health")
             startup = round(time.perf_counter() - started, 3)
-            for kind in ["accessible", "broken", "conditional"]:
+            cases = [
+                (kind, health["templates"][kind], {})
+                for kind in ["accessible", "broken", "conditional"]
+            ]
+            app = None
+            if args.complex:
+                sys.path.insert(0, str(ROOT / "engine/tests"))
+                from compatibility_app import CompatibilityApp
+
+                app = stack.enter_context(CompatibilityApp())
+                cases.append(
+                    (
+                        "owned-http-spa",
+                        app.journey().model_dump(),
+                        {
+                            "files": {
+                                "document": {
+                                    "name": "synthetic.txt",
+                                    "base64": base64.b64encode(
+                                        b"Frozen worker upload"
+                                    ).decode(),
+                                }
+                            }
+                        },
+                    )
+                )
+            for kind, journey, runtime in cases:
                 project = request(
                     "project.save",
-                    {"project": {"name": kind, "journey": health["templates"][kind]}},
+                    {"project": {"name": kind, "journey": journey}},
                 )
                 run_id = request(
                     "run.start",
@@ -88,6 +128,7 @@ def main():
                         "project_id": project["id"],
                         "authorized": True,
                         "allow_effects": True,
+                        "inputs": runtime,
                     },
                 )["id"]
                 deadline = time.monotonic() + 30
@@ -100,6 +141,7 @@ def main():
                     "failed" if kind == "broken" else "completed_with_limitations"
                 )
                 assert result["status"] == expected, result
+                assert not result["coverage_compromised"], result
                 report = request("report.export", {"id": run_id, "format": "json"})
                 assert json.loads(report["content"])["findings"] == result["findings"]
                 html = request("report.export", {"id": run_id, "format": "html"})[
@@ -116,6 +158,11 @@ def main():
                         "seconds": result["duration_seconds"],
                     }
                 )
+            if app:
+                assert (
+                    len(app.posts) == 1
+                    and app.posts[0]["document"] == b"Frozen worker upload"
+                )
         finally:
             process.stdin.close()
             process.wait(timeout=15)
@@ -126,12 +173,11 @@ def main():
             "working_directory": "temporary path with spaces",
             "browser_resources": "portable bundled revision",
             "worker_startup_seconds": startup,
+            "package": args.package,
             "runs": runs,
             "limitation": "Same Windows machine; not a clean-machine installation test.",
         }
-        (ROOT / "docs/releases/portable-smoke.json").write_text(
-            json.dumps(evidence, indent=2) + "\n", encoding="utf-8"
-        )
+        args.report.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(evidence, indent=2))
 
 

@@ -139,6 +139,16 @@ Browser tests launch real Chromium against local fixtures. Tests using React com
 verify UI behavior separately. Neither is represented as full installed-desktop testing.
 See [testing](docs/testing/strategy.md) and [security boundaries](SECURITY.md).
 
+The [compatibility corpus](docs/testing/compatibility.md) covers an owned multi-step
+SPA/API/upload application and explicitly opted-in educational public targets. Run
+`uv run --project engine python scripts/compatibility.py --public` for that fixed scope.
+The [Hackyard demo](docs/testing/hackyard.md) reproduces a real keyboard failure,
+correction, comparable retest and recorded-draft replay with synthetic data.
+See the [Windows benchmark](docs/testing/readiness-benchmark.md),
+[security review](docs/testing/security-review.md), [manual NVDA procedure](docs/testing/nvda.md)
+and [independent Windows checklist](docs/releases/clean-machine.md).
+Human NVDA and independent clean-machine results remain unverified.
+
 ## Architecture
 
 `apps/desktop` contains React and a small Rust host. The host owns a persistent Python
