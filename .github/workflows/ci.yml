@@ -1,5 +1,9 @@
 name: verify
-on: [push, pull_request, workflow_dispatch]
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 env:
@@ -25,6 +29,9 @@ jobs:
         with:
           version: "0.9.2"
       - run: npm ci
+      - run: npm ci --prefix benchmarks/pa11y
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
       - run: uv sync --project engine --locked --python 3.13
       - run: uv run --project engine playwright install --with-deps chromium
       - run: npm run check
@@ -34,8 +41,23 @@ jobs:
       - run: uv run --project engine ruff check engine scripts
       - run: uv run --project engine ruff format --check engine scripts
       - run: uv run --project engine pytest engine/tests -q
+        env:
+          ACCESSMAZE_CORPUS_OUTPUT: ${{ github.workspace }}/dist/compatibility-corpus
+          ACCESSMAZE_CORPUS_PA11Y: "1"
+      - if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: compatibility-corpus-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            dist/compatibility-corpus/*.json
+            dist/compatibility-corpus/*.html
+            dist/compatibility-corpus/*.stdout
+            dist/compatibility-corpus/*.stderr
+          if-no-files-found: warn
+          retention-days: 14
       - run: uv run --project engine python scripts/contracts.py --check
       - run: npm audit --audit-level=moderate
+      - run: npm audit --prefix benchmarks/pa11y --audit-level=moderate
       - run: uv run --project engine pip-audit
       - if: runner.os == 'Windows'
         uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable

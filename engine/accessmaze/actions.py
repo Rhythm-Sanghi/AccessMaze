@@ -1,5 +1,6 @@
 import asyncio
 import json
+import time
 
 from playwright.async_api import Error as BrowserError
 
@@ -376,6 +377,7 @@ async def _perform(page, context, step, journey, url, axe_path):
         case "wait":
             await asyncio.sleep(int(step.value) / 1000)
         case "audit":
+            audit_started = time.perf_counter()
             if not axe_path.is_file():
                 raise CheckFailure(
                     "audit-unavailable",
@@ -400,11 +402,13 @@ async def _perform(page, context, step, journey, url, axe_path):
                     )
             finally:
                 await session.detach()
-            return await page.evaluate("""async () => {
+            result = await page.evaluate("""async () => {
               const r=await axe.run(document, {resultTypes:['violations','incomplete']});
-              return {violations:r.violations.map(v=>({id:v.id,impact:v.impact,
+              return {engine:r.testEngine,violations:r.violations.map(v=>({id:v.id,impact:v.impact,
                 description:v.description,helpUrl:v.helpUrl,
                 targets:v.nodes.slice(0,20).map(n=>n.target)})),
                 incomplete:r.incomplete.map(v=>({id:v.id,description:v.description}))};
             }""")
+            result["duration_seconds"] = round(time.perf_counter() - audit_started, 6)
+            return result
     return None

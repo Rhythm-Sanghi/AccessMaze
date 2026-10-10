@@ -1,5 +1,6 @@
 import asyncio
 import copy
+import hashlib
 import importlib.metadata
 import platform
 import threading
@@ -156,6 +157,9 @@ async def execute(
             python=platform.python_version(),
             os=platform.platform(),
             networkx=importlib.metadata.version("networkx"),
+            axe_sha256=hashlib.sha256(axe_path.read_bytes()).hexdigest()
+            if axe_path.is_file()
+            else "unavailable",
         )
         if control.cancel.is_set():
             raise asyncio.CancelledError

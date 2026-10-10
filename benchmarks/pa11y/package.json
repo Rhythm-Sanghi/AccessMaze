@@ -1,0 +1,10 @@
+{
+  "name": "accessmaze-pa11y-benchmark",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Optional development-only comparative scanner; excluded from AccessMaze packages",
+  "license": "MIT",
+  "devDependencies": {
+    "pa11y": "10.0.0"
+  }
+}

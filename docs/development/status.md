@@ -264,3 +264,27 @@ comparison `inconclusive-different-conditions`. Raw local evidence:
 `dist/Profile-batch-readiness/batch.json`; no credentials or generated results are
 added to the repository. Comparative benchmark work remains in progress; native UI
 and packaging verification for schema 4 remain pending.
+
+
+## Phase C — paired compatibility corpus
+
+Added sixteen actual browser cases and an optional locked Pa11y 10 benchmark tool,
+with recorded oracle outcomes, actual axe version/hash and timing, source/host
+provenance, scanner configurations and raw results. CI installs the optional tool,
+audits it separately, and uploads corpus artifacts on both operating systems.
+Branch pushes no longer duplicate pull-request pipelines; main pushes remain tested.
+See [comparative-corpus.md](../testing/comparative-corpus.md) for workload differences,
+reproduction and scope. No static scanner's lack of task execution is counted as a
+false negative. Accessibility Insights and assistive technology remain not run.
+
+Actual CI-style command: `pytest engine/tests/test_comparative_benchmark.py -q
+--junitxml=dist/corpus-regression.xml`, with `ACCESSMAZE_CORPUS_PA11Y=1` and
+`ACCESSMAZE_CORPUS_OUTPUT=dist/Corpus-CI-local`: **1 passed, 74.58 s**, all sixteen
+case outcomes correct, eight expected rules observed, eight working cases without
+unexpected confirmed findings and eight paired improvements. Raw local output is
+ignored by Git; remote CI artifacts provide downloadable evidence. Optional tool
+`npm audit --prefix benchmarks/pa11y --audit-level=moderate`: zero vulnerabilities.
+
+Remote run [38074436461](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38074436461)
+at `39609b0`: **Linux checks, Windows checks and Windows preview packaging all
+completed successfully**. This verifies that commit, not the later working tree.
