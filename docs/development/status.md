@@ -180,8 +180,9 @@ Screenshots in `screenshots/` are from the actual application.
 The 15-run sequential benchmark measured 398.38 MiB peak summed RSS and 330.91 MiB
 median sampled RSS for Python and child processes. Shared pages count in every
 process's RSS. It excludes UI startup and long-running stress. Raw machine details
-and timings are in `../testing/benchmark.json`; portable results are in
-`../releases/portable-smoke.json`.
+and timings at baseline are retained in Git history at `c66766d`. Current raw files
+`../testing/benchmark.json` and `../releases/portable-smoke.json` contain the continuation
+measurements recorded above.
 
 ## Milestone and release limits
 

@@ -73,6 +73,8 @@ async def main():
                 "button", name="Approve button: Advance", exact=True
             )
             await approve.wait_for()
+            await page.get_by_text("0 approved website actions", exact=True).wait_for()
+            await page.get_by_text("Exploration in progress", exact=True).wait_for()
             assert not any(method == "POST" for method, _ in hits), hits
             await page.screenshot(
                 path=ROOT / "docs/development/screenshots/website-approval.png",

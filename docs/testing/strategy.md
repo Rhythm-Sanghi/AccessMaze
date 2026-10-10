@@ -23,6 +23,26 @@ interruption recovery and descendant Chromium cleanup. The frozen-worker test
 uses a stripped system-only PATH and a temporary directory containing spaces.
 These tests ran on the build machine; clean-machine installation remains unverified.
 
+Website regressions use independent real HTTP origins and Chromium. They cover DNS
+pinning, resource/navigation/write separation, redirects, private evidence, run-only
+password login with cookies, buffer uploads, dynamic waits, shadow focus and computed
+accessibility names. No request interception mocks substitute for those browser runs.
+The approved-walk tests count actual requests, require fresh decisions and check that
+external state is never reset/replayed. Recorder tests replay a captured draft and use
+actual visible Windows Chromium for stop/lifecycle checks, including slow navigation.
+Visible tests are explicitly skipped on Linux without a desktop session.
+
+`scripts/desktop_website_smoke.py` uses an owned HTTP app through packaged native UI:
+zero POSTs before approval, exactly one afterward, no reset/replay, and visible recorder
+completion capture/stop. `Test-AccessMazePortable.ps1` needs only Windows PowerShell/.NET
+and the package; it validates hashes, frozen browser journeys, JSON identity and shutdown
+with system-only PATH. Hashes detect corruption and are not a signature/authenticity check.
+
+Optional `scripts/website_smoke.py --url URL --heading NAME --authorized` uses a real
+read-only public target and defaults its private result to ignored `dist/`. The recorded
+example.org probe correctly failed a stale expected heading after successful navigation;
+it is not represented as a successful completion or a dependable third-party fixture.
+
 Manual release checks: complete a project/journey/run/report flow using only a keyboard;
 inspect focus after navigation/dialog closure; test 200% text and narrow windows; verify
 both themes in high contrast; evaluate announcements with NVDA; inspect graph alternatives;
