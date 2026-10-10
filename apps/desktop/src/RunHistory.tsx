@@ -1,5 +1,9 @@
 import { useState } from "react";
-import type { Run, RunComparison } from "../../../packages/contracts";
+import type {
+  HistoryPage,
+  Run,
+  RunComparison,
+} from "../../../packages/contracts";
 import { request } from "./api";
 import { activeRun } from "./RunWorkspace";
 
@@ -7,10 +11,14 @@ export default function RunHistory({
   history,
   run,
   onSelect,
+  onPage,
+  loading = false,
 }: {
-  history: Run[];
+  history: HistoryPage;
   run: Run | null;
-  onSelect: (run: Run) => void;
+  onSelect: (id: string) => void;
+  onPage: (offset: number) => void;
+  loading?: boolean;
 }) {
   const [previous, setPrevious] = useState("");
   const [comparison, setComparison] = useState<RunComparison | null>(null);
@@ -37,7 +45,7 @@ export default function RunHistory({
     <>
       <div className="section-heading">
         <h2>Run history</h2>
-        <span className="mono">{history.length} SAVED RUNS</span>
+        <span className="mono">{history.total} SAVED RUNS</span>
       </div>
       <div className="table-scroll">
         <table>
@@ -51,17 +59,17 @@ export default function RunHistory({
             </tr>
           </thead>
           <tbody>
-            {history.map((r) => (
+            {history.items.map((r) => (
               <tr key={r.id}>
                 <td>{new Date(r.started_at).toLocaleString()}</td>
                 <td>{r.status.replaceAll("_", " ")}</td>
-                <td>{r.findings.length}</td>
+                <td>{r.finding_count}</td>
                 <td>{r.duration_seconds ?? "—"} s</td>
                 <td>
                   <button
                     disabled={activeRun(run)}
                     onClick={() => {
-                      onSelect(r);
+                      onSelect(r.id);
                       setComparison(null);
                     }}
                   >
@@ -73,10 +81,45 @@ export default function RunHistory({
           </tbody>
         </table>
       </div>
-      {!history.length && (
-        <p className="muted">Open a project to load its run history.</p>
+      {history.total > 0 && (
+        <div className="toolbar" aria-label="Run history pages">
+          <button
+            disabled={loading || busy || activeRun(run) || history.offset === 0}
+            onClick={() => {
+              setPrevious("");
+              setComparison(null);
+              onPage(Math.max(0, history.offset - 50));
+            }}
+          >
+            Newer runs
+          </button>
+          <span role="status">
+            {history.items.length
+              ? `${history.offset + 1}–${history.offset + history.items.length} of ${history.total}`
+              : "No runs on this page"}
+          </span>
+          <button
+            disabled={
+              loading || busy || activeRun(run) || history.next_offset === null
+            }
+            onClick={() => {
+              setPrevious("");
+              setComparison(null);
+              if (history.next_offset !== null) onPage(history.next_offset);
+            }}
+          >
+            Older runs
+          </button>
+        </div>
       )}
-      {run && history.length > 1 && (
+      {!history.items.length && (
+        <p className="muted">
+          {history.total
+            ? "Choose a newer page to inspect saved runs."
+            : "No saved runs. Run a journey to collect evidence."}
+        </p>
+      )}
+      {run && history.total > 1 && (
         <section className="retest">
           <div className="section-heading">
             <h2>Journey comparison</h2>
@@ -96,7 +139,7 @@ export default function RunHistory({
                 }}
               >
                 <option value="">Select earlier evidence</option>
-                {history
+                {history.items
                   .filter((r) => r.id !== run.id)
                   .map((r) => (
                     <option key={r.id} value={r.id}>
@@ -188,7 +231,7 @@ export default function RunHistory({
                   <pre>
                     {JSON.stringify(
                       {
-                        baseline: history.find(
+                        baseline: history.items.find(
                           (r) => r.id === comparison.previous_id,
                         )?.journey.profile,
                         candidate: run.journey.profile,
@@ -202,15 +245,15 @@ export default function RunHistory({
                 <div className="toolbar">
                   <button
                     onClick={() => {
-                      const baseline = history.find(
+                      const baseline = history.items.find(
                         (r) => r.id === comparison.previous_id,
                       );
-                      if (baseline) onSelect(baseline);
+                      if (baseline) onSelect(baseline.id);
                     }}
                   >
                     Inspect baseline run
                   </button>
-                  <button onClick={() => onSelect(run)}>
+                  <button onClick={() => onSelect(run.id)}>
                     Inspect candidate run
                   </button>
                 </div>

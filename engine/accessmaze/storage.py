@@ -184,46 +184,68 @@ class Store:
 
     def projects(self):
         with self.connect() as db:
-            rows = db.execute("SELECT * FROM projects ORDER BY updated_at DESC").fetchall()
-        projects = []
+            rows = db.execute("""
+                WITH totals AS (
+                    SELECT project_id, MAX(started_at) AS last_analysis,
+                        SUM(status IN ('preparing','running','paused','awaiting_approval',
+                            'cancelled','interrupted')) AS incomplete_runs,
+                        SUM((SELECT COUNT(*) FROM json_each(runs.result,'$.findings')
+                            WHERE json_extract(value,'$.verification')='confirmed-automated'))
+                            AS confirmed_findings
+                    FROM runs GROUP BY project_id
+                )
+                SELECT projects.*, totals.last_analysis,
+                    COALESCE(totals.incomplete_runs,0) AS incomplete_runs,
+                    COALESCE(totals.confirmed_findings,0) AS confirmed_findings
+                FROM projects LEFT JOIN totals ON projects.id=totals.project_id
+                ORDER BY projects.updated_at DESC
+            """).fetchall()
+        result = []
         for row in rows:
-            with self.connect() as db:
-                summaries = db.execute(
-                    "SELECT started_at,status,json_extract(result,'$.findings') "
-                    "AS findings FROM runs WHERE project_id=? ORDER BY started_at DESC",
-                    (row["id"],),
-                ).fetchall()
-            runs = [
-                {**dict(item), "findings": json.loads(item["findings"] or "[]")}
-                for item in summaries
-            ]
-            projects.append(
-                {
-                    **dict(row),
-                    "journey": json.loads(row["journey"]),
-                    "summary": {
-                        "last_analysis": runs[0]["started_at"] if runs else None,
-                        "confirmed_findings": sum(
-                            f.get("verification") == "confirmed-automated"
-                            for run in runs
-                            for f in run.get("findings", [])
-                        ),
-                        "incomplete_runs": sum(
-                            run["status"]
-                            in {
-                                "preparing",
-                                "running",
-                                "paused",
-                                "awaiting_approval",
-                                "cancelled",
-                                "interrupted",
-                            }
-                            for run in runs
-                        ),
-                    },
-                }
-            )
-        return projects
+            item = dict(row)
+            item["summary"] = {
+                key: item.pop(key)
+                for key in ("last_analysis", "incomplete_runs", "confirmed_findings")
+            }
+            item["journey"] = json.loads(item["journey"])
+            result.append(item)
+        return result
+
+    def history(self, project_id, limit=50, offset=0):
+        if (
+            type(limit) is not int
+            or type(offset) is not int
+            or not 1 <= limit <= 100
+            or not 0 <= offset <= 1000000
+        ):
+            raise ValueError("History requires a 1–100 page size and a bounded nonnegative offset")
+        self.project(project_id)
+        with self.connect() as db:
+            total = db.execute(
+                "SELECT count(*) FROM runs WHERE project_id=?", (project_id,)
+            ).fetchone()[0]
+            rows = db.execute(
+                """
+                SELECT id,project_id,status,started_at,
+                    json_array_length(result,'$.findings') AS finding_count,
+                    json_extract(result,'$.duration_seconds') AS duration_seconds,
+                    json_extract(result,'$.journey.profile') AS profile
+                FROM runs WHERE project_id=? ORDER BY started_at DESC,id DESC LIMIT ? OFFSET ?
+            """,
+                (project_id, limit, offset),
+            ).fetchall()
+        items = []
+        for row in rows:
+            item = dict(row)
+            item["journey"] = {"profile": json.loads(item.pop("profile") or "{}")}
+            item["finding_count"] = item["finding_count"] or 0
+            items.append(item)
+        return {
+            "items": items,
+            "total": total,
+            "offset": offset,
+            "next_offset": offset + len(items) if offset + len(items) < total else None,
+        }
 
     def project(self, project_id):
         with self.connect() as db:

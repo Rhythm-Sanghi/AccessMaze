@@ -288,3 +288,21 @@ ignored by Git; remote CI artifacts provide downloadable evidence. Optional tool
 Remote run [38074436461](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38074436461)
 at `39609b0`: **Linux checks, Windows checks and Windows preview packaging all
 completed successfully**. This verifies that commit, not the later working tree.
+
+
+## Phase D — measured history loading
+
+Replaced project-summary N+1 reads with one SQLite aggregate, added bounded
+metadata-only history pages and lazy full-run inspection, and isolated history
+request state in a small hook with stale-response guards. Existing run retrieval
+and UI design remain intact. Keyboard pagination and useful empty states were added.
+
+Actual measurement and limitations: [history-performance.md](../testing/history-performance.md).
+Synthetic 776-run storage workload: 25 to 1 summary connections, 479.864 to
+283.906 ms warm summary medians, 35,389,000-byte full history versus 28,007-byte
+first page. These are development-host storage measurements, not executed browser
+results, native rendering measurements, peak memory or accepted release budgets.
+`pytest test_history.py test_storage_reports.py -q --junitxml=dist/history-regression.xml`:
+**7 passed, 2.11 s**. `npm run check` passed; React **12 passed** including out-of-order
+history responses and keyboard paging. Ruff, Prettier and contract checks passed.
+New history UI still requires native-package acceptance; polling remains periodic.

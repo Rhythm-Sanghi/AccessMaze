@@ -303,6 +303,7 @@ export type Method =
   | "run.replay.prepare"
   | "run.get"
   | "run.list"
+  | "run.history"
   | "run.cancel"
   | "run.pause"
   | "run.resume"
@@ -348,4 +349,20 @@ export interface HumanReview {
   expected: string;
   actual: string;
   notes: string;
+}
+
+export interface RunSummary {
+  id: string;
+  project_id: string;
+  status: string;
+  started_at: string;
+  finding_count: number;
+  duration_seconds?: number | null;
+  journey: { profile: Partial<Journey["profile"]> };
+}
+export interface HistoryPage {
+  items: RunSummary[];
+  total: number;
+  offset: number;
+  next_offset: number | null;
 }

@@ -8,6 +8,7 @@ import RunInputs, { emptyInputs, type Inputs } from "./RunInputs";
 import RecorderPanel from "./RecorderPanel";
 import Projects from "./Projects";
 import RunHistory from "./RunHistory";
+import { useRunHistory } from "./useRunHistory";
 import Reports from "./Reports";
 import Settings from "./Settings";
 import RunWorkspace, { activeRun } from "./RunWorkspace";
@@ -29,7 +30,7 @@ export default function App() {
   const [name, setName] = useState("Untitled investigation");
   const [run, setRun] = useState<Run | null>(null);
   const [replaySource, setReplaySource] = useState<Run | null>(null);
-  const [history, setHistory] = useState<Run[]>([]);
+  const { history, loadHistory, clearHistory } = useRunHistory();
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -91,11 +92,7 @@ export default function App() {
         setRun(current);
         if (activeRun(current)) timer = setTimeout(poll, 600);
         else {
-          setHistory(
-            await request<Run[]>("run.list", {
-              project_id: current.project_id,
-            }),
-          );
+          await loadHistory(current.project_id);
           setMessage(`Analysis ${current.status.replaceAll("_", " ")}`);
         }
       } catch (e) {
@@ -136,9 +133,9 @@ export default function App() {
     setRun(null);
     setReplaySource(null);
     setPage("journey");
-    void perform(async () =>
-      setHistory(await request<Run[]>("run.list", { project_id: project.id })),
-    );
+    void perform(async () => {
+      await loadHistory(project.id);
+    });
   }
   function create(kind: string) {
     setInputs(emptyInputs());
@@ -167,7 +164,7 @@ export default function App() {
     );
     setRun(null);
     setReplaySource(null);
-    setHistory([]);
+    clearHistory();
     setAuthorized(false);
     setEffects(false);
     setPage("journey");
@@ -546,11 +543,20 @@ export default function App() {
             <RunHistory
               history={history}
               run={run}
-              onSelect={(r) => {
-                setRun(r);
-                setReplaySource(null);
-                setPage("analysis");
+              loading={busy}
+              onPage={(offset) => {
+                if (selected)
+                  void perform(async () => {
+                    await loadHistory(selected.id, offset);
+                  });
               }}
+              onSelect={(id) =>
+                void perform(async () => {
+                  setRun(await request<Run>("run.get", { id }));
+                  setReplaySource(null);
+                  setPage("analysis");
+                })
+              }
             />
           )}
           {page === "reports" && (
@@ -567,12 +573,14 @@ export default function App() {
               onPrune={async () => {
                 await refresh();
                 if (selected) {
-                  const remaining = await request<Run[]>("run.list", {
-                    project_id: selected.id,
-                  });
-                  setHistory(remaining);
-                  if (run && !remaining.some((r) => r.id === run.id))
-                    setRun(null);
+                  await loadHistory(selected.id);
+                  if (run) {
+                    try {
+                      await request<Run>("run.get", { id: run.id });
+                    } catch {
+                      setRun(null);
+                    }
+                  }
                   setReplaySource(null);
                 }
               }}
@@ -607,7 +615,7 @@ export default function App() {
                   setJourney(null);
                   setRun(null);
                   setReplaySource(null);
-                  setHistory([]);
+                  clearHistory();
                 }
                 setConfirmation(null);
                 await refresh();

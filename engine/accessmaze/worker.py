@@ -195,6 +195,13 @@ class Worker:
             return {"ok": True}
         if method == "run.list":
             return self.store.runs(params["project_id"])
+        if method == "run.history":
+            UUID(params["project_id"])
+            if set(params) - {"project_id", "limit", "offset"}:
+                raise ValueError("Unknown history query field")
+            return self.store.history(
+                params["project_id"], params.get("limit", 50), params.get("offset", 0)
+            )
         if method == "run.get":
             run = self.store.run(params["id"])
             if params["id"] == self.active and self.control and self.control.pending():
