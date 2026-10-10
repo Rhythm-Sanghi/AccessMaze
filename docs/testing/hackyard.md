@@ -45,3 +45,8 @@ scripted demonstration, not a human recording, NVDA result or WCAG certification
 The follow-up execution at `dist/Hackyard-readiness-final` reproduced the same failure,
 correction, comparable passed retest and recorded replay after adding the explicit
 offline-emulation limitation. Its actual summary is `hackyard-demo-followup.json`.
+
+Latest continuation execution: `dist/Hackyard-release-validation`, with actual summary
+in `hackyard-release-validation.json`. Broken failed; correction/fixed execution and
+recorded replay completed with limitations; comparable keyboard retest passed; one
+POST with 25 synthetic bytes. This reran the actual current engine after security fixes.

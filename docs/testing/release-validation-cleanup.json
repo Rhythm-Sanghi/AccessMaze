@@ -1,0 +1,17 @@
+{
+  "desktop_pid": 52380,
+  "owned_children_exited": 8,
+  "ports": {
+    "9224": "closed",
+    "9227": "closed"
+  },
+  "scope": "Only the explicitly launched final-preview desktop and its descendants; user browser processes untouched.",
+  "final_matching_desktop_processes": 0,
+  "final_test_ports_closed": true,
+  "initial_system_checker_synthetic_storage_removed": true,
+  "harness_failure_cleanup": {
+    "pid": 48892,
+    "owned_children_exited": 8
+  },
+  "actual_user_appdata_history": "preserved"
+}

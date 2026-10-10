@@ -81,16 +81,26 @@ async def main():
                     }
                 )
             finally:
-                subprocess.run(
-                    [
-                        "powershell",
-                        "-NoProfile",
-                        "-Command",
-                        f"(Get-Process -Id {process.pid}).CloseMainWindow()",
-                    ],
-                    capture_output=True,
-                    creationflags=subprocess.CREATE_NO_WINDOW,
-                )
+                if process.poll() is None:
+                    owned = psutil.Process(process.pid).children(recursive=True)
+                    try:
+                        subprocess.run(
+                            [
+                                str(
+                                    Path(os.environ["SystemRoot"])
+                                    / "System32/WindowsPowerShell/v1.0/powershell.exe"
+                                ),
+                                "-NoProfile",
+                                "-Command",
+                                f"(Get-Process -Id {process.pid}).CloseMainWindow()",
+                            ],
+                            capture_output=True,
+                            creationflags=subprocess.CREATE_NO_WINDOW,
+                            timeout=10,
+                        )
+                    except (OSError, subprocess.TimeoutExpired):
+                        # Cleanup must still run when the close helper is unavailable.
+                        process.terminate()
                 try:
                     process.wait(timeout=15)
                 except subprocess.TimeoutExpired:

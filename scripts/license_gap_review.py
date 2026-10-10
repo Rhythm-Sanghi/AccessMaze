@@ -19,6 +19,26 @@ def review(baseline, inventory, modules, toc):
     old = json.loads(baseline.read_text(encoding="utf-8"))
     new = json.loads(inventory.read_text(encoding="utf-8"))
     module_ids = json.loads(modules.read_text(encoding="utf-8"))
+    normal_graph = ""
+    if any(g["ecosystem"] == "cargo" for g in old["unresolved"]):
+        normal_graph = subprocess.check_output(
+            [
+                "cargo",
+                "tree",
+                "--locked",
+                "--target",
+                "x86_64-pc-windows-msvc",
+                "--edges",
+                "normal",
+                "--prefix",
+                "none",
+                "--format",
+                "{p}",
+            ],
+            cwd=ROOT / "apps/desktop/src-tauri",
+            text=True,
+            encoding="utf-8",
+        )
     # Analysis-00.toc is a Python literal, never executable Python.
     analysis = ast.literal_eval(toc.read_text(encoding="utf-8"))
     sources = {
@@ -79,12 +99,21 @@ def review(baseline, inventory, modules, toc):
                     basis="No distribution RECORD file matched any source in actual frozen Analysis TOC. macholib is macOS-only and absent on this Windows environment. Build-hook generated code and PyInstaller bootloader obligations are reviewed separately; absence is not universal source-package clearance.",
                 )
         else:
+            ordinary_path = any(
+                line.startswith(f"{gap['name']} v{gap['version']}")
+                for line in normal_graph.splitlines()
+            )
+            row["ordinary_windows_dependency_path"] = ordinary_path
             row.update(
-                classification="genuine redistribution obligation / required notices",
+                classification=(
+                    "required attribution / conservative Windows scope; linkage not proven"
+                    if ordinary_path
+                    else "build-graph-only dependency / conservatively retained notice"
+                ),
                 disposition="original upstream notice preserved"
                 if current["notices"]
                 else "OPEN: missing full upstream notice",
-                basis="Conservatively retain notice for resolved Windows crate, including generated/build code. Supplement is tied to .cargo_vcs_info.json exact revision and SHA-256; MPL source availability remains a separate release obligation.",
+                basis="Actual cargo tree with normal edges records presence/absence of an ordinary dependency path; proc-macro and generated code still need separate interpretation. Retain original notice conservatively, without asserting executable linkage or inventing a redistribution obligation. Supplement matches exact crate revision/declaration and SHA-256. Covered native source archives are delivered separately.",
             )
         rows.append(row)
     return {
@@ -101,6 +130,9 @@ def review(baseline, inventory, modules, toc):
             p.name: digest(p) for p in [baseline, inventory, modules, toc]
         },
         "components": len(new["components"]),
+        "windows_normal_graph_sha256": hashlib.sha256(
+            normal_graph.encode()
+        ).hexdigest(),
         "original_gaps": len(rows),
         "resolutions": rows,
         "remaining_metadata_gaps": new["unresolved"],

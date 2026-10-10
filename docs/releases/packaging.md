@@ -82,7 +82,7 @@ because some upstream notices carry Unix-epoch timestamps; contents remain uncha
 The helper verifies every ZIP entry's CRC and records archive SHA-256. Neither locked
 builds nor archive generation currently promise bit-for-bit reproducible binaries.
 
-The latest locally verified artifact is `dist/AccessMaze-readiness-preview-final.zip`,
+The previous locally verified artifact is `dist/AccessMaze-readiness-preview-final.zip`,
 clean source **207a09a**, **391,203,383 bytes / 1,691 files**, with CRC/hash recorded in
 `readiness-final-artifact.json`. Both final system-PATH/frozen-complex checks passed,
 including the persisted in-flight connectivity limitation, and native UI/approval/
@@ -96,3 +96,11 @@ They are ordinary gzip tar (.crate) archives, verified against Cargo.lock and ev
 published source file used by the compiler. Recipients can extract/read/modify them
 offline under MPL-2.0. Independent review of complete source/rights obligations is still
 required; this action does not clear all incorporated browser binaries.
+
+## Release-validation continuation
+
+Latest local ZIP: `dist/AccessMaze-release-validation-final.zip`, clean application/package source **228ad9c**. **390,002,137 bytes / 1,702 files**, SHA-256 **51d72674db90ff92feb06bf46d8aedd8991a2c9662f7c9e0cb5a3ebc9e3c180e**; CRC passed. Manifest covers 1,701 files, including five byte-verified MPL source archives, notice index and bundled Python/Chromium; no standalone FFmpeg. See `release-validation-artifact.json`.
+
+Actual systems-only PowerShell checks passed on the built folder and a freshly extracted ZIP copy. Actual frozen fixtures plus the complex owned SPA/upload passed through a Unicode package alias and Unicode temporary storage. Three native startups inherited systems-only PATH. Native approval/recording/focus/errors and three worker crashes/recovery passed. Extracted application and its synthetic test storage were removed; actual user AppData/history preserved. These are developer-workstation checks, not an independent installation/removal/fresh-user/offline qualification. Subsequent commits change verification tooling/records, not the tested application runtime.
+
+[Remaining actions](remaining-actions.md) identify human, independent-machine, rights, CI and signing gates. Do not distribute this unsigned preview as release-qualified.

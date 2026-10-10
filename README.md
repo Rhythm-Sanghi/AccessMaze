@@ -172,3 +172,9 @@ Release gates remain open until tested. Extensibility follows a reliable core.
 AccessMaze source uses the MIT license. axe-core is separately licensed MPL-2.0;
 see [dependency review](docs/architecture/dependencies.md). No analytics are included.
 Read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
+
+Release-validation evidence and unresolved human/independent/signing/rights gates are
+tracked in [engineering status](docs/development/status.md) and
+[remaining qualification actions](docs/releases/remaining-actions.md).
+The [87-gap license investigation](docs/legal/license-gap-review.md) preserves
+per-component evidence; it is not redistribution clearance.

@@ -14,7 +14,7 @@ Record any separately installed WebView2 prerequisite, its source and offline av
    The embedded file manifest detects corruption; it cannot authenticate an unsigned
    package whose archive and manifest could both have been replaced. Record signature
    and SmartScreen behavior; the development preview is unsigned.
-2. Extract all files into a user-writable directory containing spaces. From ordinary
+2. Extract all files into a user-writable directory containing spaces and non-ASCII characters. From ordinary
    PowerShell, run `powershell -NoProfile -File .\Test-AccessMazePortable.ps1 -Package .`
    and preserve its JSON result and temporary-storage path. All integrity checks,
    three browser fixture journeys, exports and EOF shutdown must pass.

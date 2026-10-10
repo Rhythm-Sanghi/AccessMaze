@@ -1,21 +1,23 @@
 {
-  "package": "AccessMaze-readiness-preview",
+  "package": "AccessMaze-release-validation-final",
   "measurements": [
     {
-      "connected_ui_seconds": 4.395,
-      "ready_summed_rss_mib": 442.98,
+      "connected_ui_seconds": 1.337,
+      "ready_summed_rss_mib": 439.27,
       "child_processes": 8
     },
     {
-      "connected_ui_seconds": 1.572,
-      "ready_summed_rss_mib": 437.7,
+      "connected_ui_seconds": 1.297,
+      "ready_summed_rss_mib": 442.37,
       "child_processes": 8
     },
     {
-      "connected_ui_seconds": 1.534,
-      "ready_summed_rss_mib": 447.93,
-      "child_processes": 9
+      "connected_ui_seconds": 1.262,
+      "ready_summed_rss_mib": 438.74,
+      "child_processes": 8
     }
   ],
-  "scope": "Same laptop, existing synthetic AppData history, three sequential launches; cache state uncontrolled. Time to CDP-observed Worker connected includes polling/harness overhead. RSS includes desktop, WebView2 and worker; shared pages counted repeatedly. Test-only loopback port closed after owned desktop exit."
+  "scope": "Same laptop, existing synthetic AppData history, three sequential launches; cache state uncontrolled. Time to CDP-observed Worker connected includes polling/harness overhead. RSS includes desktop, WebView2 and worker; shared pages counted repeatedly. Test-only loopback port closed after owned desktop exit.",
+  "child_environment_path": "SystemRoot/System32 only; actual desktop/WebView/worker inherited this PATH. Python/Playwright used only by the external measurement harness.",
+  "initial_harness_failure": "Bare powershell lookup during close failed under stripped PATH. Explicit system executable path and cleanup fallback corrected; owned PID 48892 and 8 children cleaned, then all three launches/cleanup passed."
 }

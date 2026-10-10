@@ -1,0 +1,41 @@
+{
+  "frozen_worker": "passed",
+  "system_path_only": true,
+  "working_directory": "temporary path with spaces",
+  "browser_resources": "portable bundled revision",
+  "worker_startup_seconds": 0.582,
+  "package": "AccessMaze Unicode \u092a\u0930\u0940\u0915\u094d\u0937\u0923",
+  "runs": [
+    {
+      "fixture": "accessible",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 2.96
+    },
+    {
+      "fixture": "broken",
+      "status": "failed",
+      "findings": 1,
+      "seconds": 1.931
+    },
+    {
+      "fixture": "conditional",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 2.539
+    },
+    {
+      "fixture": "owned-http-spa",
+      "status": "completed_with_limitations",
+      "findings": 0,
+      "seconds": 4.65
+    }
+  ],
+  "limitation": "Same Windows machine; not a clean-machine installation test.",
+  "path_verification": {
+    "resolved_package": "AccessMaze-release-validation-final",
+    "package_alias": "AccessMaze Unicode \u092a\u0930\u0940\u0915\u094d\u0937\u0923",
+    "temporary_storage_parent": "Unicode temporary data \u092a\u0930\u0940\u0915\u094d\u0937\u0923",
+    "scope": "Windows junction used only as package path alias; actual storage ordinary private Unicode directory. Alias and temporary storage removed after execution."
+  }
+}

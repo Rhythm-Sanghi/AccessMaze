@@ -108,13 +108,13 @@ Potential incompatibilities / remaining obligations:
 | python pyinstaller-hooks-contrib 2026.8 | false positive / non-distributed development or platform dependency | excluded from application redistribution gap count |
 | python ruff 0.13.1 | false positive / non-distributed development or platform dependency | excluded from application redistribution gap count |
 | python tomli-w 1.2.0 | false positive / non-distributed development or platform dependency | excluded from application redistribution gap count |
-| cargo alloc-stdlib 0.3.0 | genuine redistribution obligation / required notices | original upstream notice preserved |
-| cargo defmt-parser 1.0.0 | genuine redistribution obligation / required notices | original upstream notice preserved |
-| cargo selectors 0.38.0 | genuine redistribution obligation / required notices | original upstream notice preserved |
-| cargo webview2-com 0.39.1 | genuine redistribution obligation / required notices | original upstream notice preserved |
-| cargo webview2-com-macros 0.8.1 | genuine redistribution obligation / required notices | original upstream notice preserved |
-| cargo webview2-com-sys 0.39.1 | genuine redistribution obligation / required notices | original upstream notice preserved |
+| cargo alloc-stdlib 0.3.0 | required attribution / conservative Windows scope; linkage not proven | original upstream notice preserved |
+| cargo defmt-parser 1.0.0 | build-graph-only dependency / conservatively retained notice | original upstream notice preserved |
+| cargo selectors 0.38.0 | required attribution / conservative Windows scope; linkage not proven | original upstream notice preserved |
+| cargo webview2-com 0.39.1 | required attribution / conservative Windows scope; linkage not proven | original upstream notice preserved |
+| cargo webview2-com-macros 0.8.1 | required attribution / conservative Windows scope; linkage not proven | original upstream notice preserved |
+| cargo webview2-com-sys 0.39.1 | required attribution / conservative Windows scope; linkage not proven | original upstream notice preserved |
 
-## Covered native source delivery follow-up
+Final scope clarification: actual normal-edge Windows cargo tree has no ordinary dependency path for defmt-parser. It is classified as build-graph-only, with its notice retained conservatively. The other five missing-notice crate rows have ordinary graph paths, which can still include proc-macros/generated code and do not establish executable linkage. Their notices are preserved as required-attribution candidates; this review does not invent genuine runtime obligations from metadata alone. The final per-row basis/graph hash is in license-gap-review-final.json; the prior conservative classifications remain in earlier JSON for traceability.
 
-The audit now preserves the five resolved MPL crate source archives offline, links them from THIRD-PARTY-NOTICES.md, and explicitly makes the covered source available under MPL-2.0. Each original .crate matches Cargo.lock SHA-256 and all 66 published files match the actual compiler registry sources byte for byte. The five archive hashes/counts are in covered-source-verification.json. A regression rejects either a lock checksum mismatch or modified compiler sources. Five distribution tests passed; actual audit still reports 627 components, 782 notices and 73 non-distributed raw flags. Browser incorporated code/source, axe preferred-source review, Microsoft runtime provenance and independent legal clearance remain open. Earlier paragraphs describe the initial review and are superseded only for this native-source delivery action.
+Covered native source delivery: all five resolved MPL crate source archives are now shipped offline, under MPL-2.0, linked from THIRD-PARTY-NOTICES.md. Cargo.lock archive hashes and all 66 compiled registry source files matched. See covered-source-verification.json. Tests reject changed archive hashes or compiler sources. Browser/Microsoft rights and preferred-source review (including axe), verified binary SBOM and independent legal qualification remain open.
