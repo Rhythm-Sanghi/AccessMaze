@@ -47,7 +47,11 @@ async def main():
             await page.get_by_label("Project name", exact=True).fill(
                 f"Desktop smoke / {kind}"
             )
-            await page.get_by_label(re.compile("I am authorized")).check()
+            await (
+                page.locator(".run-gate")
+                .get_by_label(re.compile("I am authorized"))
+                .check()
+            )
             await page.get_by_label(re.compile("I authorize this journey")).check()
             await page.get_by_role("button", name="Run analysis →").click()
             await page.get_by_text(expected, exact=True).first.wait_for()

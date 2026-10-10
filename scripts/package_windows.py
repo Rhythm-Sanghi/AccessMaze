@@ -1,6 +1,9 @@
 """Build a portable Windows preview with its own Python, driver, browser and axe script."""
 
 import argparse
+import hashlib
+import json
+import importlib.metadata
 import os
 import re
 import shutil
@@ -15,6 +18,11 @@ def run(args, **kwargs):
     subprocess.run(args, cwd=ROOT, check=True, **kwargs)
 
 
+def file_hash(path):
+    with path.open("rb") as stream:
+        return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", default="AccessMaze-portable")
@@ -27,9 +35,7 @@ def main():
         raise SystemExit("This packaging recipe is currently Windows-only")
     output = ROOT / "dist" / args.name
     if output.exists():
-        raise SystemExit(
-            "dist/AccessMaze-portable exists; preserve or move it before rebuilding"
-        )
+        raise SystemExit(f"{output} exists; preserve or move it before rebuilding")
     output.mkdir(parents=True)
     npm = shutil.which("npm.cmd")
     if not npm:
@@ -97,15 +103,47 @@ def main():
         "PLAYWRIGHT_BROWSERS_PATH": str(resources / "browsers"),
     }
     run(
-        [sys.executable, "-m", "playwright", "install", "--only-shell", "chromium"],
+        [sys.executable, "-m", "playwright", "install", "chromium"],
         env=environment,
     )
     (output / "PREVIEW.txt").write_text(
         "AccessMaze development preview. Run AccessMaze.exe. Requires Windows WebView2.\n"
         "Python, Node and a preinstalled Playwright browser are not required.\n"
         "Unsigned. Clean-machine installation and complete license manifest remain release gates.\n"
-        "Use synthetic local fixtures only. See resources/notices/SECURITY.md.\n",
+        "Use only authorized test sites/accounts. See resources/notices/SECURITY.md.\n",
         encoding="utf-8",
+    )
+    shutil.copy2(
+        ROOT / "scripts/Test-AccessMazePortable.ps1",
+        output / "Test-AccessMazePortable.ps1",
+    )
+    manifest = {
+        "schema_version": 1,
+        "source_commit": subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+        ).strip(),
+        "source_dirty": bool(
+            subprocess.check_output(
+                ["git", "status", "--porcelain"], cwd=ROOT, text=True
+            ).strip()
+        ),
+        "python": sys.version,
+        "dependencies": {
+            name: importlib.metadata.version(name)
+            for name in ["playwright", "pydantic", "networkx", "pyinstaller"]
+        },
+        "files": [
+            {
+                "path": path.relative_to(output).as_posix(),
+                "bytes": path.stat().st_size,
+                "sha256": file_hash(path),
+            }
+            for path in sorted(output.rglob("*"))
+            if path.is_file()
+        ],
+    }
+    (output / "package-manifest.json").write_text(
+        json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
     )
     print(output)
 

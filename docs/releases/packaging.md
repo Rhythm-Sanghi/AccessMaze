@@ -7,11 +7,24 @@ uv run --project engine python scripts/package_windows.py
 ```
 
 The script builds the Rust release host, freezes Python with PyInstaller and includes
-the Playwright driver, exact Chromium headless-shell revision and local axe-core.
+the Playwright driver, exact full Chromium and headless-shell revision and local axe-core.
 It writes `dist/AccessMaze-portable` and refuses to overwrite an existing package.
 Use `--name AccessMaze-preview` to choose another new output directory.
 Keep the entire directory together and launch `AccessMaze.exe`. Windows WebView2
 is required; Python, Node, uv and a preinstalled browser are not required at runtime.
+
+Packages include `package-manifest.json` with source commit/dirty state, dependency
+versions, file sizes and SHA-256 hashes. This detects accidental corruption, not
+authenticity; the preview is unsigned. Run the bundled systems-only checker:
+
+```powershell
+powershell -NoProfile -File .\Test-AccessMazePortable.ps1 -Package .
+```
+
+It checks hashes/path containment, starts the frozen worker with system-only PATH
+and temporary storage containing spaces, runs three real Chromium fixture journeys,
+checks JSON report identity and orderly EOF shutdown. It preserves the uniquely named
+storage directory for diagnosis. No Python/Node installation is needed by this check.
 
 The local `dist/AccessMaze-preview` build passed real WebView2/IPC/browser journeys,
 worker crash recovery and a frozen-worker test using only Windows system tools on

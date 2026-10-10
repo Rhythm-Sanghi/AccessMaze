@@ -4,6 +4,17 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Continuation milestone 5 — portable verification (in progress)
+
+Prepared: full Chromium for the visible recorder, source/dependency and SHA-256 file
+manifest, systems-only PowerShell checker, and actual native website/recorder smoke
+script. `uv run --project engine pytest engine/tests/test_package_integrity.py -q`:
+**1 passed**, exercising valid hashes, altered files and path-escape rejection through
+the actual PowerShell script. Ruff, diff checks and Python/npm production dependency
+audits passed (no known vulnerabilities; editable local project skipped by pip-audit).
+The new frozen/native build is being verified; these checks do not establish an
+independent clean-machine installation or package authenticity/signing.
+
 ### Continuation milestone 4 — approved website exploration and computed semantics
 
 Completed: external exploration follows one bounded path, proposing named browser
