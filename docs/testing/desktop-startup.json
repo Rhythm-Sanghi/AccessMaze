@@ -1,23 +1,23 @@
 {
-  "package": "AccessMaze-release-validation-final",
+  "package": "AccessMaze-competition-startup",
   "measurements": [
     {
-      "connected_ui_seconds": 1.337,
-      "ready_summed_rss_mib": 439.27,
+      "connected_ui_seconds": 3.859,
+      "ready_summed_rss_mib": 445.31,
       "child_processes": 8
     },
     {
-      "connected_ui_seconds": 1.297,
-      "ready_summed_rss_mib": 442.37,
+      "connected_ui_seconds": 2.68,
+      "ready_summed_rss_mib": 440.37,
       "child_processes": 8
     },
     {
-      "connected_ui_seconds": 1.262,
-      "ready_summed_rss_mib": 438.74,
+      "connected_ui_seconds": 2.616,
+      "ready_summed_rss_mib": 443.82,
       "child_processes": 8
     }
   ],
   "scope": "Same laptop, existing synthetic AppData history, three sequential launches; cache state uncontrolled. Time to CDP-observed Worker connected includes polling/harness overhead. RSS includes desktop, WebView2 and worker; shared pages counted repeatedly. Test-only loopback port closed after owned desktop exit.",
-  "child_environment_path": "SystemRoot/System32 only; actual desktop/WebView/worker inherited this PATH. Python/Playwright used only by the external measurement harness.",
-  "initial_harness_failure": "Bare powershell lookup during close failed under stripped PATH. Explicit system executable path and cleanup fallback corrected; owned PID 48892 and 8 children cleaned, then all three launches/cleanup passed."
+  "launch_environment": "SystemRoot/System32-only PATH inherited by actual desktop/worker/WebView2; external measurement harness uses the development Python.",
+  "background_load": "Archive compression also running during these samples; cache/load uncontrolled, no performance budget verdict."
 }

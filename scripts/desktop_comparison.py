@@ -103,7 +103,7 @@ async def main():
             await page.get_by_role(
                 "heading", name="Journey comparison", exact=True
             ).wait_for()
-            previous = page.get_by_label("Previous run", exact=True)
+            previous = page.get_by_label(re.compile("^Previous run"))
             options = await previous.locator("option").evaluate_all(
                 "es=>es.filter(e=>e.value).map(e=>({value:e.value,text:e.textContent}))"
             )

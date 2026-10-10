@@ -21,7 +21,8 @@ for actual verification and remaining release gates.
 - Opt-in bounded button-branch discovery on resettable synthetic fixtures, including recorded frontier bounds.
 - SQLite run history, crash interruption recovery, masked fixture failure screenshots.
 - JSON, escaped HTML and formula-safe CSV report exports.
-- Persisted retest comparisons, consistent ZIP backups and explicit retention cleanup.
+- Explicit task outcomes and persisted comparisons with step alignment, target-aware findings,
+  changed-condition warnings, consistent ZIP backups and explicit retention cleanup.
 - Synthetic fixtures that demonstrate both successful journeys and observable failures.
 - Light/dark desktop UI with labels, focus indicators and keyboard operation.
 - Website projects with separate navigation/API and read-only resource permissions,

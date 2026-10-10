@@ -69,6 +69,45 @@ async def demonstrate(output):
                 )
 
             app.broken = True
+            isolated_journey = Journey.model_validate(
+                {
+                    **journey.model_dump(),
+                    "steps": [
+                        {"id": "open", "action": "navigate"},
+                        {"id": "page-rules", "action": "audit"},
+                        {
+                            "id": "page-present",
+                            "action": "assert_visible",
+                            "target": {
+                                "role": "heading",
+                                "name": "Hackyard application",
+                            },
+                        },
+                    ],
+                }
+            )
+            isolated_project = store.save_project(
+                ProjectInput(
+                    name="Isolated initial-page checks", journey=isolated_journey
+                )
+            )
+            isolated = await execute(
+                store,
+                isolated_project["id"],
+                isolated_journey,
+                RunControl(),
+                fixtures,
+                ROOT / "node_modules/axe-core/axe.min.js",
+            )
+            assert (
+                isolated["outcome"]["status"] == "completed"
+                and not isolated["findings"]
+            ), isolated
+            for format in ["json", "html", "csv"]:
+                content, _ = export_report(isolated, format)
+                (output / f"isolated-check.{format}").write_text(
+                    content, encoding="utf-8"
+                )
             before_html = app.html()
             broken = await run()
             assert any(
@@ -188,6 +227,11 @@ async def demonstrate(output):
             save(output / "recorded-replay.json", replay)
             summary = {
                 "scope": "Owned HTTP app and actual Chromium; scripted recording, no NVDA claim",
+                "isolated_page_findings": len(isolated["findings"]),
+                "isolated_page_manual_review": isolated["steps"][1]["audit"][
+                    "incomplete"
+                ],
+                "isolated_page_scope": "Initial page axe rules and heading assertion only; no keyboard task completion or conformance verdict",
                 "broken_status": broken["status"],
                 "fixed_status": fixed["status"],
                 "broken_outcome": broken["outcome"],

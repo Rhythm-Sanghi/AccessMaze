@@ -1,0 +1,706 @@
+{
+  "scope": "Actual saved synthetic attempts before harness cleanup. Includes cancelled initial timeout and successful browser runs before selector-harness failure. These attempts are not all successful validations.",
+  "attempts": [
+    {
+      "owned_project_name": "Native comparison 31ebd248",
+      "run": {
+        "id": "6ea9edb3-bf02-4b30-b3c8-1b3afa4ce10c",
+        "project_id": "76621f03-7014-4c7e-90c5-359ff6d8ad5f",
+        "status": "cancelled",
+        "started_at": "2026-10-10T12:02:40.510159+00:00",
+        "journey": {
+          "schema_version": 1,
+          "name": "Native keyboard correction",
+          "target": "http://127.0.0.1:54266",
+          "steps": [
+            {
+              "id": "open",
+              "action": "navigate",
+              "target": null,
+              "value": "",
+              "optional": false,
+              "effect": false,
+              "value_from": null,
+              "file_label": ""
+            },
+            {
+              "id": "continue",
+              "action": "activate",
+              "target": {
+                "by": "role",
+                "role": "button",
+                "name": "Continue"
+              },
+              "value": "",
+              "optional": false,
+              "effect": true,
+              "value_from": null,
+              "file_label": ""
+            },
+            {
+              "id": "done",
+              "action": "assert_visible",
+              "target": {
+                "by": "role",
+                "role": "heading",
+                "name": "Done"
+              },
+              "value": "",
+              "optional": false,
+              "effect": false,
+              "value_from": null,
+              "file_label": ""
+            }
+          ],
+          "profile": {
+            "action_timeout_ms": 10000,
+            "keyboard_only": true,
+            "reduced_motion": false,
+            "viewport_width": 1280,
+            "viewport_height": 800,
+            "network_latency_ms": 0
+          },
+          "max_seconds": 60,
+          "tab_budget": 8,
+          "allow_local": true,
+          "exploration": {
+            "enabled": false,
+            "max_depth": 2,
+            "max_actions": 50
+          },
+          "network": {
+            "navigation_origins": [],
+            "resource_origins": []
+          },
+          "privacy": {
+            "capture_page_text": true
+          }
+        },
+        "input_signature": null,
+        "steps": [],
+        "findings": [],
+        "nodes": [],
+        "edges": [],
+        "environment": {
+          "engine": "0.1.0",
+          "playwright": "1.63.0",
+          "python": "3.13.9",
+          "os": "Windows-11-10.0.26220-SP0",
+          "networkx": "3.7"
+        },
+        "limitations": [
+          "Authored path only; unvisited branches are not covered.",
+          "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+          "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+          "Motion and viewport preferences are applied; usability requires human review.",
+          "Only approved origins are allowed; blocked traffic can change behavior.",
+          "Screenshots are captured only for bundled synthetic fixtures."
+        ],
+        "outcome": {
+          "status": "cancelled",
+          "reason": "Execution was cancelled; partial evidence is retained.",
+          "assertions": [
+            {
+              "step_id": "done",
+              "status": "not-reached"
+            }
+          ],
+          "blocked_step_id": null,
+          "limitation": "Task completion does not establish accessibility conformance or untested coverage."
+        },
+        "coverage_compromised": false,
+        "finished_at": "2026-10-10T12:02:45.959854+00:00",
+        "duration_seconds": 0.011
+      }
+    },
+    {
+      "owned_project_name": "Native comparison eecdd637",
+      "run": {
+        "id": "8bf252dd-e91d-4dcf-9bf8-f9727a41a83c",
+        "project_id": "cf9cb9ce-25be-4ac9-8c51-3ab009abc300",
+        "status": "failed",
+        "started_at": "2026-10-10T12:10:50.378296+00:00",
+        "journey": {
+          "schema_version": 1,
+          "name": "Native keyboard correction",
+          "target": "http://127.0.0.1:57121",
+          "steps": [
+            {
+              "id": "open",
+              "action": "navigate",
+              "target": null,
+              "value": "",
+              "optional": false,
+              "effect": false,
+              "value_from": null,
+              "file_label": ""
+            },
+            {
+              "id": "continue",
+              "action": "activate",
+              "target": {
+                "by": "role",
+                "role": "button",
+                "name": "Continue"
+              },
+              "value": "",
+              "optional": false,
+              "effect": true,
+              "value_from": null,
+              "file_label": ""
+            },
+            {
+              "id": "done",
+              "action": "assert_visible",
+              "target": {
+                "by": "role",
+                "role": "heading",
+                "name": "Done"
+              },
+              "value": "",
+              "optional": false,
+              "effect": false,
+              "value_from": null,
+              "file_label": ""
+            }
+          ],
+          "profile": {
+            "action_timeout_ms": 10000,
+            "keyboard_only": true,
+            "reduced_motion": false,
+            "viewport_width": 1280,
+            "viewport_height": 800,
+            "network_latency_ms": 0
+          },
+          "max_seconds": 60,
+          "tab_budget": 8,
+          "allow_local": true,
+          "exploration": {
+            "enabled": false,
+            "max_depth": 2,
+            "max_actions": 50
+          },
+          "network": {
+            "navigation_origins": [],
+            "resource_origins": []
+          },
+          "privacy": {
+            "capture_page_text": true
+          }
+        },
+        "input_signature": null,
+        "steps": [
+          {
+            "id": "open",
+            "action": "navigate",
+            "status": "passed",
+            "timestamp": "2026-10-10T12:10:53.293253+00:00",
+            "index": 0,
+            "interaction": {
+              "http_status": 200
+            },
+            "state_id": "48d774c0101f2bf5"
+          },
+          {
+            "id": "continue",
+            "action": "activate",
+            "status": "failed",
+            "timestamp": "2026-10-10T12:10:54.064063+00:00",
+            "index": 1,
+            "interaction": {
+              "tab_presses": 8,
+              "focus_history": [
+                {
+                  "tag": "body",
+                  "role": "",
+                  "name": ""
+                },
+                {
+                  "tag": "body",
+                  "role": "",
+                  "name": ""
+                },
+                {
+                  "tag": "body",
+                  "role": "",
+                  "name": ""
+                },
+                {
+                  "tag": "body",
+                  "role": "",
+                  "name": ""
+                },
+                {
+                  "tag": "body",
+                  "role": "",
+                  "name": ""
+                },
+                {
+                  "tag": "body",
+                  "role": "",
+                  "name": ""
+                },
+                {
+                  "tag": "body",
+                  "role": "",
+                  "name": ""
+                },
+                {
+                  "tag": "body",
+                  "role": "",
+                  "name": ""
+                },
+                {
+                  "tag": "body",
+                  "role": "",
+                  "name": ""
+                }
+              ]
+            },
+            "state_id": "e7b163da33af9bc0"
+          }
+        ],
+        "findings": [
+          {
+            "id": "76a364f2-c47e-4a75-898d-9f4cf6bec88b",
+            "step_id": "continue",
+            "rule": "keyboard-unreachable",
+            "title": "Target not reached within 8 Tab presses",
+            "severity": "serious",
+            "verification": "confirmed-automated",
+            "actual": "Target not reached within 8 Tab presses",
+            "expected": "Target reachable through sequential keyboard navigation",
+            "timestamp": "2026-10-10T12:10:54.680612+00:00",
+            "reproduction": [
+              "open",
+              "continue"
+            ],
+            "remediation": "Inspect the step and target; rerun after repair."
+          }
+        ],
+        "nodes": [
+          {
+            "id": "48d774c0101f2bf5",
+            "observation": {
+              "title": "Owned comparison",
+              "controls": [
+                {
+                  "tag": "div",
+                  "role": "button",
+                  "name": "Continue",
+                  "disabled": false,
+                  "visible": true,
+                  "invalid": null,
+                  "populated": false,
+                  "focused": false
+                }
+              ],
+              "headings": [
+                "Application"
+              ],
+              "online": true,
+              "reduced_motion": false,
+              "url": "http://127.0.0.1:57121/",
+              "ax_tree": {
+                "source": "Chromium computed accessibility tree",
+                "max_depth": 8,
+                "max_nodes": 500,
+                "nodes": [
+                  {
+                    "role": "RootWebArea",
+                    "name": "Owned comparison",
+                    "focused": true
+                  },
+                  {
+                    "role": "main",
+                    "name": "",
+                    "focused": false
+                  },
+                  {
+                    "role": "heading",
+                    "name": "Application",
+                    "focused": false
+                  },
+                  {
+                    "role": "button",
+                    "name": "Continue",
+                    "focused": false
+                  }
+                ]
+              }
+            },
+            "first_step": "open"
+          },
+          {
+            "id": "e7b163da33af9bc0",
+            "observation": {
+              "title": "Owned comparison",
+              "controls": [
+                {
+                  "tag": "div",
+                  "role": "button",
+                  "name": "Continue",
+                  "disabled": false,
+                  "visible": true,
+                  "invalid": null,
+                  "populated": false,
+                  "focused": false
+                }
+              ],
+              "headings": [
+                "Application"
+              ],
+              "online": true,
+              "reduced_motion": false,
+              "url": "http://127.0.0.1:57121/",
+              "ax_tree": {
+                "source": "Chromium computed accessibility tree",
+                "max_depth": 8,
+                "max_nodes": 500,
+                "nodes": [
+                  {
+                    "role": "RootWebArea",
+                    "name": "Owned comparison",
+                    "focused": false
+                  },
+                  {
+                    "role": "main",
+                    "name": "",
+                    "focused": false
+                  },
+                  {
+                    "role": "heading",
+                    "name": "Application",
+                    "focused": false
+                  },
+                  {
+                    "role": "button",
+                    "name": "Continue",
+                    "focused": false
+                  }
+                ]
+              }
+            },
+            "first_step": "continue"
+          }
+        ],
+        "edges": [
+          {
+            "source": "48d774c0101f2bf5",
+            "target": "e7b163da33af9bc0",
+            "step_id": "continue",
+            "status": "failed",
+            "cycle": false
+          }
+        ],
+        "environment": {
+          "engine": "0.1.0",
+          "playwright": "1.63.0",
+          "python": "3.13.9",
+          "os": "Windows-11-10.0.26220-SP0",
+          "networkx": "3.7",
+          "browser": "153.0.8010.12"
+        },
+        "limitations": [
+          "Authored path only; unvisited branches are not covered.",
+          "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+          "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+          "Motion and viewport preferences are applied; usability requires human review.",
+          "Only approved origins are allowed; blocked traffic can change behavior.",
+          "Screenshots are captured only for bundled synthetic fixtures."
+        ],
+        "outcome": {
+          "status": "blocked",
+          "reason": "A required interaction or assertion failed in this bounded attempt.",
+          "assertions": [
+            {
+              "step_id": "done",
+              "status": "not-reached"
+            }
+          ],
+          "blocked_step_id": "continue",
+          "limitation": "Task completion does not establish accessibility conformance or untested coverage."
+        },
+        "coverage_compromised": false,
+        "finished_at": "2026-10-10T12:10:55.309102+00:00",
+        "duration_seconds": 4.93
+      }
+    },
+    {
+      "owned_project_name": "Native comparison eecdd637",
+      "run": {
+        "id": "49f68d43-c316-40f0-b152-89f19be68779",
+        "project_id": "cf9cb9ce-25be-4ac9-8c51-3ab009abc300",
+        "status": "completed_with_limitations",
+        "started_at": "2026-10-10T12:10:56.383414+00:00",
+        "journey": {
+          "schema_version": 1,
+          "name": "Native keyboard correction",
+          "target": "http://127.0.0.1:57121",
+          "steps": [
+            {
+              "id": "open",
+              "action": "navigate",
+              "target": null,
+              "value": "",
+              "optional": false,
+              "effect": false,
+              "value_from": null,
+              "file_label": ""
+            },
+            {
+              "id": "continue",
+              "action": "activate",
+              "target": {
+                "by": "role",
+                "role": "button",
+                "name": "Continue"
+              },
+              "value": "",
+              "optional": false,
+              "effect": true,
+              "value_from": null,
+              "file_label": ""
+            },
+            {
+              "id": "done",
+              "action": "assert_visible",
+              "target": {
+                "by": "role",
+                "role": "heading",
+                "name": "Done"
+              },
+              "value": "",
+              "optional": false,
+              "effect": false,
+              "value_from": null,
+              "file_label": ""
+            }
+          ],
+          "profile": {
+            "action_timeout_ms": 10000,
+            "keyboard_only": true,
+            "reduced_motion": false,
+            "viewport_width": 1280,
+            "viewport_height": 800,
+            "network_latency_ms": 0
+          },
+          "max_seconds": 60,
+          "tab_budget": 8,
+          "allow_local": true,
+          "exploration": {
+            "enabled": false,
+            "max_depth": 2,
+            "max_actions": 50
+          },
+          "network": {
+            "navigation_origins": [],
+            "resource_origins": []
+          },
+          "privacy": {
+            "capture_page_text": true
+          }
+        },
+        "input_signature": null,
+        "steps": [
+          {
+            "id": "open",
+            "action": "navigate",
+            "status": "passed",
+            "timestamp": "2026-10-10T12:10:58.875226+00:00",
+            "index": 0,
+            "interaction": {
+              "http_status": 200
+            },
+            "state_id": "4b2014729642a684"
+          },
+          {
+            "id": "continue",
+            "action": "activate",
+            "status": "passed",
+            "timestamp": "2026-10-10T12:10:58.962614+00:00",
+            "index": 1,
+            "interaction": {
+              "tab_presses": 1,
+              "focus_history": [
+                {
+                  "tag": "body",
+                  "role": "",
+                  "name": ""
+                },
+                {
+                  "tag": "button",
+                  "role": "",
+                  "name": "Continue"
+                }
+              ]
+            },
+            "state_id": "0682cd736ffcf9b9"
+          },
+          {
+            "id": "done",
+            "action": "assert_visible",
+            "status": "passed",
+            "timestamp": "2026-10-10T12:10:59.346883+00:00",
+            "index": 2,
+            "state_id": "0682cd736ffcf9b9"
+          }
+        ],
+        "findings": [],
+        "nodes": [
+          {
+            "id": "4b2014729642a684",
+            "observation": {
+              "title": "Owned comparison",
+              "controls": [
+                {
+                  "tag": "button",
+                  "role": null,
+                  "name": "Continue",
+                  "disabled": false,
+                  "visible": true,
+                  "invalid": null,
+                  "populated": false,
+                  "focused": false
+                }
+              ],
+              "headings": [
+                "Application"
+              ],
+              "online": true,
+              "reduced_motion": false,
+              "url": "http://127.0.0.1:57121/",
+              "ax_tree": {
+                "source": "Chromium computed accessibility tree",
+                "max_depth": 8,
+                "max_nodes": 500,
+                "nodes": [
+                  {
+                    "role": "RootWebArea",
+                    "name": "Owned comparison",
+                    "focused": true
+                  },
+                  {
+                    "role": "main",
+                    "name": "",
+                    "focused": false
+                  },
+                  {
+                    "role": "heading",
+                    "name": "Application",
+                    "focused": false
+                  },
+                  {
+                    "role": "button",
+                    "name": "Continue",
+                    "focused": false
+                  }
+                ]
+              }
+            },
+            "first_step": "open"
+          },
+          {
+            "id": "0682cd736ffcf9b9",
+            "observation": {
+              "title": "Owned comparison",
+              "controls": [
+                {
+                  "tag": "button",
+                  "role": null,
+                  "name": "Continue",
+                  "disabled": false,
+                  "visible": true,
+                  "invalid": null,
+                  "populated": false,
+                  "focused": true
+                }
+              ],
+              "headings": [
+                "Done"
+              ],
+              "online": true,
+              "reduced_motion": false,
+              "url": "http://127.0.0.1:57121/",
+              "ax_tree": {
+                "source": "Chromium computed accessibility tree",
+                "max_depth": 8,
+                "max_nodes": 500,
+                "nodes": [
+                  {
+                    "role": "RootWebArea",
+                    "name": "Owned comparison",
+                    "focused": true
+                  },
+                  {
+                    "role": "main",
+                    "name": "",
+                    "focused": false
+                  },
+                  {
+                    "role": "heading",
+                    "name": "Done",
+                    "focused": false
+                  },
+                  {
+                    "role": "button",
+                    "name": "Continue",
+                    "focused": true
+                  }
+                ]
+              }
+            },
+            "first_step": "continue"
+          }
+        ],
+        "edges": [
+          {
+            "source": "4b2014729642a684",
+            "target": "0682cd736ffcf9b9",
+            "step_id": "continue",
+            "status": "passed",
+            "cycle": false
+          },
+          {
+            "source": "0682cd736ffcf9b9",
+            "target": "0682cd736ffcf9b9",
+            "step_id": "done",
+            "status": "passed",
+            "cycle": true
+          }
+        ],
+        "environment": {
+          "engine": "0.1.0",
+          "playwright": "1.63.0",
+          "python": "3.13.9",
+          "os": "Windows-11-10.0.26220-SP0",
+          "networkx": "3.7",
+          "browser": "153.0.8010.12"
+        },
+        "limitations": [
+          "Authored path only; unvisited branches are not covered.",
+          "Keyboard reachability uses a finite Tab budget; failure is bounded to this attempt.",
+          "DOM semantics do not establish assistive technology behavior or WCAG conformance.",
+          "Motion and viewport preferences are applied; usability requires human review.",
+          "Only approved origins are allowed; blocked traffic can change behavior.",
+          "Screenshots are captured only for bundled synthetic fixtures."
+        ],
+        "outcome": {
+          "status": "completed",
+          "reason": "All mandatory assertions passed in this execution.",
+          "assertions": [
+            {
+              "step_id": "done",
+              "status": "passed"
+            }
+          ],
+          "blocked_step_id": null,
+          "limitation": "Task completion does not establish accessibility conformance or untested coverage."
+        },
+        "coverage_compromised": false,
+        "finished_at": "2026-10-10T12:10:59.491970+00:00",
+        "duration_seconds": 3.107
+      }
+    }
+  ]
+}

@@ -9,7 +9,8 @@ uv run --project engine python scripts/hackyard_demo.py --output dist/Hackyard-c
 Choose a new output folder; evidence is never overwritten. Only owned loopback servers
 and synthetic fixtures receive interactions. No public-site write is performed.
 
-1. Show journey.json: keyboard-only profile, bounded steps and explicit task assertions.
+1. First show isolated-check.html and isolated-check.json: an actual initial-page axe scan
+   and heading assertion pass, while keyboard task completion remains untested. Then show journey.json: keyboard-only profile, bounded steps and explicit task assertions.
 2. Show broken.html and broken.json: Continue is an unfocusable role-button div. Read
    the failed step, actual bounded focus attempt and not-reached assertions.
 3. Show correction.diff: replace that control with a native button.
@@ -30,3 +31,7 @@ The HTTP servers close after the run. Regenerate to obtain live origins; do not 
 expired URLs. Generated reports remain viewable offline. Identify stored evidence as
 historical execution, including its timestamp, whenever it replaces a live demonstration.
 A failed run must remain visible rather than being replaced with fabricated findings.
+
+Latest standalone evidence: `demo-competition-verification.json`; generated local artifacts
+are in `dist/Hackyard-competition-evidence`. Native comparison evidence is in
+`native-comparison-verification.json`, against clean application source 504774a.

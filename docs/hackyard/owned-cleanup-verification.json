@@ -1,0 +1,17 @@
+{
+  "desktop_pid": 42220,
+  "owned_children_closed": 8,
+  "remaining_owned_processes": 0,
+  "synthetic_checker_directories_removed": [
+    "AccessMaze portable check 5735d1f6-f0f4-4430-a648-94294e71d2f2",
+    "AccessMaze portable check 788dffec-b62d-496a-be36-d5131d18ae04"
+  ],
+  "scope": "Only owned comparison projects/checker directories and this native GUI; real user AppData otherwise preserved.",
+  "after_startup_measurements": {
+    "matching_desktops": [],
+    "test_ports_listening": {
+      "9224": false,
+      "9227": false
+    }
+  }
+}

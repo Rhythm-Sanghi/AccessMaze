@@ -15,6 +15,10 @@ def test_demo_records_real_failure_fix_and_replay(tmp_path):
     output = tmp_path / "demo"
     result = asyncio.run(module.demonstrate(output))
     assert result["server_observations"]["api_posts"] == 1
+    assert result["isolated_page_findings"] == 0
+    isolated = json.loads((output / "isolated-check.json").read_text(encoding="utf-8"))
+    assert isolated["steps"][1]["action"] == "audit"
+    assert isolated["steps"][1]["audit"]["violations"] == []
     assert result["broken_outcome"]["status"] == "blocked"
     assert result["fixed_outcome"]["status"] == "completed"
     assert result["environment_outcome"]["status"] == "blocked"

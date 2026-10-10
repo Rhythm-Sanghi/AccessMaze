@@ -4,6 +4,49 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Competition outcome milestone — native verification complete for this increment
+
+Application source **504774a**, built clean as `dist/AccessMaze-competition-startup`;
+source_dirty=false. **1,702 manifest-hashed files**, 782 collected notices and native MPL
+sources retained; no dependency or security-policy relaxation. ZIP **389,992,385 bytes /
+1,703 files**, CRC passed, SHA-256 **1313d9ddd959b90e9d419c19fcc9a9aa34a80703d737ec142681aa8d9d77aaa9**.
+Raw artifact record: `../hackyard/preview-artifact-verification.json`. Later demo/test-tooling
+and documentation changes do not alter this packaged runtime. This unsigned ZIP is a
+locally tested preview, not independent release qualification.
+
+Actual final verification:
+
+- `uv run --project engine pytest engine/tests -q`: **102 passed in 122.19 s**, including the reproduced cold-start regression after its fix.
+- `npm run check`, `npm test` (**6 tests**), `npm run format:check`, contracts, Ruff/check/format (**66 files**), Cargo fmt and locked Cargo test (**1 Windows Job test**) passed. Frontend/release build passed in packaging. Remote CI and NVDA remain unexecuted.
+- `Test-AccessMazePortable.ps1 -Package ./dist/AccessMaze-competition-startup -Report ...`: all file hashes, frozen worker/bundled Chromium, three expected fixture outcomes, exports/EOF, System32-only PATH passed; worker startup **0.558 s**. Raw `../hackyard/portable-startup-verification.json`.
+- `portable_smoke.py --package AccessMaze-competition-startup --complex --report ...`: three fixture outcomes and real owned 19-step HTTP SPA/upload passed, expected exact single upload/bytes asserted; worker **0.471 s**, complex run **5.425 s**. Raw `../hackyard/complex-portable-verification.json`.
+- `desktop_comparison.py`: actual native WebView2/IPC/Chromium target, observed keyboard failure → correction → completion; Enter activates comparison, first divergent step is continue, passed keyboard retest, baseline inspection hides stale comparison. Axe **0 violations**, color-contrast incomplete. Unique passing project removed. Raw `../hackyard/native-comparison-verification.json`; screenshot `screenshots/journey-comparison.png` visually inspected.
+- The first post-fix harness attempt reached both actual expected outcomes, then failed because an exact wrapped-label selector included option text. Fixed the harness selector to use the label prefix; the entire sequence reran successfully. This was a harness defect, not a product failure. Actual cancelled/pre-comparison failed-attempt records are preserved in `../hackyard/native-validation-attempts.json`; only the explicitly owned disposable projects were subsequently removed.
+- `desktop_smoke.py`, `desktop_website_smoke.py`, `desktop_readiness.py`: native fixtures/light+dark axe (0 violations, contrast incomplete), per-action approval/one POST/no external replay, headed recorder/H1 capture, keyboard heading focus, safe schema errors/input retention and dialog focus all passed.
+- `desktop_crash.py` on the exact new executable: actual worker restarted, interrupted run persisted and **4 Chromium descendants** cleaned. Raw `../testing/desktop-crash.json`. Native GUI PID 42220/eight children subsequently closed.
+- Three actual native launches with System32-only PATH: connected UI **3.859 / 2.680 / 2.616 s**, ready summed RSS **445.31 / 440.37 / 443.82 MiB**. Archive compression ran concurrently; load/cache uncontrolled, no performance-regression or budget conclusion. All owned descendants closed. Raw `../hackyard/native-startup-verification.json`.
+- Both checker-created temporary stores removed after validating their exact UUID paths; no matching desktop remained and ports 9224/9227 were closed. User AppData otherwise retained. Raw `../hackyard/owned-cleanup-verification.json`.
+
+The strengthened demo additionally executes an **isolated initial-page axe audit** before
+attempting the broken keyboard task. Actual current run: **0 axe violations / 0 incomplete
+rules**, initial heading assertion passed; the keyboard journey then blocked at validate.
+The native-button correction completed, its comparable retest passed, one 25-byte upload
+occurred, and a separate offline/online form-state-loss assertion blocked as expected.
+`pytest engine/tests/test_hackyard_demo.py -q`: **1 passed in 18.28 s** after this final
+script-only enhancement. Standalone command `hackyard_demo.py --output
+dist/Hackyard-competition-evidence` also passed; actual summary
+`../hackyard/demo-competition-verification.json`. This is evidence of this isolated check
+set versus this task, not an assertion that every accessibility check or WCAG criterion passed.
+
+**Broader competition mission remains open:** reusable named profile library/true browser
+zoom, expanded semantic/goal-directed discovery with appropriately authorized branching,
+and dedicated historical-versus-live failure replay still need implementation and acceptance.
+Existing narrower implementations remain documented in `../hackyard/gap-assessment.md`.
+The nine requested materials and local document links were checked; onsite achievements
+remain unclaimed. Independent release gates in `../releases/remaining-actions.md` remain
+open. This increment does not establish competition completion or public-release readiness.
+
+
 ### Native validation exposed a cold-start readiness blocker — corrected
 
 Clean milestone source **e84b34e** packaged as `dist/AccessMaze-competition-outcomes`.

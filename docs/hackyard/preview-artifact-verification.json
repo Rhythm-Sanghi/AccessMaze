@@ -1,0 +1,10 @@
+{
+  "artifact": "AccessMaze-competition-startup.zip",
+  "bytes": 389992385,
+  "sha256": "1313d9ddd959b90e9d419c19fcc9a9aa34a80703d737ec142681aa8d9d77aaa9",
+  "zip_crc": "passed",
+  "files": 1703,
+  "source_commit": "504774abe4c4fc64cdfa7044a0251164d770c77c",
+  "source_dirty": false,
+  "scope": "Unsigned local preview. ZIP timestamps clamp to supported range; file hashes remain authoritative. No bit-for-bit build or independent qualification claim."
+}

@@ -1,5 +1,10 @@
 # Reproducible Hackyard demonstration
 
+The current competition procedure is [the three-case script](../hackyard/demo-script.md).
+It adds an actual isolated initial-page audit and a separately exported environmental
+draft-loss case. Latest real results: `../hackyard/demo-competition-verification.json`.
+Earlier executions below remain historical evidence.
+
 Use [presentation and transparency](hackyard-presentation.md) for the three-minute
 sequence, architecture, differentiation, limits and pre-existing/new-work ledger.
 
