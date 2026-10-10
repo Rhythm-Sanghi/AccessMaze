@@ -133,3 +133,26 @@ The repository cleanup removes duplicate report snapshots and machine diagnostic
 the published tree. Source behavior, tests, license notices and commit history are retained.
 Disposable extraction/Temp directories from local testing remain on disk after guarded
 cleanup was rejected by execution policy. This does not affect the Git working tree.
+
+
+## Engineering continuation — baseline and CI repair
+
+Working branch: `engineering/browser-investigation`, baseline `c634573`.
+Repository-wide assessment and file/test milestones: [engineering-plan.md](engineering-plan.md).
+Fresh baseline commands: `uv run --project engine pytest engine/tests -q
+--junitxml=dist/engineering-baseline.xml` (112 passed, 140.921 s), `npm test`
+(9 passed, 3.99 s), `cargo test --locked --manifest-path
+apps/desktop/src-tauri/Cargo.toml` (1 passed).
+
+Actual GitHub [run 38071630094](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38071630094)
+failed on Linux (23 failures, 82 passed, 7 skipped). The demo unconditionally
+selected a repository browser cache after CI had installed browsers elsewhere;
+subsequent browser launches could not find Chromium. Windows was cancelled and
+packaging skipped. The repair uses one explicit install/test cache in CI, avoids
+selecting a nonexistent cache in the standalone demo, restores test environment
+state, and disables matrix fail-fast so both platforms report their own results.
+Action references are immutable SHAs resolved from official repositories; checkout
+and setup-node use their Node 24 v5 actions. Permissions remain contents/read.
+Affected real-browser demo regression: 1 passed in 15.42 s. Ruff and workflow
+Prettier validation passed after formatting. Remote verification of the repair is
+pending; no CI success is inferred from local tests.
