@@ -362,6 +362,7 @@ export default function RunWorkspace({
                           <th>Role</th>
                           <th>Computed name</th>
                           <th>Focus</th>
+                          <th>Control state</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -370,6 +371,7 @@ export default function RunWorkspace({
                             <td>{n.role}</td>
                             <td>{n.name}</td>
                             <td>{n.focused ? "focused" : ""}</td>
+                            <td>{JSON.stringify(n.states ?? {})}</td>
                           </tr>
                         ))}
                       </tbody>

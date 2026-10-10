@@ -202,3 +202,92 @@ document.body.innerHTML='<h1>Beta branch</h1>'">Beta</button>"""
             assert store.run(result["id"])["exploration"] == result["exploration"]
 
     asyncio.run(exercise())
+
+
+def test_checkbox_state_is_not_lost_by_focus_normalization(store, fixtures, axe_path):
+    from accessmaze.website_exploration import state_key
+
+    async def exercise():
+        with website(
+            {
+                "/": (
+                    200,
+                    {"Content-Type": "text/html"},
+                    "<h1>Base</h1><label>Terms<input type=checkbox></label>"
+                    "<label>Plan<input type=radio></label>",
+                )
+            }
+        ) as (target, hits):
+            journey = journey_for(target)
+            journey.exploration.max_actions = 1
+            p = store.save_project(ProjectInput(name="Checkbox discovery", journey=journey))
+            control = RunControl()
+            task = asyncio.create_task(
+                execute(store, p["id"], journey, control, fixtures, axe_path)
+            )
+            proposal = await wait_for_proposal(control)
+            assert [c["role"] for c in proposal["choices"]] == ["checkbox", "radio"]
+            choice = proposal["choices"][0]
+            assert choice["classification"] == "potentially-consequential"
+            assert not store.runs(p["id"])[0]["exploration"]["actions"]
+            control.approve(proposal["id"], choice["id"])
+            result = await asyncio.wait_for(task, 8)
+            action = result["exploration"]["actions"][0]
+            source = next(n["observation"] for n in result["nodes"] if n["id"] == action["source"])
+            destination = next(
+                n["observation"] for n in result["nodes"] if n["id"] == action["state_id"]
+            )
+            assert state_key(source) != state_key(destination), (
+                "Checked state was incorrectly aliased after focus normalization"
+            )
+            assert action["reachability"] == "reached"
+            assert not result["findings"]
+            assert not any(method == "POST" for method, _ in hits)
+
+    asyncio.run(exercise())
+
+
+def test_observation_does_not_mix_documents_during_navigation(monkeypatch):
+    from pathlib import Path
+
+    from playwright.async_api import async_playwright
+
+    import accessmaze.evidence as evidence
+
+    browsers = Path.cwd() / ".accessmaze/browsers"
+    if browsers.is_dir():
+        monkeypatch.setenv("PLAYWRIGHT_BROWSERS_PATH", str(browsers))
+
+    async def exercise():
+        with website(
+            {
+                "/": (200, {"Content-Type": "text/html"}, "<title>Old</title><h1>Old</h1>"),
+                "/next": (200, {"Content-Type": "text/html"}, "<title>New</title><h1>New</h1>"),
+            }
+        ) as (url, hits):
+            async with async_playwright() as pw:
+                browser = await pw.chromium.launch()
+                try:
+                    page = await browser.new_page()
+                    await page.goto(url)
+                    real_tree = evidence.accessibility_tree
+                    navigated = False
+
+                    async def tree_during_navigation(page):
+                        nonlocal navigated
+                        if not navigated:
+                            navigated = True
+                            await page.goto(url + "/next")
+                        return await real_tree(page)
+
+                    monkeypatch.setattr(evidence, "accessibility_tree", tree_during_navigation)
+                    observation = await evidence.observe(page)
+                    assert observation["title"] == "New"
+                    assert observation["headings"] == ["New"]
+                    assert observation["url"] == url + "/next"
+                    assert "_document_epoch" not in observation
+                    assert hits.count(("GET", "/next")) == 1
+                finally:
+                    await browser.close()
+
+    asyncio.run(exercise())

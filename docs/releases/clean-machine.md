@@ -46,3 +46,14 @@ commands, raw results and defects. Have the independent tester attest that no de
 runtime/cache was present. Re-run failed steps after correction; do not transfer local
 passes into this record. Release qualification additionally requires the security,
 license, manual accessibility, CI and acceptance gates in engineering status.
+
+For the remaining-feature build, additionally save/apply/update a reusable profile across
+two projects; verify keyboard/pointer outcomes and layout-zoom/motion/connectivity
+observations. Approve separate branches and root recovery against owned targets; verify
+no unapproved write. Reproduce a stored authored failure with fresh input, correct the
+owned target and replay again; inspect both traces. Cancel during approval/replay and
+crash the worker while a profile run is active. Record each result independently.
+
+Schema 3 migration is forward-only. Before upgrading a real store, retain a verified
+backup. Schema-2 previews refuse schema 3 rather than modifying it. A downgrade requires
+restoring the matching older backup into isolated storage; never downgrade the only copy.

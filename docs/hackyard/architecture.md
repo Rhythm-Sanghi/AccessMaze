@@ -10,6 +10,10 @@ flowchart LR
   Browser --> Observations[Focus / computed AX / axe / assertions]
   Observations --> SQLite[Private SQLite / masked fixture artifacts]
   SQLite --> Investigation[Observed graph / reports / comparison]
+  UI --> Profiles[Reusable profile library / immutable run snapshots]
+  Profiles --> Worker
+  Investigation --> Replay[Historical finding / fresh approved browser replay]
+  Replay --> Worker
   Worker --> Proposal[One bounded proposed external action]
   Proposal --> Person
 ```
@@ -21,5 +25,7 @@ receives desktop IPC. Origin policy is not an OS firewall or a hostile-target sa
 State identity normalizes bounded browser observations, omitting input values and URL
 queries. Focus and dynamic labels can split equivalent states; absent application internals
 can merge different states. Graphs describe observations, never exhaustive application models.
-External discovery never resets or replays effects. Only bundled resettable fixtures permit
-branch replay. See ../architecture/001-local-worker.md and 002-authorized-websites.md.
+External discovery never automatically replays effects. Optional root navigation requires
+fresh approval and cannot undo server state or restore forms. Only bundled resettable
+fixtures permit automatic branch replay. Discovery coverage ignores focus-only changes
+but retains checked/expanded/selected/pressed states and original focus evidence. See ../architecture/001-local-worker.md and 002-authorized-websites.md.

@@ -148,7 +148,7 @@ this.remove()">Beta</button></main></html>"""
                 ],
             )
             await page.get_by_label(
-                "Saved capability profile", exact=True
+                re.compile("^Saved capability profile")
             ).select_option(label=profile_name)
             assert (
                 await page.get_by_label(
@@ -221,7 +221,7 @@ this.remove()">Beta</button></main></html>"""
                 "button", name="02 Journey builder", exact=True
             ).click()
             await page.get_by_label(
-                "Saved capability profile", exact=True
+                re.compile("^Saved capability profile")
             ).select_option(label=profile_name)
             await page.get_by_role(
                 "button", name="Remove from library", exact=True

@@ -4,6 +4,31 @@ Updated 2026-10-10. Verification below records actual local execution.
 
 ## Implemented
 
+### Verification correction — checked-state deduplication
+
+A new actual Chromium regression initially failed: toggling a discovered checkbox produced
+the same focus-normalized coverage key as its unchecked state. Observation capture omitted
+checked/expanded/selected state. Fixed DOM checked/expanded/selected evidence and bounded
+AX checked/expanded/selected/disabled/pressed enum evidence; arbitrary ARIA values are not
+captured. The UI exposes actual computed control state.
+A subsequent real multi-page test also exposed observation racing a document navigation:
+the approved link passed but DOM capture's context was destroyed. Evidence capture now
+retries only transient navigation/context failures within bounded attempts, checks document
+epoch across DOM/AX capture, and never retries the interaction. A real Chromium regression
+navigates between DOM and AX collection and verifies a consistent new-document snapshot. This prevents focus normalization
+from silently merging checked and unchecked controls. Native verification must use the
+subsequent build, not the intermediate clean 8c3b586 package.
+
+The serial full suite before this final regression passed **110 tests in 170.31 s**.
+An earlier concurrent-build run had **108 passed / 2 recorder startup-wait failures**
+(346.09 s); a repeated React run also exceeded the existing 5-second comparison-test timeout.
+Both recorder tests passed in the serial full run without changing their deadlines.
+Resource contention is a plausible explanation, not an established diagnosis or a claim
+of stability under arbitrary load. After the control-state/navigation fixes:
+`pytest engine/tests/test_website_exploration.py -q`: **7 passed in 19.02 s**;
+React **9 passed in 7.04 s**; type/lint/format/contracts passed. Updated ADR 003 records
+the decisions. Final full-suite/native/package checks for this corrected source remain pending.
+
 ### Remaining-feature milestones 2–3 — implementation and browser verification
 
 Historical/live failure reproduction now selects an actual stored finding, displays the

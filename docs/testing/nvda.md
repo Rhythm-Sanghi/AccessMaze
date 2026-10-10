@@ -34,6 +34,9 @@ pass/fail/inconclusive and evidence file for each task:
 | Findings and graph alternative | Severity, verification limits, evidence and ordered journey readable without relying on visual graph | NOT RUN |
 | Validation and upload | Invalid fields/errors discoverable; native file picker cancellation and focus restoration usable | NOT RUN |
 | Dialogs | Name/role, initial focus, Tab boundaries, Escape where supported and restored invoking focus | NOT RUN |
+| Reusable profiles | Saved profile selection/name/settings announced; apply/edit/remove reachable; snapshots and zoom-emulation limits understandable | NOT RUN |
+| Failure replay | Historical versus live evidence announced distinctly; target/steps/permissions readable before authorization; focus retained through new results and non-reproduction | NOT RUN |
+| Approved root recovery | Navigation risk and retained untested branches readable; stopping never announced as inaccessible coverage | NOT RUN |
 | Retest and reports | Failed/passed/inconclusive distinctions announced; exported HTML has meaningful structure | NOT RUN |
 | Worker interruption | Interrupted status and restart path readable; no misleading success announcement | NOT RUN |
 

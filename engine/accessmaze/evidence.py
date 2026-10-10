@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import hmac
 import json
@@ -113,6 +114,13 @@ async def accessibility_tree(page):
                 {
                     "role": role,
                     "name": str(node.get("name", {}).get("value", ""))[:200],
+                    "states": {
+                        p["name"]: p.get("value", {}).get("value")
+                        for p in node.get("properties", [])
+                        if p["name"] in {"checked", "expanded", "selected", "disabled", "pressed"}
+                        and isinstance(p.get("value", {}).get("value"), (bool, str))
+                        and p["value"]["value"] in {True, False, "true", "false", "mixed"}
+                    },
                     "focused": any(
                         p["name"] == "focused" and p.get("value", {}).get("value") is True
                         for p in node.get("properties", [])
@@ -134,6 +142,28 @@ async def accessibility_tree(page):
 
 
 async def observe(page):
+    # Retry evidence capture only, never the interaction that caused navigation.
+    policy = getattr(page.context, "_accessmaze_policy", None)
+    timeout = policy.journey.profile.action_timeout_ms if policy else 10000
+    for attempt in range(5):
+        try:
+            return await observe_document(page)
+        except BrowserError as error:
+            transient = any(
+                message in str(error)
+                for message in (
+                    "Execution context was destroyed",
+                    "Cannot find context",
+                    "Document changed during observation",
+                )
+            )
+            if not transient or page.is_closed() or attempt == 4:
+                raise
+            await asyncio.sleep(0.05)
+            await page.wait_for_load_state("domcontentloaded", timeout=timeout)
+
+
+async def observe_document(page):
     data = await page.evaluate("""() => {
       const controls = [...document.querySelectorAll(
         'button,input,select,textarea,a[href],[role=button],[role=dialog],[role=alert],[role=status]'
@@ -145,11 +175,16 @@ async def observe(page):
           (e.labels ? [...e.labels].map(l=>l.textContent).join(' ') : '')
           || (['BUTTON','A'].includes(e.tagName) || e.hasAttribute('role') ? e.textContent : '')
           || '').trim().slice(0,160),
+        checked:e.matches('input[type=checkbox],input[type=radio]') ? e.checked : null,
+        expanded:['true','false'].includes(e.getAttribute('aria-expanded'))
+          ? e.getAttribute('aria-expanded') : null,
+        selected:['true','false'].includes(e.getAttribute('aria-selected'))
+          ? e.getAttribute('aria-selected') : null,
         disabled:e.matches(':disabled'), visible:!!e.getClientRects().length,
         invalid:e.getAttribute('aria-invalid'), populated:!!e.value,
         focused:e===document.activeElement
       }));
-      return {title:document.title.slice(0,160),controls,
+      return {_document_epoch:performance.timeOrigin,title:document.title.slice(0,160),controls,
         viewport:{width:innerWidth,height:innerHeight,device_pixel_ratio:devicePixelRatio},
         headings:[...document.querySelectorAll('h1,h2,h3')].slice(0,30)
           .map(e=>e.textContent.trim().slice(0,160)),
@@ -158,4 +193,6 @@ async def observe(page):
     }""")
     data["url"] = safe_url(page.url)
     data["ax_tree"] = await accessibility_tree(page)
+    if await page.evaluate("performance.timeOrigin") != data.pop("_document_epoch"):
+        raise BrowserError("Document changed during observation")
     return data

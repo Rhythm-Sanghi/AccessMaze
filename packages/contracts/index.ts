@@ -98,7 +98,12 @@ export interface Observation {
     source: string;
     max_depth?: number;
     max_nodes?: number;
-    nodes: { role: string; name: string; focused: boolean }[];
+    nodes: {
+      role: string;
+      name: string;
+      focused: boolean;
+      states?: Record<string, boolean | string>;
+    }[];
   };
   url: string;
   title: string;
@@ -110,6 +115,9 @@ export interface Observation {
     visible: boolean;
     invalid: string | null;
     populated: boolean;
+    checked?: boolean | null;
+    expanded?: string | null;
+    selected?: string | null;
     focused: boolean;
   }[];
   headings: string[];
