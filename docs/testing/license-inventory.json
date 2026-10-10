@@ -1,6 +1,6 @@
 {
   "schema": "AccessMaze engineering dependency inventory v1; not SPDX/CycloneDX certification",
-  "source_commit": "d4d5625dfced894bcb414b9c719a773852e249fd",
+  "source_commit": "2f5aea7894419acde0cee155e5085b989e981e99",
   "lock_sha256": {
     "package-lock.json": "4dd4b0592c784cc8b88fa0c3f1dd761a7b2fb12df06f0bf2db1143f4f4776f65",
     "engine/uv.lock": "6334402e6753815c17139671eecab4602f47f8d4940b086c26a817ca04293233",
@@ -3737,6 +3737,10 @@
         {
           "path": "notices/0270/LICENSE",
           "sha256": "b0f2417199889f1c0d28ec4e0244eacf1a15de5819d61f641dd7d8f45153ac9c"
+        },
+        {
+          "path": "notices/0270/THIRD-PARTY-NOTICES.md",
+          "sha256": "d780be09f96043b2958d83054a54657a1967ddd979fe3eb6512bd473c0d75dcd"
         }
       ],
       "integrity": "sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==",
@@ -4312,6 +4316,10 @@
         {
           "path": "notices/0309/LICENSE.txt",
           "sha256": "a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47"
+        },
+        {
+          "path": "notices/0309/ThirdPartyNoticeText.txt",
+          "sha256": "1af3c68039c57e539422da82a4faada506ce6d0ea6f90e0b699d02dbcdb7a90c"
         }
       ],
       "integrity": "sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==",
@@ -12581,6 +12589,10 @@
         {
           "path": "notices/0626/NOTICE",
           "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d"
+        },
+        {
+          "path": "notices/0626/ThirdPartyNotices.txt",
+          "sha256": "a549d329bad8806fe279f0ecae0fc0270dec7e7c2dc8ec10f90e394f7c32b144"
         }
       ],
       "scope": "bundled JavaScript driver"

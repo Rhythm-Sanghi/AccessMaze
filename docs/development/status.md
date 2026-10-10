@@ -40,7 +40,7 @@ No independent machine or human NVDA tester is available in this environment.
 
 ### Readiness milestone 3 — redistribution audit (package verification pending)
 
-Inventoried 627 locked/resolved components, copied 772 installed notices and recorded
+Inventoried 627 locked/resolved components, copied 775 installed notices and recorded
 87 unresolved declarations/notice sets. Extracted full Chromium's exact binary credits
 offline, including 754 collapsed license sections; added a real-browser regression.
 Packaging now includes inventory/notices, readable axe source and standalone credits.

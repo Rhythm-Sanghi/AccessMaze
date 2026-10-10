@@ -31,7 +31,7 @@ constitute a final redistribution audit.
 `uv run --project engine python scripts/license_audit.py --output dist/license-audit-new`
 inventories npm/uv locked packages and the resolved Windows Cargo graph, including
 build dependencies. First successful execution: **627 components** (331 npm, 50 Python,
-243 Cargo, 3 runtimes), **772 notice files copied**, **87 unresolved declarations or
+243 Cargo, 3 runtimes), **775 notice files copied**, **87 unresolved declarations or
 notice sets**. Raw inventory/lock hashes: `../testing/license-inventory.json`. An initial
 Windows locale decode failure was fixed by explicitly decoding Cargo metadata as UTF-8.
 Missing optional-platform packages remain unresolved, not silently omitted or treated

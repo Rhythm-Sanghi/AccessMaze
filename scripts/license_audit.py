@@ -33,7 +33,16 @@ def notices(folder):
             and (
                 p.parent != folder
                 or p.name.upper().startswith(
-                    ("LICENSE", "LICENCE", "COPYING", "NOTICE", "COPYRIGHT")
+                    (
+                        "LICENSE",
+                        "LICENCE",
+                        "COPYING",
+                        "NOTICE",
+                        "COPYRIGHT",
+                        "THIRDPARTY",
+                        "THIRD_PARTY",
+                        "THIRD-PARTY",
+                    )
                 )
             )
         }
