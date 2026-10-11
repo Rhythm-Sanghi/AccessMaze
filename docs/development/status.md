@@ -40,6 +40,41 @@ hosted results must be recorded before
 treating this candidate as a verified correction. This is an internal review;
 independent Windows, NVDA, signing, legal and overnight gates remain open.
 
+Fresh full-suite verification at `d9a3656`: `uv run --project engine pytest
+engine/tests -q --junitxml=dist/Context-cleanup-full.xml` with real Chromium,
+`ACCESSMAZE_CORPUS_PA11Y=1` and `ACCESSMAZE_CORPUS_OUTPUT=dist/Context-cleanup-corpus`:
+**135 passed, 324.02 s**. Ten additional separate slow-navigation executions passed
+with distinct `dist/Context-cleanup-repeat-*.xml` reports, stopping on first failure;
+none failed. `npm run check` and `npm run format:check` also passed. The later context
+timestamp instrumentation was exercised by the recorder suite and those repetitions.
+
+`scripts/package_windows.py --name AccessMaze-context-d9a3656` built a fresh frozen
+package; its manifest records full source `d9a365673edc9620cfd88af54a94ec9c766dab7c`
+and `source_dirty: false`. `Test-AccessMazePortable.ps1` and
+`portable_smoke.py --complex` passed integrity/frozen runtime/System32-only PATH and
+temporary working-directory checks. Startup **0.303 s**; accessible, broken,
+conditional and owned-SPA runs **1.638 / 2.291 / 2.501 / 5.460 s**, expected finding
+counts **0 / 1 / 0 / 0**. These are uncontrolled same-laptop observations, not budgets.
+Reports: `dist/Context-cleanup-portable.json`, `dist/Context-cleanup-complex.json`.
+`archive_preview.py` passed ZIP CRC checks: **1,707 files, 390,025,055 bytes**,
+SHA-256 `8bae625aada5b205bf2e231c188549d9604c6a503ec95a86c3e3ea012abcd126`.
+The unsigned local archive retains clean `d9a3656` provenance; this is not a
+bit-for-bit reproducibility or independent clean-machine result.
+
+`launch_preview.py --package AccessMaze-context-d9a3656` and
+`desktop_website_smoke.py --endpoint http://127.0.0.1:9224` passed actual packaged
+WebView2/IPC/Chromium approval and headed recorder completion/stop. Exactly one
+approved POST occurred; the owned project was removed. Normal owned desktop close
+left **zero of eight** observed child processes. Original screenshot and raw native
+report were restored byte-for-byte; fresh evidence is under
+`dist/Context-cleanup-native`. No other process was closed.
+
+`hackyard_demo.py --output dist/Context-cleanup-hackyard` passed actual broken/fixed
+journeys, verified-improvement comparison and recorded-draft replay. The controlled
+server observed one approved POST and a 25-byte upload. These results do not claim
+NVDA verification or accessibility certification. Hosted final-head and post-merge
+results remain necessary before reporting successful delivery.
+
 PR #1 was squash-merged as `91e0e7fada546ed9129ca25b211675d9b4fdc3d8` after
 rechecking its unchanged head `05a34a5`, completed green CI and fresh local checks.
 Tag `pr-1-reviewed-2026-10-11` preserves all eleven original PR commits and the
