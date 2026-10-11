@@ -89,6 +89,18 @@ Local diagnostic check: `pytest engine/tests/test_recorder.py -q
 Prettier, Ruff lint/format and `git diff --check` passed. Application code is unchanged
 in this diagnostic step.
 
+Resumed repository review: GitHub confirms PR #1 remains merged at `91e0e7f`;
+remote `main` remains `1dab8aa`, and the working tree was clean. The unpublished
+`2d8000b` commit contained the repeated CI check and the preceding status entry,
+but its intended test instrumentation had been removed during concurrent editing.
+That commit is preserved. Browser-close/driver-exit instrumentation is now restored
+on `codex/recorder-shutdown-diagnostics`, using actual Playwright calls and reporting
+only stage names and monotonic timestamps. Fresh recorder verification:
+`uv run --project engine pytest engine/tests/test_recorder.py -q
+--junitxml=dist/Recorder-resumed-diagnostics.xml`: **4 passed, 8.73 s**.
+This does not resolve the intermittent hosted failure. No application behavior,
+shutdown bound, origin policy or assertion has been weakened.
+
 ## Current verified implementation
 
 The original investigation acceptance package uses clean source
