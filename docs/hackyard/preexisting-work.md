@@ -37,3 +37,10 @@ fixes and delivery verification. Inspect `git log --reverse --oneline c634573..H
 and the corresponding diff. Preserve all three boundaries. None proves event timing
 or human-only authorship; the entrant must disclose actual tools and contributions
 as required by the competition. No competition submission has been made here.
+
+PR #1 was squash-merged at **91e0e7f** on 2026-10-11. The annotated tag
+`pr-1-reviewed-2026-10-11` preserves its original head **05a34a5** and all eleven
+development commits. To inspect those individual changes after the squash, use
+`git log --reverse --oneline c634573..pr-1-reviewed-2026-10-11` and
+`git diff c634573..pr-1-reviewed-2026-10-11`. The tag preserves technical provenance;
+it is not a release qualification or proof of competition timing.

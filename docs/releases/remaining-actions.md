@@ -6,7 +6,8 @@ failure replay and a reusable profile library. Their limits and local acceptance
 in ../hackyard/remaining-features.md and status. True browser chrome/text zoom,
 replay of withheld discovery targets and exhaustive external graph coverage remain
 outside this implemented scope; independent manual zoom testing is still required.
-Current local application acceptance is at clean **432dd5f**; exact artifact hashes,
+Current local recorder/package acceptance is at clean **1a2809b**, following the
+broader native investigation acceptance at **432dd5f**; exact artifact hashes,
 measurements and current CI conclusions are in engineering status. Earlier native
 WebView2 retention remains undiagnosed; later shutdown passes do not explain it.
 None of the following is implicitly passed by the browser regression suite.

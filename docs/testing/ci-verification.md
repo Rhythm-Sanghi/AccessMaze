@@ -35,3 +35,10 @@ only read/execute to the application-package SID on the downloaded test-browser 
 following [Puppeteer sandbox guidance](https://pptr.dev/troubleshooting#chrome-reports-sandbox-errors-on-windows).
 No credential/evidence path is granted and no scanner failure is automatically retried
 or represented as a clean scan. Verify actual final-head conclusions before reporting success.
+
+Windows also executes the existing visible-recorder slow-navigation cancellation
+test five separate times before the full suite, stopping at the first failure.
+These are repeated executions, not retries that can hide a failure. The regression
+retains the three-second stop bound and reports browser-close/driver-exit timestamps
+on failure. A passing run does not explain the intermittent shutdown stalls recorded
+in engineering status.

@@ -158,6 +158,10 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
         pytest.skip("Actual visible Windows recorder")
     browsers = []
     connected_at_driver_exit = []
+    cleanup_events = []
+
+    def event(stage):
+        cleanup_events.append((stage, round(time.monotonic(), 3)))
 
     class ObservedPlaywright:
         def __init__(self):
@@ -171,6 +175,16 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
             async def launch(**options):
                 browser = await original_launch(**options)
                 browsers.append(browser)
+                original_close = browser.close
+
+                async def close(**kwargs):
+                    event("browser.close started")
+                    try:
+                        return await original_close(**kwargs)
+                    finally:
+                        event("browser.close finished")
+
+                monkeypatch.setattr(browser, "close", close)
                 return browser
 
             monkeypatch.setattr(browser_type, "launch", launch)
@@ -179,7 +193,11 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
         async def __aexit__(self, *args):
             # Observe actual Chromium ownership before stopping the real driver.
             connected_at_driver_exit.extend(b.is_connected() for b in browsers)
-            await self.manager.__aexit__(*args)
+            event("driver exit started")
+            try:
+                await self.manager.__aexit__(*args)
+            finally:
+                event("driver exit finished")
 
     monkeypatch.setattr("accessmaze.recorder.async_playwright", ObservedPlaywright)
     requested = threading.Event()
@@ -210,11 +228,13 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
         recorder.start()
         assert requested.wait(8), recorder.recording.snapshot()
         started = time.monotonic()
+        event("stop requested")
         recorder.close()
-        assert not recorder.thread.is_alive()
+        event("join returned")
+        assert not recorder.thread.is_alive(), cleanup_events
         assert recorder.recording.status == "stopped"
         assert connected_at_driver_exit == [False], "Browser outlived its driver scope"
-        assert time.monotonic() - started < 3, "Stop waited for the slow target response"
+        assert time.monotonic() - started < 3, cleanup_events
     finally:
         release.set()
         recorder.close()

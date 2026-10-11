@@ -72,6 +72,65 @@ The follow-up source and its final hosted conclusions are separately tracked by
 The failed `91e0e7f` run does not verify the correction; later results require their
 own completed checks and exact source/artifact provenance.
 
+The ordering fix is not sufficient to qualify recorder shutdown. Final-main
+[run 38111832499](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38111832499)
+at `1dab8aa` passed Linux (**128 passed, 7 skipped, 195.47 s**) but failed Windows
+(**134 passed, 1 failed, 363.40 s**); packaging was skipped. The same slow-navigation
+test found the recorder thread alive after its ten-second join. This is an unresolved
+hosted Windows lifecycle defect despite the successful correction PR/local runs.
+The next diagnostic records monotonic browser-close and driver-exit stages through
+the actual Playwright APIs. Windows CI now executes the existing cancellation test
+five times before the full suite, stopping on the first failure; it is not an automatic
+retry. The three-second bound, thread termination and connection-order assertions
+remain unchanged. No further application fix is claimed before the stalled stage
+is identified and independently exercised by a completed hosted run.
+Local diagnostic check: `pytest engine/tests/test_recorder.py -q
+--junitxml=dist/Recorder-cleanup-diagnostics.xml` through uv: **4 passed, 10.81 s**;
+Prettier, Ruff lint/format and `git diff --check` passed. Application code is unchanged
+in this diagnostic step.
+
+Resumed repository review: GitHub confirms PR #1 remains merged at `91e0e7f`;
+remote `main` remains `1dab8aa`, and the working tree was clean. The unpublished
+`2d8000b` commit contained the repeated CI check and the preceding status entry,
+but its intended test instrumentation had been removed during concurrent editing.
+That commit is preserved. Browser-close/driver-exit instrumentation is now restored
+on `codex/recorder-shutdown-diagnostics`, using actual Playwright calls and reporting
+only stage names and monotonic timestamps. Fresh recorder verification:
+`uv run --project engine pytest engine/tests/test_recorder.py -q
+--junitxml=dist/Recorder-resumed-diagnostics.xml`: **4 passed, 8.73 s**.
+This does not resolve the intermittent hosted failure. No application behavior,
+shutdown bound, origin policy or assertion has been weakened.
+
+Fresh local checks at `45f348c` passed: Python **135 passed, 331.03 s** with real
+Chromium and locked Pa11y corpus (`ACCESSMAZE_CORPUS_PA11Y=1`,
+`ACCESSMAZE_CORPUS_OUTPUT=dist/Resumed-corpus`, JUnit `dist/Resumed-full.xml`);
+React **13 passed, 41.89 s**; Rust **1 passed, 0.03 s**. Commands: `npm run check`,
+`npm run format:check`, `npm test`, `npm run build`; Ruff lint/format; `python
+scripts/contracts.py --check` through uv; Cargo check/fmt/test with the locked
+desktop manifest. `npm audit --audit-level=moderate` for the application and Pa11y
+and `uv run --project engine pip-audit` found no known vulnerabilities (local editable
+engine excluded by pip-audit). Cargo audit retained the same two allowed warnings.
+Actionlint 1.7.7 and `git diff --check` passed.
+
+Fresh inventory again found **217 tracked files**, no tracked generated candidates,
+missing Markdown file targets, byte-identical PNG duplicates or unignored untracked
+files. The targeted private-key/GitHub/cloud-token patterns found no matches; this
+remains a limited scan. No file deletion or move was justified. Raw inventory is
+`dist/Resumed-repository-audit.json`. The remaining-actions package reference and
+Hackyard instructions now identify the corrected package and the provenance tag.
+
+The unchanged `1a2809b` frozen package passed `scripts/Test-AccessMazePortable.ps1`
+and `scripts/portable_smoke.py --complex`: system-only PATH, temporary directory
+with spaces, startup **0.663 s**, accessible/broken/conditional/owned-SPA runs
+**2.643/4.499/4.730/6.339 s**, expected finding counts **0/1/0/0**. Reports:
+`dist/Resumed-portable.json`, `dist/Resumed-complex.json`. No new package build or
+independent clean-machine result is claimed. Existing seven-script native acceptance
+above remains applicable because application, UI, contracts and scripts are unchanged.
+`scripts/hackyard_demo.py --output dist/Resumed-hackyard` passed actual broken/fixed
+journeys, strict repair comparison and recorded-draft replay; the controlled server
+observed one approved POST and a 25-byte upload. No screenshots or prior evidence
+were overwritten by these resumed checks.
+
 ## Current verified implementation
 
 The original investigation acceptance package uses clean source
