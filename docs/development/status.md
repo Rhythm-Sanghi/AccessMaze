@@ -4,6 +4,74 @@ Updated 2026-10-11. AccessMaze is an unsigned readiness preview. It is not
 production-ready or release-qualified. The current engineering continuation begins
 at clean `c634573`; preserve the earlier milestone history below.
 
+## Repository review and post-merge recorder correction
+
+PR #1 was squash-merged as `91e0e7fada546ed9129ca25b211675d9b4fdc3d8` after
+rechecking its unchanged head `05a34a5`, completed green CI and fresh local checks.
+Tag `pr-1-reviewed-2026-10-11` preserves all eleven original PR commits and the
+`9f3222a`, `8e074e7`, `c634573` technical boundaries. The merged tree matched that
+tag exactly; the PR branch was retained and the default branch remained `main`.
+
+All 217 tracked files, ignored/untracked inventory, script purposes/references,
+Markdown targets and screenshot hashes were reviewed. No tracked generated-file
+candidate, missing Markdown file target or byte-identical screenshot duplicate was
+found. A targeted private-key/GitHub/cloud-token scan found no matching patterns;
+this is not an exhaustive secret audit. No justified deletion, move or ignore change
+was identified. Cleanup classifications:
+
+| Candidate | Decision and basis |
+| --- | --- |
+| Safe tracked deletion | None confirmed; filename, age and size alone were not used |
+| Runtime/build/cache/browser/package/database/log outputs and raw local JSON | Keep locally, already ignored; no local deletion attempted |
+| Historical verification/legal inventories | Retain distinct baseline/provenance; no consolidation justified |
+| Source, tests, fixtures, migrations, lockfiles, contracts, ADRs, security/legal notices, Hackyard materials, screenshots and release scripts | Retain; references and purposes checked |
+| Ambiguous deletion | None attempted; no confirmation needed |
+
+Fresh pre-merge verification: TypeScript/ESLint/Prettier, production frontend build,
+Ruff lint/format, contracts, React **13 passed**, Rust **1 passed**, Python
+**135 passed in 370.35 s** including Chromium/Pa11y. npm/Python advisories passed;
+the local editable engine could not be audited through PyPI. Cargo retained its
+two documented warnings. All seven native feature/comparison/readiness/website/
+investigation/cancel/crash scripts passed, including three approvals, headed
+recording, separate manual-plan export and persistence. Native close left zero of
+eight observed children. Frozen portable/complex checks and the actual Hackyard
+failure/fix/retest passed. New raw evidence is under ignored `dist/Premerge-*`;
+earlier local JSON and tracked screenshots were preserved and restored.
+
+[Post-merge run 38107753260](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38107753260)
+passed Ubuntu (**128 passed, 7 skipped, 195.01 s**) but failed Windows
+(**134 passed, 1 failed, 348.43 s**); packaging was skipped. The existing recorder
+slow-navigation test measured shutdown **7.413 s**, exceeding its unchanged
+three-second assertion. This is retained as a failure, not relabeled as a green run.
+
+Inspection and a deterministic real-Chromium regression reproduced incorrect
+resource ordering: the recorder exited its Playwright driver scope with Chromium
+still connected, then attempted browser cleanup outside that scope. The regression
+failed with `[True]` before the fix. Browser cleanup now runs in an inner `finally`
+while the driver is usable, matching the journey runner's ownership order. The
+three-second assertion remains; the test server also tolerates the expected Windows
+connection-aborted exception during cancellation. All four recorder tests passed
+in **10.78 s**, followed by **ten passing slow-navigation repetitions**. This does
+not establish overnight stability or resolve the earlier WebView2 retention gate.
+
+Commands: `uv run --project engine pytest engine/tests/test_recorder.py -q
+--junitxml=dist/Recorder-shutdown-fixed.xml`; ten separate invocations of
+`pytest engine/tests/test_recorder.py::test_recorder_stop_cancels_slow_initial_navigation -q`
+through the same uv environment, with distinct JUnit files; Ruff lint/format and
+`python scripts/contracts.py --check` passed. The before-fix regression result is
+retained as `dist/Premerge-recorder-before-fix.xml`.
+The full corrected suite then passed: `uv run --project engine pytest engine/tests
+-q --junitxml=dist/Recorder-fix-full.xml`, with `ACCESSMAZE_CORPUS_PA11Y=1` and
+distinct `dist/Recorder-fix-corpus` output: **135 passed in 337.21 s**. The actual
+owned-browser corpus and headed recording tests ran; no browser tests were mocked
+or skipped on this Windows run. Source changes remain limited to recorder ownership,
+its real-browser regression and this record.
+
+The follow-up source and its final hosted conclusions are separately tracked by
+[recorder correction checks](https://github.com/Rhythm-Sanghi/AccessMaze/actions?query=branch%3Acodex%2Frecorder-shutdown).
+The failed `91e0e7f` run does not verify the correction; later results require their
+own completed checks and exact source/artifact provenance.
+
 ## Current verified implementation
 
 The latest locally built application package uses clean source

@@ -176,7 +176,6 @@ class Recorder:
         async def run():
             recording = self.recording
             policy = BrowserPolicy(recording.journey, self.target, recording.warnings)
-            browser = None
             try:
                 async with asyncio.timeout(recording.journey.max_seconds):
                     await cancellable(policy.prepare(), recording)
@@ -192,34 +191,40 @@ class Recorder:
                         browser = await cancellable(
                             pw.chromium.launch(headless=False, args=policy.launch_args), recording
                         )
-                        context = await browser.new_context(
-                            service_workers="block", accept_downloads=False
-                        )
-                        await policy.install(context)
-                        page = await context.new_page()
-                        await policy.attach(page)
-                        await recording.attach(context, page)
-                        # Manual session effects are separately authorized before launching.
-                        policy.effects = True
-                        context.set_default_timeout(recording.journey.profile.action_timeout_ms)
-                        await cancellable(
-                            page.goto(self.target, wait_until="domcontentloaded"), recording
-                        )
-                        recording.status = "recording"
-                        while (
-                            not recording.stop.is_set()
-                            and browser.is_connected()
-                            and not page.is_closed()
-                        ):
-                            try:
-                                recording.origin = canonical_origin(page.url)
-                            except ValueError:
-                                recording.warnings.add("Unsupported navigation; recording stopped")
-                                break
-                            if recording.capture.is_set():
-                                recording.capture.clear()
-                                await cancellable(recording.capture_completion(page), recording)
-                            await asyncio.sleep(0.1)
+                        try:
+                            context = await browser.new_context(
+                                service_workers="block", accept_downloads=False
+                            )
+                            await policy.install(context)
+                            page = await context.new_page()
+                            await policy.attach(page)
+                            await recording.attach(context, page)
+                            # Manual session effects are separately authorized before launching.
+                            policy.effects = True
+                            context.set_default_timeout(recording.journey.profile.action_timeout_ms)
+                            await cancellable(
+                                page.goto(self.target, wait_until="domcontentloaded"), recording
+                            )
+                            recording.status = "recording"
+                            while (
+                                not recording.stop.is_set()
+                                and browser.is_connected()
+                                and not page.is_closed()
+                            ):
+                                try:
+                                    recording.origin = canonical_origin(page.url)
+                                except ValueError:
+                                    recording.warnings.add(
+                                        "Unsupported navigation; recording stopped"
+                                    )
+                                    break
+                                if recording.capture.is_set():
+                                    recording.capture.clear()
+                                    await cancellable(recording.capture_completion(page), recording)
+                                await asyncio.sleep(0.1)
+                        finally:
+                            # Close Chromium while its driver connection is still usable.
+                            await browser.close()
             except TimeoutError:
                 recording.warnings.add("Recording reached its time bound")
             except asyncio.CancelledError:
@@ -230,8 +235,6 @@ class Recorder:
                     "Recording browser stopped or could not start; check browser installation"
                 )
             finally:
-                if browser and browser.is_connected():
-                    await browser.close()
                 recording.status = "stopped"
 
         asyncio.run(run())
