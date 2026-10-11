@@ -6,6 +6,120 @@ at clean `c634573`; preserve the earlier milestone history below.
 
 ## Repository review and post-merge recorder correction
 
+### Interrupted-navigation context cleanup
+
+Final-main [run 38115447841](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38115447841)
+at `473eb93` failed Windows: **134 passed, 1 failed, 363.25 s**. Ubuntu passed
+**128 tests, 7 skipped, 202.59 s**; packaging was skipped. All five separate Windows
+cancellation executions passed before the full-suite failure. Diagnostic timestamps
+show cancellation reached `browser.close()` after **29 ms**, but that call had not
+returned after the ten-second thread join. Driver shutdown had not started. The
+successful PR #3 run does not resolve this subsequent main-branch failure.
+
+The recorder created an explicit context but left it open until browser shutdown.
+[Playwright's browser-close documentation](https://playwright.dev/python/docs/api/class-browser#browser-close)
+recommends closing explicitly created contexts first. A real headed Chromium
+regression observed **one open context at browser close** and failed before the
+change (`pytest engine/tests/test_recorder.py::test_recorder_stop_cancels_slow_initial_navigation
+-q`: **1 failed, 4.22 s**). This establishes the ownership-order defect, not the
+internal cause of the intermittent hosted stall.
+
+Recorder cleanup now closes its context before the browser, retaining browser
+cleanup in a nested `finally` if context cleanup raises. Both remain within the
+live Playwright driver scope. Origin restrictions and cancellation limits are
+unchanged. The test observes actual context/browser/driver calls, requires zero
+contexts at browser close and retains the three-second stop bound. Context-close
+timestamps distinguish a future context stall from a browser/driver stall.
+
+Initial local verification: `uv run --project engine pytest
+engine/tests/test_recorder.py -q`: **4 passed, 9.43 s**. After adding context-stage
+instrumentation, the same suite passed **4 tests in 15.89 s**, with JUnit output
+`dist/Context-cleanup-recorder.xml`; the full suite was running concurrently. Ruff
+lint/format, contract validation and `git diff --check` passed. Further local and
+hosted results must be recorded before
+treating this candidate as a verified correction. This is an internal review;
+independent Windows, NVDA, signing, legal and overnight gates remain open.
+
+Fresh full-suite verification at `d9a3656`: `uv run --project engine pytest
+engine/tests -q --junitxml=dist/Context-cleanup-full.xml` with real Chromium,
+`ACCESSMAZE_CORPUS_PA11Y=1` and `ACCESSMAZE_CORPUS_OUTPUT=dist/Context-cleanup-corpus`:
+**135 passed, 324.02 s**. Ten additional separate slow-navigation executions passed
+with distinct `dist/Context-cleanup-repeat-*.xml` reports, stopping on first failure;
+none failed. `npm run check` and `npm run format:check` also passed. The later context
+timestamp instrumentation was exercised by the recorder suite and those repetitions.
+
+`scripts/package_windows.py --name AccessMaze-context-d9a3656` built a fresh frozen
+package; its manifest records full source `d9a365673edc9620cfd88af54a94ec9c766dab7c`
+and `source_dirty: false`. `Test-AccessMazePortable.ps1` and
+`portable_smoke.py --complex` passed integrity/frozen runtime/System32-only PATH and
+temporary working-directory checks. Startup **0.303 s**; accessible, broken,
+conditional and owned-SPA runs **1.638 / 2.291 / 2.501 / 5.460 s**, expected finding
+counts **0 / 1 / 0 / 0**. These are uncontrolled same-laptop observations, not budgets.
+Reports: `dist/Context-cleanup-portable.json`, `dist/Context-cleanup-complex.json`.
+`archive_preview.py` passed ZIP CRC checks: **1,707 files, 390,025,055 bytes**,
+SHA-256 `8bae625aada5b205bf2e231c188549d9604c6a503ec95a86c3e3ea012abcd126`.
+The unsigned local archive retains clean `d9a3656` provenance; this is not a
+bit-for-bit reproducibility or independent clean-machine result.
+
+`launch_preview.py --package AccessMaze-context-d9a3656` and
+`desktop_website_smoke.py --endpoint http://127.0.0.1:9224` passed actual packaged
+WebView2/IPC/Chromium approval and headed recorder completion/stop. Exactly one
+approved POST occurred; the owned project was removed. Normal owned desktop close
+left **zero of eight** observed child processes. Original screenshot and raw native
+report were restored byte-for-byte; fresh evidence is under
+`dist/Context-cleanup-native`. No other process was closed.
+
+`hackyard_demo.py --output dist/Context-cleanup-hackyard` passed actual broken/fixed
+journeys, verified-improvement comparison and recorded-draft replay. The controlled
+server observed one approved POST and a 25-byte upload. These results do not claim
+NVDA verification or accessibility certification. Hosted final-head and post-merge
+results remain necessary before reporting successful delivery.
+
+[Final-head run 38127805981](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38127805981)
+at `0952bf1` failed Windows: **134 passed, 1 failed, 364.35 s**. Ubuntu passed
+**128 tests, 7 skipped, 195.19 s**; packaging was skipped. All five slow-navigation
+repetitions and the full-suite slow-navigation regression passed. This time the
+ordinary headed recorder lifecycle test found the thread alive after its unchanged
+eight-second join. Explicit context cleanup is therefore insufficient to establish
+reliable shutdown; PR #4 remains unmerged. The previous superseded run at `d9a3656`
+passed Windows Python (**135 tests, 390.47 s**) but was cancelled during Rust checks
+by the documentation push, so it is not an all-jobs pass.
+
+Both real headed tests now share the actual Playwright cleanup observer and retain
+their original shutdown bounds. The ordinary lifecycle test records context/browser/
+driver stages too. `DEBUG=pw:browser` is enabled only for these owned synthetic tests
+to distinguish Chromium process exit from temporary-profile cleanup in a future
+failure; no credentials or real user pages are used. Windows CI repeats both tests
+five times, stopping on first failure. This is diagnostic coverage, not another
+application fix or automatic retry. Local `pytest engine/tests/test_recorder.py -q
+--junitxml=dist/Context-cleanup-lifecycle-diagnostics.xml`: **4 passed, 14.39 s**.
+Ruff lint/format passed. The hosted recorder lifecycle defect remains a delivery
+blocker regardless of the successful local package and demo checks.
+
+The diagnostic observer then passed **30 local lifecycle/cancellation pairs** in
+separate pytest processes: **60 passed, zero failures/errors/skips**, summed JUnit
+test time **145.914 s**. Reports `dist/Context-lifecycle-pair-*.xml` and summary
+`dist/Context-lifecycle-pairs.json` retain the actual measurements; this is not an
+overnight result. The diagnostic hosted run at `eeb0802` passed its initial pairs
+and full Python step without reproducing the stall, then was superseded during
+Rust checks by the next diagnostic coverage change; no all-jobs pass is claimed.
+
+Windows CI now also runs **30 lifecycle/cancellation pairs after the full browser
+suite**, stopping on first failure. Process logs are visible for this owned-page
+sequence, and JUnit reports are retained with the compatibility evidence. Prior
+failures occurred within the full workload despite passing startup repetitions;
+the additional bounded sequence exercises shutdown after accumulated browser work.
+It does not change application behavior or make the intermittent defect resolved.
+The post-test Windows diagnostic also records surviving Chromium/Node process
+identities and metadata/readability/ACLs for up to 20 newest temporary Chromium
+profiles. It reads no file contents and changes no permissions. This allows a future
+process-exit/profile-cleanup log to be checked against actual filesystem evidence;
+no ACL cause is claimed before that evidence exists.
+Executing the exact read-only PowerShell probe locally inspected nine remaining
+profiles: four had the cache directory and all four were readable; none was denied.
+The current laptop still does not reproduce the suspected ACL problem. Actionlint
+1.7.7, Prettier and `git diff --check` passed for the workflow changes.
+
 PR #1 was squash-merged as `91e0e7fada546ed9129ca25b211675d9b4fdc3d8` after
 rechecking its unchanged head `05a34a5`, completed green CI and fresh local checks.
 Tag `pr-1-reviewed-2026-10-11` preserves all eleven original PR commits and the

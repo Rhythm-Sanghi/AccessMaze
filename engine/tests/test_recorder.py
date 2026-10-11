@@ -93,8 +93,79 @@ def test_recording_requires_separate_manual_effect_authorization(tmp_path):
         worker.close()
 
 
+@pytest.fixture
+def recorder_cleanup(monkeypatch):
+    import time
+
+    # Browser-process logs only for these owned synthetic recorder tests.
+    monkeypatch.setenv("DEBUG", "pw:browser")
+    browsers = []
+    connected_at_driver_exit = []
+    contexts_at_browser_close = []
+    cleanup_events = []
+
+    def event(stage):
+        cleanup_events.append((stage, round(time.monotonic(), 3)))
+
+    class ObservedPlaywright:
+        def __init__(self):
+            self.manager = async_playwright()
+
+        async def __aenter__(self):
+            playwright = await self.manager.__aenter__()
+            browser_type = playwright.chromium
+            original_launch = browser_type.launch
+
+            async def launch(**options):
+                browser = await original_launch(**options)
+                browsers.append(browser)
+                original_close = browser.close
+                original_new_context = browser.new_context
+
+                async def new_context(**options):
+                    context = await original_new_context(**options)
+                    original_context_close = context.close
+
+                    async def close_context(**kwargs):
+                        event("context.close started")
+                        try:
+                            return await original_context_close(**kwargs)
+                        finally:
+                            event("context.close finished")
+
+                    monkeypatch.setattr(context, "close", close_context)
+                    return context
+
+                async def close(**kwargs):
+                    contexts_at_browser_close.append(len(browser.contexts))
+                    event("browser.close started")
+                    try:
+                        return await original_close(**kwargs)
+                    finally:
+                        event("browser.close finished")
+
+                monkeypatch.setattr(browser, "close", close)
+                monkeypatch.setattr(browser, "new_context", new_context)
+                return browser
+
+            monkeypatch.setattr(browser_type, "launch", launch)
+            return playwright
+
+        async def __aexit__(self, *args):
+            # Observe actual Chromium ownership before stopping the real driver.
+            connected_at_driver_exit.extend(b.is_connected() for b in browsers)
+            event("driver exit started")
+            try:
+                await self.manager.__aexit__(*args)
+            finally:
+                event("driver exit finished")
+
+    monkeypatch.setattr("accessmaze.recorder.async_playwright", ObservedPlaywright)
+    return cleanup_events, contexts_at_browser_close, connected_at_driver_exit, event
+
+
 @pytest.mark.browser
-def test_headed_recorder_worker_lifecycle_on_windows(tmp_path):
+def test_headed_recorder_worker_lifecycle_on_windows(tmp_path, recorder_cleanup):
     import sys
     import time
 
@@ -102,6 +173,7 @@ def test_headed_recorder_worker_lifecycle_on_windows(tmp_path):
 
     if sys.platform != "win32":
         pytest.skip("Actual headed Windows browser test; Linux CI has no desktop session")
+    cleanup_events, contexts_at_browser_close, connected_at_driver_exit, event = recorder_cleanup
     worker = Worker(tmp_path, Path.cwd())
     try:
         p = worker.store.save_project(ProjectInput(name="Manual recording", journey=template()))
@@ -134,19 +206,23 @@ def test_headed_recorder_worker_lifecycle_on_windows(tmp_path):
                     params={"project_id": p["id"], "authorized": True, "allow_effects": True},
                 )
             )
+        event("stop requested")
         worker.dispatch(
             Request(version=1, id="4", method="recorder.stop", params={"id": started["id"]})
         )
         worker.recorder.thread.join(timeout=8)
-        assert not worker.recorder.thread.is_alive()
+        event("join returned")
+        assert not worker.recorder.thread.is_alive(), cleanup_events
         assert worker.recorder.recording.status == "stopped"
+        assert contexts_at_browser_close == [0], cleanup_events
+        assert connected_at_driver_exit == [False], cleanup_events
         assert not any(p.is_running() for p in children)
     finally:
         worker.close()
 
 
 @pytest.mark.browser
-def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
+def test_recorder_stop_cancels_slow_initial_navigation(recorder_cleanup):
     import sys
     import threading
     import time
@@ -156,50 +232,7 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
 
     if sys.platform != "win32":
         pytest.skip("Actual visible Windows recorder")
-    browsers = []
-    connected_at_driver_exit = []
-    cleanup_events = []
-
-    def event(stage):
-        cleanup_events.append((stage, round(time.monotonic(), 3)))
-
-    class ObservedPlaywright:
-        def __init__(self):
-            self.manager = async_playwright()
-
-        async def __aenter__(self):
-            playwright = await self.manager.__aenter__()
-            browser_type = playwright.chromium
-            original_launch = browser_type.launch
-
-            async def launch(**options):
-                browser = await original_launch(**options)
-                browsers.append(browser)
-                original_close = browser.close
-
-                async def close(**kwargs):
-                    event("browser.close started")
-                    try:
-                        return await original_close(**kwargs)
-                    finally:
-                        event("browser.close finished")
-
-                monkeypatch.setattr(browser, "close", close)
-                return browser
-
-            monkeypatch.setattr(browser_type, "launch", launch)
-            return playwright
-
-        async def __aexit__(self, *args):
-            # Observe actual Chromium ownership before stopping the real driver.
-            connected_at_driver_exit.extend(b.is_connected() for b in browsers)
-            event("driver exit started")
-            try:
-                await self.manager.__aexit__(*args)
-            finally:
-                event("driver exit finished")
-
-    monkeypatch.setattr("accessmaze.recorder.async_playwright", ObservedPlaywright)
+    cleanup_events, contexts_at_browser_close, connected_at_driver_exit, event = recorder_cleanup
     requested = threading.Event()
     release = threading.Event()
 
@@ -234,6 +267,7 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
         assert not recorder.thread.is_alive(), cleanup_events
         assert recorder.recording.status == "stopped"
         assert connected_at_driver_exit == [False], "Browser outlived its driver scope"
+        assert contexts_at_browser_close == [0], "Recorder context was not closed first"
         assert time.monotonic() - started < 3, cleanup_events
     finally:
         release.set()
