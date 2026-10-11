@@ -4,6 +4,85 @@ Updated 2026-10-11. AccessMaze is an unsigned readiness preview. It is not
 production-ready or release-qualified. The current engineering continuation begins
 at clean `c634573`; preserve the earlier milestone history below.
 
+## Single-branch repository maintenance — 2026-10-11
+
+Started from clean `a9bb9699f3f26e45f3f056f563b52a0a10f1eb13` after
+`git fetch origin --prune`. GitHub and local Git now each have exactly one branch,
+`main`; the remote symbolic HEAD still points to it. No force push, main-history
+rewrite, protection change, source change or tracked-file deletion was needed.
+The five obsolete local and remote branches were removed after these checks:
+
+| Deleted branch | Head | Incorporation evidence |
+| --- | --- | --- |
+| `codex/recorder-context-shutdown` | `1dab8aa` | Ancestor of main, zero commits ahead; main evidence commit after merged PR #2 |
+| `codex/recorder-navigation-cleanup` | `d3c165c` | Ancestor of main, zero ahead; PR #4 merged |
+| `codex/recorder-shutdown` | `1a2809b` | Ancestor of main, zero ahead; PR #2 merged |
+| `codex/recorder-shutdown-diagnostics` | `7f9b603` | Ancestor of main, zero ahead; PR #3 merged |
+| `engineering/browser-investigation` | `05a34a5` | PR #1 squash-merged as `91e0e7f`; full tree and combined patch identical |
+
+The investigation branch had 11 commits ahead and 15 behind main, so ordinary
+ancestry alone was insufficient. `git diff pr-1-reviewed-2026-10-11 91e0e7f`
+was empty; the two baseline-to-head diffs had the same stable patch ID,
+`4a6b51b3353bcc7c9c24a9207f3c71576cf5da65`. All eleven original commits remain
+reachable through the published annotated tag `pr-1-reviewed-2026-10-11`, whose
+peeled target is `05a34a5caf971c6aa5c54d6b4cace72531fa2654`. Hackyard boundaries
+`9f3222a`, `8e074e7` and `c634573` remain documented in the pre-existing-work ledger.
+No missing work was found or merged again. Historical entries below describe
+branch retention at their original dates; this maintenance supersedes that state.
+
+Reviewed all 217 tracked files and ignored inventory again. No tracked generated
+candidate, broken local Markdown file target, duplicate PNG or unignored untracked
+file was found. Script references remain active. The connectivity screenshot lacks
+a literal filename reference but retains distinct historical verification evidence;
+it was preserved. Source, tests, fixtures, contracts, locks, migrations, legal
+inventories/notices, CI, packaging scripts, architecture and Hackyard materials
+remain intact. Environments, caches, browsers, packages, databases and raw reports
+stay local under existing ignore rules. No additional ignore rule was necessary.
+Raw inventory: ignored `dist/Single-branch-inventory.json`.
+
+Fresh local verification uses unchanged application source at `a9bb969`:
+
+- `uv run --project engine pytest engine/tests -q
+  --junitxml=dist/Single-branch-tests.xml`: **135 passed, 286.55 s**, with
+  `PLAYWRIGHT_BROWSERS_PATH=.accessmaze/browsers`,
+  `ACCESSMAZE_CORPUS_PA11Y=1`, and corpus output under ignored
+  `dist/Single-branch-corpus`. This executed real Chromium/Pa11y, failure replay,
+  journey exploration, observed task reachability, human-review data separation,
+  SQLite persistence, recording and browser-policy regressions.
+- `npm run check`, `npm run format:check`, `npm test`, `npm run build`: passed;
+  **13 React tests**.
+- `uv run --project engine ruff check engine scripts`, `ruff format --check
+  engine scripts`, and `python scripts/contracts.py --check`: passed; 88 Python
+  files already formatted.
+- `cargo check --locked`, `cargo fmt --check`, `cargo test --locked` from
+  `apps/desktop/src-tauri`: passed; **one Rust test, 0.04 s**. An initial command
+  used a repository-relative manifest path from that subdirectory and failed before
+  running checks; the corrected commands above completed successfully.
+- Both npm audits and `uv run --project engine pip-audit`: no known vulnerabilities
+  in audited dependencies; the editable local engine is excluded from PyPI auditing.
+  `cargo audit` retains two allowed warnings, RUSTSEC-2024-0370 and RUSTSEC-2024-0429.
+- `python scripts/hackyard_demo.py --output dist/Single-branch-hackyard`: actual
+  Chromium broken journey failed, corrected journey completed with limitations,
+  comparison returned `verified-improvement`, and recorded replay completed with
+  limitations. The owned server observed one approved POST and a 25-byte upload.
+- `Test-AccessMazePortable.ps1` and `portable_smoke.py --complex` passed against
+  the existing clean `AccessMaze-context-d9a3656` package. Manifest integrity,
+  System32-only PATH, temporary working directory with spaces, bundled runtime/
+  Chromium and accessible/broken/conditional/SPA results passed. Startup 1.313 s;
+  journey times 3.052 / 5.731 / 4.527 / 7.854 s, findings 0 / 1 / 0 / 0. This is
+  a recheck of an existing package, not a new build or independent machine test.
+  ZIP CRC passed: 1,707 files, 390,025,055 bytes, SHA-256
+  `8bae625aada5b205bf2e231c188549d9604c6a503ec95a86c3e3ea012abcd126`.
+  Raw reports: ignored `dist/Single-branch-{portable,complex,archive}.json`.
+
+The existing exact-main [run 38132046152](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38132046152)
+was rechecked: Windows, Ubuntu and Windows packaging all completed successfully
+at `a9bb969`. Branch deletion does not require a fabricated CI-trigger commit.
+This documentation change records completed maintenance and establishes the future
+branch policy in CONTRIBUTING; its pushed SHA requires its own completed workflow.
+The historical recorder/WebView retention and independent Windows, NVDA, security,
+legal, signing, overnight and performance qualification gates remain open.
+
 ## Repository review and post-merge recorder correction
 
 ### Completed context ownership correction and current qualification limit

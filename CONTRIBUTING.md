@@ -1,5 +1,14 @@
 # Contributing
 
+Keep `main` as the only long-lived branch. Small, verified changes may go directly
+to `main` when explicitly authorized and repository rules permit. Use a temporary
+branch and normal pull-request review for high-risk changes; delete that branch
+after verifying the merge. Never bypass required checks or branch protection.
+Preserve release checkpoints and necessary development history with documented
+commits or tags, rather than permanent development, staging or backup branches.
+Before deleting a squash-merged branch, verify its content and preserve any
+historical commits needed for legal or Hackyard evidence.
+
 Use the setup and verification commands in README. Keep changes scoped to an observable
 behavior, describe the problem and include the checks you actually ran. Never present
 mocked browser results as integration or end-to-end evidence.
