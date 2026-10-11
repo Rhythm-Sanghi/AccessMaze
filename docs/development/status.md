@@ -101,6 +101,36 @@ only stage names and monotonic timestamps. Fresh recorder verification:
 This does not resolve the intermittent hosted failure. No application behavior,
 shutdown bound, origin policy or assertion has been weakened.
 
+Fresh local checks at `45f348c` passed: Python **135 passed, 331.03 s** with real
+Chromium and locked Pa11y corpus (`ACCESSMAZE_CORPUS_PA11Y=1`,
+`ACCESSMAZE_CORPUS_OUTPUT=dist/Resumed-corpus`, JUnit `dist/Resumed-full.xml`);
+React **13 passed, 41.89 s**; Rust **1 passed, 0.03 s**. Commands: `npm run check`,
+`npm run format:check`, `npm test`, `npm run build`; Ruff lint/format; `python
+scripts/contracts.py --check` through uv; Cargo check/fmt/test with the locked
+desktop manifest. `npm audit --audit-level=moderate` for the application and Pa11y
+and `uv run --project engine pip-audit` found no known vulnerabilities (local editable
+engine excluded by pip-audit). Cargo audit retained the same two allowed warnings.
+Actionlint 1.7.7 and `git diff --check` passed.
+
+Fresh inventory again found **217 tracked files**, no tracked generated candidates,
+missing Markdown file targets, byte-identical PNG duplicates or unignored untracked
+files. The targeted private-key/GitHub/cloud-token patterns found no matches; this
+remains a limited scan. No file deletion or move was justified. Raw inventory is
+`dist/Resumed-repository-audit.json`. The remaining-actions package reference and
+Hackyard instructions now identify the corrected package and the provenance tag.
+
+The unchanged `1a2809b` frozen package passed `scripts/Test-AccessMazePortable.ps1`
+and `scripts/portable_smoke.py --complex`: system-only PATH, temporary directory
+with spaces, startup **0.663 s**, accessible/broken/conditional/owned-SPA runs
+**2.643/4.499/4.730/6.339 s**, expected finding counts **0/1/0/0**. Reports:
+`dist/Resumed-portable.json`, `dist/Resumed-complex.json`. No new package build or
+independent clean-machine result is claimed. Existing seven-script native acceptance
+above remains applicable because application, UI, contracts and scripts are unchanged.
+`scripts/hackyard_demo.py --output dist/Resumed-hackyard` passed actual broken/fixed
+journeys, strict repair comparison and recorded-draft replay; the controlled server
+observed one approved POST and a 25-byte upload. No screenshots or prior evidence
+were overwritten by these resumed checks.
+
 ## Current verified implementation
 
 The original investigation acceptance package uses clean source
