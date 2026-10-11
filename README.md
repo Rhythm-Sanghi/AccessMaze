@@ -5,20 +5,20 @@ constraints, and records whether the task reached its completion assertion.
 It is a local-first desktop application built with Tauri 2, React, TypeScript,
 Python, Playwright and SQLite. No account, cloud analysis or paid service is required.
 
-**Status: development preview.** This repository implements a working vertical slice,
-not the full master specification. See [engineering status](docs/development/status.md)
+**Status: readiness preview; release qualification is incomplete.** See [engineering status](docs/development/status.md)
 for actual verification and remaining release gates.
 
 ## Current functionality
 
 - Saved projects; edit, archive, restore and permanently delete projects and their evidence.
 - Semantic journey editor, validated version 1 JSON import/export, mandatory assertions.
-- One managed Chromium run at a time; real progress, pause between steps and emergency cancellation.
+- One managed Chromium run per desktop worker at a time; real progress, pause between steps and emergency cancellation.
 - Keyboard-only Tab navigation and keyboard activation, or explicitly permitted pointer actions.
 - Offline/reconnect transitions, retained-value assertions, request latency, viewport and motion preferences.
 - Local axe-core audits, error association/live-region checks and completion assertions.
 - Normalized observed-state graph, repeated-state detection, transition table and evidence inspection.
-- Opt-in bounded button-branch discovery on resettable synthetic fixtures, including recorded frontier bounds.
+- Bounded scoped discovery for semantic controls, with state/action/time budgets,
+  explicit external action approvals and recorded frontiers.
 - SQLite run history, crash interruption recovery, masked fixture failure screenshots.
 - JSON, escaped HTML and formula-safe CSV report exports.
 - Explicit task outcomes and persisted comparisons with step alignment, target-aware findings,
@@ -31,7 +31,11 @@ for actual verification and remaining release gates.
   contain binding names and field labels, never credentials or file paths.
 - Reusable named condition profiles, layout zoom emulation, scheduled connectivity,
   semantics/focus assertions and descriptive outcome comparisons across profiles.
-- Dedicated historical evidence/live browser failure replay with fresh input and authorization.
+- Versioned failure replay recipes, fresh approved execution and editable journey drafts.
+- Task reachability through observed paths, blocking attempts and bounded alternatives.
+- Versioned profiles and bounded serial profile batches with separate authorization.
+- Planned or attested human investigation records, stored separately from automated findings.
+- Paged history summaries and revision-based polling avoid repeatedly transferring unchanged graphs.
 - Opt-in approved root navigation for additional semantic website branches, with saved frontier.
 - A manual browser recorder produces editable semantic steps and runtime bindings,
   with explicit completion capture and review before replay.
@@ -48,8 +52,9 @@ possible keyboard path is unavailable. DOM semantics and axe-core do not simulat
 screen reader or certify WCAG conformance. Motion preferences and viewport size are
 applied settings, not automatic usability verdicts. Latency is request delay, not bandwidth
 emulation. Screenshots are enabled only for bundled synthetic fixtures. External targets
-use explicitly approved origins. Popups, embedded frames, service workers and WebSockets
-are blocked; these restrictions can change application behavior. Blocked traffic makes
+use explicitly approved origins. Embedded frames are denied by default; authorized-application
+mode can opt in to named frames under the same explicit navigation-origin policy. Popups,
+service workers, downloads and WebSockets remain blocked; these restrictions can change application behavior. Blocked traffic makes
 findings and repair verification inconclusive.
 
 No real assistive-technology integration, persistent credential management,
@@ -144,7 +149,10 @@ uv run --project engine pip-audit
 
 Browser tests launch real Chromium against local fixtures. Tests using React components
 verify UI behavior separately. Neither is represented as full installed-desktop testing.
-See [testing](docs/testing/strategy.md) and [security boundaries](SECURITY.md).
+See the [paired browser corpus](docs/testing/comparative-corpus.md),
+[manual investigation](docs/testing/human-investigation.md),
+[profile batches](docs/testing/profile-batches.md),
+and [testing](docs/testing/strategy.md) and [security boundaries](SECURITY.md).
 
 The [compatibility corpus](docs/testing/compatibility.md) covers an owned multi-step
 SPA/API/upload application and explicitly opted-in educational public targets. Run

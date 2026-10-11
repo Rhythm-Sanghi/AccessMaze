@@ -79,3 +79,11 @@ inconclusive and fail the regression. No automatic retry hides them.
 A subsequent clean local full-suite corpus at `10a3fc6` completed all sixteen probes
 in 71.513 seconds with no inconclusive scanner results. Local Windows success does
 not establish Linux launch success or remove the earlier hosted failures.
+
+
+Later Windows run 38102629066 retained explicit Chromium sandbox access-denied errors
+and network-service crashes before aborted navigation. The subsequent workflow grants
+only read/execute on its downloaded test-browser cache, following publisher guidance.
+At `81f813d`, actual Ubuntu corpus/full checks passed (127 tests plus seven visible
+skips), and Windows full checks passed (134 tests). Complete packaging and final-head
+CI remain separate requirements; see engineering status and the PR checks.

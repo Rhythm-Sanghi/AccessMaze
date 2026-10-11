@@ -37,15 +37,15 @@ Reports are generated locally and ignored by Git.
 
 ## Latest local preview
 
-Clean application source: `746eaca94fae91a7749c1ce293ac721bc03f95a4`.
-Archive: `dist/AccessMaze-hackyard-preview-746eaca.zip`, 389,996,150 bytes, 1,703 entries.
-SHA-256: `6165c5693f9e57803cfa88d93c0525c59c3830527331e3aa7c0a3bb1b0ec1a53`.
+Clean application source: `432dd5f385aaecbfebb8b36fae28cc439ac1019b`.
+Archive: `dist/AccessMaze-investigation-preview-432dd5f.zip`, 390,039,679 bytes, 1,707 entries.
+SHA-256: `cfb33a28ca777acb801279e666560ec9abc7bddc49e075e9aff05905dc25449c`.
 
-Native feature/replay/profile/comparison/cancellation/crash checks, complex frozen
-execution and System32-only checks passed. A fresh extraction under a Unicode/space
-path also passed worker verification and native startup/shutdown. These checks reused
-the developer machine's AppData/WebView2; they are not independent installation tests.
-See [engineering status](../development/status.md).
+Native approvals/replay/profile/comparison/manual-plan/history/draft/cancellation/crash
+checks, complex frozen execution and system-only-PATH checks passed. Unicode/space
+extraction passed frozen verification. These reuse the developer machine's
+AppData/WebView2; independent installation remains unverified. Older `746eaca`
+measurements are historical. See [engineering status](../development/status.md).
 
 ## Release gates
 

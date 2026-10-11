@@ -96,6 +96,38 @@ def test_stdio_invalid_message_does_not_kill_worker(tmp_path):
     assert responses[1]["result"]["version"] == 1
 
 
+def test_stdio_adversarial_frames_preserve_privacy_and_subsequent_requests(tmp_path):
+    private = "synthetic-private-import-key-882"
+    base = {"version": 1, "id": "invalid", "method": "health"}
+    frames = [b"\xff", b"{", b"null", b"true", b"42", b"[]", b'"text"']
+    # Exercise the decoder recursion boundary as well as schema mutations through
+    # the actual pipe. No supplied frame may dispatch an effectful operation.
+    frames.append(b"[" * 2000 + b"0" + b"]" * 2000)
+    for field, values in {
+        "version": [None, -1, 2, {}, []],
+        "id": [None, "", "x" * 65, {private: "value"}, []],
+        "method": [None, private, {}, []],
+        "params": [None, True, 42, "text", []],
+    }.items():
+        for value in values:
+            frames.append(json.dumps({**base, field: value}).encode())
+    frames.append(json.dumps({**base, private: "must not be echoed"}).encode())
+    good = b'{"version":1,"id":"healthy","method":"health"}'
+    process = subprocess.run(
+        [sys.executable, "-m", "accessmaze.worker", "--storage", str(tmp_path)],
+        input=b"\n".join([*frames, good]) + b"\n",
+        capture_output=True,
+        timeout=20,
+    )
+    assert process.returncode == 0
+    assert private.encode() not in process.stdout + process.stderr
+    responses = [json.loads(line) for line in process.stdout.splitlines()]
+    assert len(responses) == len(frames) + 1
+    assert all("error" in response for response in responses[:-1])
+    assert responses[-1]["id"] == "healthy"
+    assert responses[-1]["result"]["version"] == 1
+
+
 def test_oversized_frame_is_discarded_and_malformed_id_is_not_echoed(tmp_path):
     secret = "private-malformed-id-412"
     spliced = '{"version":1,"id":"spliced","method":"health"}'

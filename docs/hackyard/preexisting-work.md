@@ -26,3 +26,14 @@ competition eligibility depends on the event rules.
 The remaining-feature continuation requested a second explicit baseline, **8e074e7**.
 `git log --reverse --oneline 8e074e7..HEAD` identifies these new discovery/replay/profile
 changes. This does not replace the original 9f3222a ledger or claim an onsite boundary.
+
+
+The complete engineering continuation uses clean **c634573** as its third technical
+boundary. Everything reachable at that commit is pre-existing for this continuation.
+Subsequent work adds authorized named frames, scoped widget discovery, versioned
+replay/editable drafts, observed task reachability, separate human records, profile
+batches, the paired axe/Pa11y corpus, bounded history/polling, reproduced security/UI
+fixes and delivery verification. Inspect `git log --reverse --oneline c634573..HEAD`
+and the corresponding diff. Preserve all three boundaries. None proves event timing
+or human-only authorship; the entrant must disclose actual tools and contributions
+as required by the competition. No competition submission has been made here.

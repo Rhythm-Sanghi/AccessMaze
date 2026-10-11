@@ -1,7 +1,8 @@
 # Evidence-based differentiation
 
 Research checked 2026-10-10 against publisher documentation. This is a feature/workflow
-comparison, not an installed comparative benchmark or an assertion of unique invention.
+comparison, not an assertion of unique invention. The later controlled corpus below
+is a separate measured comparison with narrower workloads.
 
 | Tool                           | Documented capability already available elsewhere                                                         | AccessMaze's demonstrated combination                                                                                                                   |
 | ------------------------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -17,3 +18,14 @@ Sources: [Deque APIs and user flows](https://www.deque.com/accessible-developmen
 The distinction is the inspectable combination and its local evidence, not exclusive
 ownership of keyboard checks, recording, workflows or automated rules. All analysis runs locally. General task understanding, exhaustive exploration, real AT integration and
 independent release qualification remain outside current demonstrated capabilities.
+
+
+The [paired corpus](../testing/comparative-corpus.md) executes sixteen actual browser
+cases: eight broken/working pairs. AccessMaze executes authored tasks; axe and locked
+Pa11y 10.0.0/HTML_CodeSniffer scan the initial page in fresh contexts. Local results
+classified all sixteen tasks correctly and observed eight verified improvements.
+Both initial-page scanners detected the unnamed-button calibration; the other task
+failures arose after interaction. That absence is not a scanner false negative: the
+workloads differ, and Pa11y itself supports actions. This establishes no general
+speed/accuracy ranking. Accessibility Insights and real NVDA were not executed.
+CI scanner failures remain inconclusive until corrected and actually rerun.

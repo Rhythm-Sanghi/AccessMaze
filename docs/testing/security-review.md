@@ -1,4 +1,4 @@
-# Local security review, 2026-10-10
+# Internal security review, updated 2026-10-11
 
 Scope: source inspection, existing and new actual Chromium/protocol regressions,
 Windows ACL inspection, package integrity checks and dependency advisory tools. This
@@ -10,9 +10,11 @@ is an engineering review on one developer laptop, not an independent penetration
 | Evidence | External text uses per-run HMAC tokens by default; screenshots restricted to fixtures. Known runtime values/names redacted before storage. Authored labels/URLs and literal journey input remain persistent; opt-in text can retain unrelated personal data. |
 | Retention | SQLite/WAL and backup ZIPs are plaintext. Pruning removes completed historical runs/artifacts; SQLite backup API captures a consistent database. No secure SSD/WAL/backups erasure guarantee. Exported files inherit the chosen destination's permissions. |
 | Filesystem | Actual `icacls` showed inherited RX for `CodexSandboxUsers` on this laptop's development and AppData directories. Storage now applies a protected inheritable DACL granting only current user, SYSTEM and Administrators; startup fails if it cannot apply it. A Windows test seeds broad Everyone access and verifies it is removed and the new database inherits private access. A reproduced explicit Everyone grant on an existing database/artifact survived the previous root-only policy. Startup now reapplies the private DACL to existing descendants, fails on enumeration/ACL errors, and rejects child reparse points before traversing external targets. Real Windows regressions preserve evidence bytes and verify junction targets are untouched. Administrators and same-user processes remain trusted. |
-| Browser isolation | Fresh context/browser per run; browser is separate from desktop WebView. Service workers, downloads, popups, embedded frames and WebSockets denied; DNS snapshot and redirect response interception tested. Exact read-only resources vs navigation/API scope preserved. No OS firewall/hostile-browser isolation claim. |
+| Browser isolation | Fresh context/browser per run; browser is separate from desktop WebView. Service workers, downloads, popups and WebSockets denied; frames denied by default with explicit authorized-application opt-in and named-frame targeting under navigation origins; DNS snapshot and redirect response interception tested. Exact read-only resources vs navigation/API scope preserved. No OS firewall/hostile-browser isolation claim. |
 | Effects | Declared steps plus run authorization; each exploratory action separately approved and stale state refused. Recorder manual-session authorization permits background writes to authorized API origins. GET and page-loading scripts can still have effects; use dedicated authorized accounts. |
 | Errors | Invalid schema now reports safe field locations and repair guidance, without Pydantic input/context. A private-stdio test verifies a supplied synthetic password is absent from stdout/stderr. A reproduced internal exception leaked its synthetic sensitive message to stderr. Internal/request-storage failures now emit only a static stage and correlation UUID, with no exception text or chained traceback. Four actual-stdio cases cover RuntimeError/OSError/KeyError/TypeError and subsequent health recovery. Startup/bootstrap diagnostics and OS crash dumps require separate review. |
+| Imports/protocol | Strict versioned journey models, bounded semantic targets and budgets; no scripts/commands/raw filesystem navigation. Private stdio drains oversized frames, validates correlation IDs and rejects unknown protocol methods; method-specific schemas validate imported/action fields. History pagination and revision requests have strict integer bounds. This pipe trusts the current local user; it is not authenticated against hostile same-user processes. |
+| Updates | Portable updates use manual directory replacement and verified backups. No automatic update service or authenticated update channel is implemented. An unsigned manifest can detect corruption but cannot authenticate replacement code. Independent distribution/signing remains required. |
 | Integrity | Existing integrity test detects tampering/path traversal; package manifest hashes protect against accidental corruption only. Preview is unsigned; authenticated distribution/code signing and browser binary provenance remain gates. |
 
 No external credentials were entered during this review. Python strings and browser
@@ -43,3 +45,27 @@ per-action approval, visible recorder and actual worker crash cleanup passed aga
 The test-only desktop was closed and debugging ports 9224/9227 confirmed closed.
 
 Protocol follow-up: executing the original worker blob from `275a4e1` produced four responses for an oversized frame plus malformed-ID/health messages: the oversized suffix executed, and the malformed ID echoed a synthetic private value. The corrected worker drains the whole oversized frame in bounded chunks and echoes only a validated string ID. The regression observes exactly three responses, no private value, and a healthy subsequent request. The private pipe remains a trusted same-user boundary; these fixes do not claim a hostile-process sandbox.
+
+
+October 11 follow-up: actual WAL-backed database size bypass and single-character
+redaction corruption were reproduced and fixed. Backup limits use logical committed
+size and recheck the snapshot before ZIP creation. Generated hashes/state references
+remain intact while sensitive page/input text is redacted. Fifteen real browser/storage
+regressions passed in 38.06 s; the authoritative status retains failed-before evidence.
+Human notes intentionally remain plaintext and are identified in backup manifests.
+
+New strict protocol fields cover named frame/scoped semantic targets, versioned profiles,
+manual records, replay recipes and bounded history/revision requests. Approval-state
+changes are tested using an actual controlled response rather than a page-load timer.
+No arbitrary script or filesystem target execution is introduced by imported journeys.
+The optional CI Pa11y probe is separate from the application: owned loopback pages only;
+Linux sandbox opt-out is explicit and recorded, while Windows retains its sandbox with
+read/execute permission on the downloaded browser cache. Neither changes private-store
+permissions or establishes a hostile-target security boundary.
+
+
+Actual adversarial private-stdio follow-up exercised 28 malformed frames, including
+invalid UTF-8, decoder recursion, non-object JSON and sensitive unknown mapping keys,
+then a healthy request. Ten worker tests passed in 14.03 s. All invalid frames
+returned errors; the private marker did not appear on stdout/stderr. This is a bounded
+malformed-input regression corpus, not an exhaustive fuzzing or independent-audit claim.
