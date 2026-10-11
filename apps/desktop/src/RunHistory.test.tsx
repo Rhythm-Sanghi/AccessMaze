@@ -72,7 +72,20 @@ it("compares through keyboard controls and hides evidence when the selected run 
   };
   vi.mocked(request).mockResolvedValue(comparison);
   const onSelect = vi.fn();
-  const props = { history: [baseline, candidate], run: candidate, onSelect };
+  const props = {
+    history: {
+      items: [baseline, candidate].map((r) => ({
+        ...r,
+        finding_count: r.findings.length,
+      })),
+      total: 2,
+      offset: 0,
+      next_offset: null,
+    },
+    run: candidate,
+    onSelect,
+    onPage: vi.fn(),
+  };
   const view = render(<RunHistory {...props} />);
   const user = userEvent.setup();
   await user.selectOptions(screen.getByLabelText("Previous run"), "baseline");
@@ -92,7 +105,25 @@ it("compares through keyboard controls and hides evidence when the selected run 
   await user.click(
     screen.getByRole("button", { name: "Inspect baseline run" }),
   );
-  expect(onSelect).toHaveBeenCalledWith(baseline);
+  expect(onSelect).toHaveBeenCalledWith(baseline.id);
   view.rerender(<RunHistory {...props} run={baseline} />);
   expect(screen.queryByText("passed-retest")).not.toBeInTheDocument();
+});
+
+it("pages bounded summaries with keyboard controls", async () => {
+  const onPage = vi.fn();
+  render(
+    <RunHistory
+      history={{ items: [], total: 102, offset: 0, next_offset: 50 }}
+      run={null}
+      onSelect={vi.fn()}
+      onPage={onPage}
+    />,
+  );
+  const user = userEvent.setup();
+  expect(screen.getByRole("button", { name: "Newer runs" })).toBeDisabled();
+  screen.getByRole("button", { name: "Older runs" }).focus();
+  await user.keyboard("{Enter}");
+  expect(onPage).toHaveBeenCalledWith(50);
+  expect(request).not.toHaveBeenCalled();
 });

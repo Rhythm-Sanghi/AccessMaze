@@ -54,7 +54,7 @@ Normal run-history comparison retains its stricter unchanged-conditions repair r
 
 In Journey builder, edit concrete test conditions, name them and save a reusable
 profile. Apply it to another project, edit/update it or remove it from the library.
-SQLite schema 3 migrates prior projects/runs/retests without deleting them. Each
+The historical schema-3 milestone migrated prior projects/runs/retests without deleting them. Each
 journey/run keeps a condition snapshot; changing a library entry never rewrites history.
 Backups contain the profile table. No credentials or upload payload belong in profiles.
 
@@ -87,9 +87,17 @@ layout zoom metrics, actual semantic audits and completion focus assertions.
 Native acceptance and package results are recorded separately in engineering status;
 no pending native check or independent release gate is implicitly passed here.
 
-Final packaged native acceptance at **746eaca** passed branching/root approval, profile
+Historical packaged native acceptance at **746eaca** passed branching/root approval, profile
 reuse, observed-again reproduction and corrected replay. Separate native strict retest,
 keyboard/error/dialog focus, headed recording, cancellation with partial persistence and
 worker-crash Chromium cleanup passed. Final frozen complex execution and ZIP CRC/hash
 passed locally. See final-feature-verification.json and engineering status for actual
 commands, measurements, preserved failed attempts and open independent qualification.
+
+
+Current application source **432dd5f** adds the engineering continuation listed in
+[status](../development/status.md): scoped widgets/named frames, versioned recipes
+and editable drafts, observed task paths, separate human records, profile batches
+and bounded history/polling. Database schema is now 4. Current native acceptance
+passes after fixing duplicate replay/human panel keys; the earlier `10a3fc6` UI
+acceptance failure is preserved rather than reported as a successful package.

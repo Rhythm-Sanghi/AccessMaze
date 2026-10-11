@@ -13,5 +13,12 @@
 - Task outcomes, profile comparisons and conservative repair retests.
 - Portable Windows packaging, lifecycle recovery and browser regression tests.
 - Windows/Linux CI checks and Windows preview packaging.
+- Explicit named-frame permissions and scoped native/ARIA widget targets.
+- Versioned replay recipes, editable drafts and observed task reachability.
+- Versioned profiles, bounded serial batches and separate planned/attested human records.
+- Paired real-browser corpus with separate axe/Pa11y initial-page measurements.
+- Paged history and revision polling; unchanged graphs stay local to the current view.
+- Regression fixes for WAL backup bounds, short-input redaction, combobox logical
+  focus, checked-state capture and duplicate replay panels.
 
 No release-candidate or full specification completion claim is made.

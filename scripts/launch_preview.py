@@ -3,6 +3,7 @@
 import os
 import argparse
 import subprocess
+import socket
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
@@ -12,6 +13,15 @@ options = parser.parse_args()
 package = (root / "dist" / options.package).resolve()
 if package.parent != (root / "dist").resolve():
     raise SystemExit("Package must be directly inside dist")
+try:
+    with socket.create_connection(("127.0.0.1", 9224), timeout=1):
+        pass
+except OSError:
+    pass
+else:
+    raise SystemExit(
+        "Test port 9224 is occupied; close the existing test desktop first"
+    )
 startup = subprocess.STARTUPINFO()
 startup.dwFlags = subprocess.STARTF_USESHOWWINDOW
 startup.wShowWindow = 0

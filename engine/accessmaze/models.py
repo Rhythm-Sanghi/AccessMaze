@@ -8,6 +8,22 @@ class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class TargetScope(StrictModel):
+    role: Literal[
+        "form",
+        "group",
+        "dialog",
+        "region",
+        "tablist",
+        "menu",
+        "listbox",
+        "radiogroup",
+        "tree",
+        "toolbar",
+    ]
+    name: str = Field(min_length=1, max_length=200)
+
+
 class Target(StrictModel):
     by: Literal["role", "label"] = "role"
     role: Literal[
@@ -22,8 +38,20 @@ class Target(StrictModel):
         "dialog",
         "radio",
         "spinbutton",
+        "tab",
+        "menuitem",
+        "menuitemcheckbox",
+        "menuitemradio",
+        "option",
+        "switch",
+        "treeitem",
+        "listbox",
     ]
     name: str = Field(min_length=1, max_length=200)
+    frame_name: str | None = Field(default=None, min_length=1, max_length=200)
+    scope: TargetScope | None = None
+    element_id: str | None = Field(default=None, pattern=r"^[A-Za-z][A-Za-z0-9_:.\-]{0,159}$")
+    description: str | None = Field(default=None, min_length=1, max_length=200)
 
 
 class Step(StrictModel):
@@ -116,6 +144,7 @@ class RuntimeInputs(StrictModel):
 
 
 class Profile(StrictModel):
+    schema_version: Literal[1] = 1
     action_timeout_ms: int = Field(default=10000, ge=1000, le=30000)
     keyboard_only: bool = True
     reduced_motion: bool = False
@@ -145,9 +174,12 @@ class Exploration(StrictModel):
     recover_navigation: bool = False
     max_depth: int = Field(default=2, ge=1, le=4)
     max_actions: int = Field(default=50, ge=1, le=200)
+    max_states: int = Field(default=100, ge=2, le=500)
 
 
 class NetworkPolicy(StrictModel):
+    mode: Literal["restricted", "authorized-application"] = "restricted"
+    embedded_frames: bool = False
     navigation_origins: list[str] = Field(default_factory=list, max_length=16)
     resource_origins: list[str] = Field(default_factory=list, max_length=32)
 
@@ -155,6 +187,8 @@ class NetworkPolicy(StrictModel):
     def validate_origins(self):
         from accessmaze.network import canonical_origin
 
+        if self.embedded_frames and self.mode != "authorized-application":
+            raise ValueError("Embedded frames require authorized-application mode")
         for field in ("navigation_origins", "resource_origins"):
             values = getattr(self, field)
             normalized = []
@@ -223,6 +257,8 @@ class Journey(StrictModel):
             ):
                 raise ValueError("Profile recovery must follow interruption")
         for step in self.steps:
+            if step.target and step.target.frame_name and not self.network.embedded_frames:
+                raise ValueError("Frame targets require explicit embedded-frame permission")
             if step.action == "navigate" and step.value not in {"", "/"}:
                 raise ValueError(
                     "Navigation opens only the configured target; use links for transitions"
@@ -235,6 +271,49 @@ class ProjectInput(StrictModel):
     journey: Journey
 
 
+class HumanReview(StrictModel):
+    schema_version: Literal[1] = 1
+    run_id: str = Field(pattern=r"^[0-9a-fA-F-]{36}$")
+    step_id: str = Field(pattern=r"^[a-zA-Z0-9_-]{1,64}$")
+    finding_id: str | None = Field(default=None, max_length=64)
+    status: Literal["planned", "observed", "inconclusive", "verified-human"] = "planned"
+    performed_by_human: bool = False
+    assistive_technology: str = Field(default="", max_length=200)
+    browser: str = Field(default="", max_length=200)
+    os: str = Field(default="", max_length=200)
+    settings: str = Field(default="", max_length=2000)
+    action: str = Field(default="", max_length=2000)
+    expected: str = Field(default="", max_length=2000)
+    actual: str = Field(default="", max_length=4000)
+    notes: str = Field(default="", max_length=4000)
+
+    @model_validator(mode="after")
+    def validate_verification(self):
+        from uuid import UUID
+
+        UUID(self.run_id)
+        if self.status in {"observed", "verified-human"} and (
+            not self.performed_by_human
+            or not all(
+                getattr(self, field).strip()
+                for field in (
+                    "assistive_technology",
+                    "browser",
+                    "os",
+                    "settings",
+                    "action",
+                    "expected",
+                    "actual",
+                )
+            )
+        ):
+            raise ValueError(
+                "Human observation requires attestation, exact testing context, "
+                "action, expected and actual behavior"
+            )
+        return self
+
+
 class Request(StrictModel):
     version: Literal[1]
     id: str = Field(min_length=1, max_length=64)
@@ -243,6 +322,9 @@ class Request(StrictModel):
         "profile.list",
         "profile.save",
         "profile.delete",
+        "review.list",
+        "review.save",
+        "review.delete",
         "project.list",
         "project.save",
         "project.delete",
@@ -250,7 +332,9 @@ class Request(StrictModel):
         "run.start",
         "run.replay.prepare",
         "run.get",
+        "run.poll",
         "run.list",
+        "run.history",
         "run.cancel",
         "run.pause",
         "run.resume",

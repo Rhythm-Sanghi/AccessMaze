@@ -5,6 +5,7 @@ import argparse
 import json
 import re
 from pathlib import Path
+from uuid import uuid4
 
 import psutil
 from playwright.async_api import async_playwright
@@ -21,6 +22,7 @@ async def main():
         default=ROOT / "apps/desktop/src-tauri/target/debug/accessmaze.exe",
     )
     args = parser.parse_args()
+    name = "Native crash recovery " + uuid4().hex[:8]
     expected = args.exe.resolve()
     desktop = next(
         p
@@ -42,9 +44,7 @@ async def main():
             .get_by_role("button", name=re.compile("Long-running journey"))
             .click()
         )
-        await page.get_by_label("Project name", exact=True).fill(
-            "Desktop crash recovery / synthetic"
-        )
+        await page.get_by_label("Project name", exact=True).fill(name)
         await (
             page.locator(".run-gate")
             .get_by_label(re.compile("I am authorized"))
@@ -88,8 +88,18 @@ async def main():
         assert not any(p.is_running() for p in chromium), (
             "Worker crash left Chromium running"
         )
+        projects = await page.evaluate(
+            "()=>window.__TAURI_INTERNALS__.invoke('worker_request',{method:'project.list',params:{}})"
+        )
+        owned = [p for p in projects if p["name"] == name]
+        assert len(owned) == 1, "Owned synthetic project identity is ambiguous"
+        await page.evaluate(
+            "id=>window.__TAURI_INTERNALS__.invoke('worker_request',{method:'project.delete',params:{id}})",
+            owned[0]["id"],
+        )
         evidence = {
             "host_restarted_worker": True,
+            "owned_project_removed": True,
             "run_marked_interrupted": True,
             "chromium_processes_cleaned": len(chromium),
             "scope": "Real Windows desktop and Windows job object",

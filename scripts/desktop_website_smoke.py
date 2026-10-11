@@ -7,6 +7,7 @@ import re
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from uuid import uuid4
 
 from playwright.async_api import async_playwright
 
@@ -17,6 +18,7 @@ async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--endpoint", default="http://127.0.0.1:9224")
     args = parser.parse_args()
+    name = "Native approved website " + uuid4().hex[:8]
     hits = []
 
     class Handler(BaseHTTPRequestHandler):
@@ -53,9 +55,7 @@ async def main():
             page.set_default_timeout(30000)
             await page.get_by_role("button", name="01 Projects").click()
             await page.get_by_role("button", name="+ Website investigation").click()
-            await page.get_by_label("Project name", exact=True).fill(
-                "Native approved website smoke"
-            )
+            await page.get_by_label("Project name", exact=True).fill(name)
             await page.get_by_label("Target URL", exact=True).fill(
                 f"http://127.0.0.1:{server.server_port}"
             )
@@ -117,6 +117,15 @@ async def main():
             await recorder.get_by_role(
                 "button", name="Review these steps in the editor"
             ).wait_for()
+            projects = await page.evaluate(
+                "()=>window.__TAURI_INTERNALS__.invoke('worker_request',{method:'project.list',params:{}})"
+            )
+            owned = [p for p in projects if p["name"] == name]
+            assert len(owned) == 1, "Owned synthetic project identity is ambiguous"
+            await page.evaluate(
+                "id=>window.__TAURI_INTERNALS__.invoke('worker_request',{method:'project.delete',params:{id}})",
+                owned[0]["id"],
+            )
             result = {
                 "packaged_website_approval": "passed",
                 "posts": 1,
@@ -124,6 +133,7 @@ async def main():
                 "packaged_headed_recorder": "passed",
                 "completion_capture": "Base",
                 "scope": "Owned HTTP server, actual native UI/IPC/browser",
+                "owned_project_removed": True,
             }
             (ROOT / "docs/testing/desktop-website.json").write_text(
                 json.dumps(result, indent=2) + "\n"

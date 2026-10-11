@@ -88,3 +88,12 @@ earlier code, tools and team contributions required by the rules.
 Preserve commit history; use `git log --reverse --oneline` and `git diff 275a4e1..HEAD`
 for the precise boundary. This document does not assert eligibility or that pre-existing
 features were implemented during the competition.
+
+
+Current handoff: [submission copy](../hackyard/submission.md),
+[ninety-second and five-minute scripts](../hackyard/demo-script.md),
+[three technical contribution boundaries](../hackyard/preexisting-work.md),
+and [current verification](../development/status.md). The older 275a4e1 ledger above
+remains a historical boundary; it does not replace later c634573 continuation evidence.
+The current paired corpus actually executes axe and Pa11y, with explicit differing
+workloads; earlier feature comparisons are not a general competitive benchmark.

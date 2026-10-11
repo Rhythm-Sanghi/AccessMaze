@@ -2,7 +2,7 @@
 
 [Engineering status](../development/status.md) records the tested source, results,
 measurements, failures and release blockers. The latest application package is from
-clean commit `746eaca`; later changes concern verification tools and documentation.
+clean commit `432dd5f`; later changes concern verification tools and documentation.
 
 ## Regression coverage
 
@@ -15,7 +15,8 @@ clean commit `746eaca`; later changes concern verification tools and documentati
 | `test_comparison_browser.py`, `test_retests.py` | Target-aware findings, changed conditions and conservative repair comparisons                                                             |
 | `test_hackyard_demo.py`                         | Broken/fixed workflow, upload bytes, recorder replay and offline draft loss                                                               |
 
-The recorded suite passed 112 Python, 9 React and 1 Rust tests. Browser regressions
+The current recorded suite passed 134 Python, 13 React and 1 Rust tests;
+exact tested commits and durations are in status. Browser regressions
 launch Chromium; component tests separately exercise the interface.
 
 ## Native Windows checks

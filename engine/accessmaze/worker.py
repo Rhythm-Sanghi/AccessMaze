@@ -15,7 +15,7 @@ from pydantic import ValidationError
 from accessmaze.fixtures import FixtureServer
 from accessmaze.inputs import RunInputs
 from accessmaze.maintenance import backup, prune
-from accessmaze.models import Journey, ProfileInput, ProjectInput, Request
+from accessmaze.models import HumanReview, Journey, ProfileInput, ProjectInput, Request
 from accessmaze.profiles import apply_conditions
 from accessmaze.recorder import Recorder
 from accessmaze.replay import prepare_replay, replay_verdict
@@ -141,6 +141,20 @@ class Worker:
             return self.recorder.recording.snapshot()
         if method == "profile.list":
             return self.store.profiles()
+        if method == "review.list":
+            UUID(params["run_id"])
+            return self.store.reviews(params["run_id"])
+        if method == "review.save":
+            if params.get("id"):
+                UUID(params["id"])
+            return self.store.save_review(
+                HumanReview.model_validate(params["review"]), params.get("id")
+            )
+        if method == "review.delete":
+            UUID(params["run_id"])
+            UUID(params["id"])
+            self.store.delete_review(params["run_id"], params["id"])
+            return {"ok": True}
         if method == "profile.save":
             profile_id = params.get("id")
             if profile_id:
@@ -181,7 +195,25 @@ class Worker:
             return {"ok": True}
         if method == "run.list":
             return self.store.runs(params["project_id"])
-        if method == "run.get":
+        if method == "run.history":
+            UUID(params["project_id"])
+            if set(params) - {"project_id", "limit", "offset"}:
+                raise ValueError("Unknown history query field")
+            return self.store.history(
+                params["project_id"], params.get("limit", 50), params.get("offset", 0)
+            )
+        if method in {"run.get", "run.poll"}:
+            if method == "run.poll":
+                UUID(params["id"])
+                if set(params) - {"id", "after_revision"}:
+                    raise ValueError("Unknown run poll field")
+                revision = params.get("after_revision", -1)
+                if type(revision) is not int or not -1 <= revision <= 2**53 - 1:
+                    raise ValueError("Run revision must be a bounded integer")
+                current = self.store.run_revision(params["id"])
+                # Legacy records without a revision always return a full snapshot.
+                if current is not None and current == revision:
+                    return {"changed": False, "revision": current}
             run = self.store.run(params["id"])
             if params["id"] == self.active and self.control and self.control.pending():
                 # Raw proposed names exist only in this response, not SQLite/reports.
@@ -196,7 +228,11 @@ class Worker:
                 run["replay"]["verdict"] = replay_verdict(
                     original, run, run["replay"]["finding_id"]
                 )
-            return run
+            return (
+                {"changed": True, "revision": run.get("revision"), "run": run}
+                if method == "run.poll"
+                else run
+            )
         if method == "run.approve":
             if params["id"] != self.active or not self.control:
                 raise ValueError("This run is no longer active")
@@ -264,6 +300,7 @@ class Worker:
                     try:
                         result = self.store.run(run_id)
                         result.update(status="failed", error=message)
+                        result["revision"] = result.get("revision", 0) + 1
                         self.store.save_run(result)
                     except Exception:
                         internal_error("failure persistence")
@@ -289,6 +326,7 @@ class Worker:
             return {"ok": True}
         if method == "report.export":
             run = self.store.run(params["id"])
+            run["human_reviews"] = self.store.reviews(run["id"])
             screenshots = {}
             if params["format"] == "html":
                 for finding in run["findings"][:10]:

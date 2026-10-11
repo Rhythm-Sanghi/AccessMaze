@@ -24,11 +24,40 @@ export type Role =
   | "alert"
   | "dialog"
   | "radio"
-  | "spinbutton";
+  | "spinbutton"
+  | "tab"
+  | "menuitem"
+  | "menuitemcheckbox"
+  | "menuitemradio"
+  | "option"
+  | "switch"
+  | "treeitem"
+  | "listbox";
 export interface Step {
   id: string;
   action: Action;
-  target?: { role: Role; name: string; by?: "role" | "label" } | null;
+  target?: {
+    role: Role;
+    name: string;
+    by?: "role" | "label";
+    frame_name?: string | null;
+    element_id?: string | null;
+    description?: string | null;
+    scope?: {
+      role:
+        | "form"
+        | "group"
+        | "dialog"
+        | "region"
+        | "tablist"
+        | "menu"
+        | "listbox"
+        | "radiogroup"
+        | "tree"
+        | "toolbar";
+      name: string;
+    } | null;
+  } | null;
   value_from?: string | null;
   file_label?: string;
   value: string;
@@ -37,18 +66,25 @@ export interface Step {
 }
 export interface Journey {
   privacy?: { capture_page_text: boolean };
-  network?: { navigation_origins: string[]; resource_origins: string[] };
+  network?: {
+    navigation_origins: string[];
+    resource_origins: string[];
+    mode?: "restricted" | "authorized-application";
+    embedded_frames?: boolean;
+  };
   exploration?: {
     enabled: boolean;
     recover_navigation?: boolean;
     max_depth: number;
     max_actions: number;
+    max_states?: number;
   };
   schema_version: 1;
   name: string;
   target: string;
   steps: Step[];
   profile: {
+    schema_version?: 1;
     action_timeout_ms?: number;
     keyboard_only: boolean;
     reduced_motion: boolean;
@@ -78,6 +114,8 @@ export interface Project {
   updated_at: string;
 }
 export interface Finding {
+  classification?: string;
+  replay_recipe?: { schema_version: 1; available: boolean; reason: string };
   id: string;
   step_id: string;
   rule: string;
@@ -115,7 +153,7 @@ export interface Observation {
     visible: boolean;
     invalid: string | null;
     populated: boolean;
-    checked?: boolean | null;
+    checked?: boolean | "mixed" | null;
     expanded?: string | null;
     selected?: string | null;
     focused: boolean;
@@ -124,9 +162,36 @@ export interface Observation {
   online: boolean;
   reduced_motion: boolean;
 }
+export type RunPoll =
+  | { changed: false; revision: number }
+  | { changed: true; revision: number | null; run: Run };
 export interface Run {
+  revision?: number;
+  failure?: { classification: string; reason: string };
   replay?: { source_id: string; finding_id: string; verdict?: string };
   outcome?: TaskOutcome;
+  reachability?: {
+    schema_version: 1;
+    status: string;
+    reachable_observed_states: number;
+    observed_states: number;
+    unexplored_frontier: {
+      state_id: string;
+      path: string[];
+      reason?: string;
+    }[];
+    blocking_attempts: {
+      step_id: string;
+      finding_ids: string[];
+      chronological_prerequisites: string[];
+    }[];
+    objectives: {
+      step_id: string;
+      status: string;
+      shortest_observed_state_path?: string[] | null;
+    }[];
+    limitation: string;
+  };
   approval?: {
     id: string;
     state_id: string;
@@ -168,7 +233,13 @@ export interface Run {
     interaction?: Record<string, unknown>;
   }[];
   findings: Finding[];
-  nodes: { id: string; observation: Observation; first_step: string }[];
+  nodes: {
+    id: string;
+    observation: Observation;
+    first_step: string;
+    navigation_state_id?: string;
+    interaction_state_id?: string;
+  }[];
   edges: {
     source: string;
     target: string;
@@ -187,6 +258,7 @@ export interface TaskOutcome {
   limitation: string;
 }
 export interface RunComparison {
+  verdict?: string;
   previous_id: string;
   current_id: string;
   comparable: boolean;
@@ -202,6 +274,8 @@ export interface RunComparison {
     previous_status: string;
     current_status: string;
     previous_state_id?: string | null;
+    focus_change?: string;
+    control_change?: string;
     current_state_id?: string | null;
   }[];
   first_divergent_step: {
@@ -222,6 +296,9 @@ export type Method =
   | "profile.list"
   | "profile.save"
   | "profile.delete"
+  | "review.list"
+  | "review.save"
+  | "review.delete"
   | "project.list"
   | "project.save"
   | "project.delete"
@@ -229,7 +306,9 @@ export type Method =
   | "run.start"
   | "run.replay.prepare"
   | "run.get"
+  | "run.poll"
   | "run.list"
+  | "run.history"
   | "run.cancel"
   | "run.pause"
   | "run.resume"
@@ -256,4 +335,39 @@ export interface SavedProfile {
   name: string;
   profile: Journey["profile"];
   updated_at: string;
+}
+
+export interface HumanReview {
+  id?: string;
+  updated_at?: string;
+  schema_version: 1;
+  run_id: string;
+  step_id: string;
+  finding_id: string | null;
+  status: "planned" | "observed" | "inconclusive" | "verified-human";
+  performed_by_human: boolean;
+  assistive_technology: string;
+  browser: string;
+  os: string;
+  settings: string;
+  action: string;
+  expected: string;
+  actual: string;
+  notes: string;
+}
+
+export interface RunSummary {
+  id: string;
+  project_id: string;
+  status: string;
+  started_at: string;
+  finding_count: number;
+  duration_seconds?: number | null;
+  journey: { profile: Partial<Journey["profile"]> };
+}
+export interface HistoryPage {
+  items: RunSummary[];
+  total: number;
+  offset: number;
+  next_offset: number | null;
 }

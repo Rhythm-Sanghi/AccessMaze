@@ -67,3 +67,16 @@ does not establish behavior under every OS/Wi-Fi failure or server-side commit a
 Known false-negative classes remain: misleading labels/alt text, usability, meaningful
 reading order, closed shadow trees, OS focus, AT announcements and unvisited states.
 No automated result upgrades these into verified conformance.
+
+
+## October 11 engineering rerun
+
+`dist/Compatibility-engineering.json` records a successful rerun of the four
+existing cases on Chromium 153.0.8010.12: owned 6.893 s, Selenium 7.375 s,
+W3C before 1.891 s and after 1.667 s. No origin coverage was compromised.
+The owned application received one POST and 25 selected bytes. The rule sets were
+unchanged from the earlier documented observations. The new controlled paired
+corpus and its scanner comparison are described in [comparative-corpus.md](comparative-corpus.md).
+Additional actual regressions cover roving menus, custom switches, mixed native
+checkboxes and externally controlled active-descendant options. DOM checked-state
+capture and external-owner reachability defects were reproduced and fixed.

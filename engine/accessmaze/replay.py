@@ -4,6 +4,55 @@ from accessmaze.models import Journey
 from accessmaze.retests import finding_identity
 
 
+def replay_recipe(run, finding):
+    """A chronological witness, not an automatic reset or a promise of server state."""
+    actions = run.get("exploration", {}).get("actions", [])
+    authored = {s["id"] for s in run["journey"]["steps"]}
+    relevant = []
+    if finding["step_id"] not in authored:
+        if run["journey"]["target"].startswith("fixture://") and finding.get("replay_steps"):
+            relevant = [
+                {"step_id": step["id"], "replay_step": step} for step in finding["replay_steps"]
+            ]
+        else:
+            for action in actions:
+                relevant.append(action)
+                if action["step_id"] == finding["step_id"]:
+                    break
+        if not relevant or relevant[-1]["step_id"] != finding["step_id"]:
+            return {
+                "schema_version": 1,
+                "available": False,
+                "reason": "No supported chronological discovery witness",
+            }
+        if any(not a.get("replay_step") for a in relevant):
+            return {
+                "schema_version": 1,
+                "available": False,
+                "reason": "Discovery target text was withheld. Author a new journey or explicitly "
+                "enable page-text retention before recording a new path.",
+            }
+    available = len(run["journey"]["steps"]) + len(relevant) <= 100
+    return {
+        "schema_version": 1,
+        "available": available,
+        "reason": "Review prerequisites and authorize every effect; server state is not restored"
+        if available
+        else "Recipe exceeds the 100-step import bound",
+        "discovered_steps": [a["replay_step"] for a in relevant] if available else [],
+        "observation_ids": [a.get("source") for a in relevant]
+        + [a.get("state_id") for a in relevant],
+        "requirements": {
+            "network": run["journey"].get("network", {}),
+            "profile": run["journey"].get("profile", {}),
+            "fresh_runtime_inputs": True,
+            "explicit_effect_approval": True,
+        },
+        "preconditions": "Fresh browser context; application/server prerequisites "
+        "must be supplied by the tester",
+    }
+
+
 def prepare_replay(run, finding_id):
     finding = next((f for f in run.get("findings", []) if f["id"] == finding_id), None)
     if finding is None:
@@ -29,10 +78,10 @@ def prepare_replay(run, finding_id):
                 )
             step["value"] = ""
     if finding["step_id"] not in recorded_step_ids:
-        raise ValueError(
-            "Discovery findings need an authored journey before replay; "
-            "transient approved targets are not retained in private evidence"
-        )
+        recipe = finding.get("replay_recipe") or replay_recipe(run, finding)
+        if not recipe["available"]:
+            raise ValueError(recipe["reason"])
+        data["steps"].extend(recipe["discovered_steps"])
     return Journey.model_validate(data)
 
 
@@ -45,6 +94,10 @@ def replay_verdict(original, current, finding_id):
     ]
     if current.get("coverage_compromised"):
         return "inconclusive-blocked-traffic"
+    if current.get("environment", {}).get("browser") and original.get(
+        "environment", {}
+    ) != current.get("environment", {}):
+        return "environment-changed"
     if observed:
         identity = finding_identity(finding)
         return (
@@ -54,5 +107,9 @@ def replay_verdict(original, current, finding_id):
         )
     step = next((s for s in current.get("steps", []) if s["id"] == finding["step_id"]), None)
     if step and step["status"] == "passed":
+        if original["journey"]["target"] != current["journey"]["target"]:
+            return "environment-changed"
+        if original.get("input_signature") != current.get("input_signature"):
+            return "inconclusive-different-inputs"
         return "not-reproduced-in-this-run"
     return "inconclusive-step-not-passed"

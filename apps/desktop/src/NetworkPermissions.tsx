@@ -68,6 +68,30 @@ export default function NetworkPermissions({
       <label className="check">
         <input
           type="checkbox"
+          checked={network.embedded_frames ?? false}
+          onChange={(e) =>
+            onChange({
+              ...journey,
+              network: {
+                ...network,
+                mode: e.target.checked
+                  ? "authorized-application"
+                  : "restricted",
+                embedded_frames: e.target.checked,
+              },
+            })
+          }
+        />
+        Authorize embedded frame navigation at approved navigation origins
+      </label>
+      <p className="muted">
+        Named-frame journey targets require this permission. Popups, WebSockets,
+        service workers and downloads remain unsupported. Approval does not
+        create a strong security sandbox.
+      </p>
+      <label className="check">
+        <input
+          type="checkbox"
           checked={journey.privacy?.capture_page_text ?? false}
           onChange={(e) =>
             onChange({

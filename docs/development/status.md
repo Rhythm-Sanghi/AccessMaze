@@ -1,9 +1,96 @@
 # Engineering status
 
-Updated 2026-10-10. AccessMaze is a Windows development preview. Independent release
-qualification is incomplete.
+Updated 2026-10-11. AccessMaze is an unsigned readiness preview. It is not
+production-ready or release-qualified. The current engineering continuation begins
+at clean `c634573`; preserve the earlier milestone history below.
 
-## Current implementation
+## Current verified implementation
+
+The latest locally built application package uses clean source
+`432dd5f385aaecbfebb8b36fae28cc439ac1019b`. Subsequent changes currently concern
+CI browser permissions, verification harnesses and documentation.
+
+- Authorized journeys, exact navigation/API versus resource origins, DNS/redirect
+  checks, run-only credentials/uploads and private evidence remain in place.
+- Explicit named-frame permission, scoped semantic widgets, bounded discovery,
+  per-action approval and separately approved root recovery.
+- Versioned failure recipes, editable journey drafts and observed task reachability;
+  withheld targets and unknown frontiers remain explicit limitations.
+- Versioned reusable profiles and bounded serial profile batches. Layout emulation
+  is not browser chrome/text zoom or a disability simulation.
+- Separate planned/attested human investigation records. No actual NVDA test occurred.
+- Database schema 4, paged metadata history and revision-based polling. Existing
+  full-run retrieval remains available; unchanged graphs are not repeatedly transferred.
+- WAL-aware backup bounds, preserved structural evidence IDs and distinct React
+  panel keys fix defects reproduced by real storage/browser/native checks.
+
+## Current local verification
+
+Available laptop: Intel Core i7-1365U, 10 cores/12 threads, 15.66 GiB usable RAM,
+Windows 11 build 26220. Background activity and cache state were uncontrolled.
+
+| Check | Actual result |
+| --- | --- |
+| Full Python suite at clean `10a3fc6` | 134 passed, 296.67 s, including actual Chromium and the locked Pa11y corpus |
+| React after duplicate-key correction | 13 passed, 5.19 s |
+| Rust Windows Job regression | 1 passed; formatting/checks passed |
+| TypeScript/ESLint, Ruff, Prettier, generated contracts | Passed |
+| Native approved branches/replay/profile reuse | Passed, 14.539 s; three separate approvals, observed-again then not-reproduced after correction |
+| Native strict repair comparison | Blocked → completed; passed-retest; divergent step `continue` |
+| Native history/manual/editable draft | Passed, 5.974 s; separate planned-only record/export, four history switches without duplicate panels, draft saves without execution |
+| Native keyboard/errors/dialogs | Passed; retained invalid input and restored dialog focus |
+| Native website/recorder | One approved POST; actual headed recorder completion capture; no external automatic replay |
+| Native cancellation/crash | Cancelled partial node persisted; crash interrupted run and restarted worker; four Chromium children cleaned in each test |
+| Replay/comparison UI axe | Zero violations; aria-prohibited-attr and color-contrast remain incomplete, not passes |
+| Frozen complex runtime | System-only PATH startup 0.421 s; accessible/broken/conditional/owned-SPA 2.056/2.596/2.551/5.280 s, expected findings 0/1/0/0 |
+| Sustained native UI/worker run | 601.33 s; 157 journey/UI cycles, owned history removed, zero owned children after close; six reused PIDs excluded by creation-time identity |
+| Portable integrity/Unicode extraction | Manifest, CRC and frozen checks passed on development laptop |
+| License distribution regressions | 5 passed, 4.37 s; all 87 original rows reclassified against current 627-component build, zero open original rows; broader redistribution gates remain |
+| Sustained worker/browser regression | 1,223.77 s; 24 persistent journeys and 24 × 34 = 816 passing regression executions; no surviving children at cycle boundaries |
+
+The 20-minute worker run began at clean `10a3fc6`; engine source fingerprints stayed
+unchanged. Later changes were UI/test-harness/docs/CI, not engine source. Peak summed
+harness/test-child RSS 740.88 MiB, handles 4,105. Idle worker RSS 65.32 → 67.41 MiB
+(range 44.80–69.68), handles 256 → 251. This is not overnight, a native UI soak or
+proof of no memory leak. The separate native sustained run passed as recorded below.
+
+## Current portable artifact
+
+Local archive `dist/AccessMaze-investigation-preview-432dd5f.zip`: **390,039,679 bytes**,
+**1,707 ZIP entries**. SHA-256:
+`cfb33a28ca777acb801279e666560ec9abc7bddc49e075e9aff05905dc25449c`.
+Source is clean `432dd5f`. Bundled Python 3.13.9, Playwright 1.63.0 and Chromium
+153.0.8010.12 executed; no developer runtime was needed on PATH. A new Unicode/space
+extraction passed frozen checks. These reuse this laptop's Windows/AppData/WebView2
+and are not independent fresh-user or clean-machine results. The package is unsigned.
+
+## CI and release gates
+
+[Run 38102629066](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38102629066)
+passed Ubuntu but failed Windows's optional scanner; packaging was skipped. Browser
+stderr identified sandbox access denied. A narrow cache read/execute correction was
+pushed as `81f813d`; [run 38103235350](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38103235350)
+completed all three jobs successfully. The PR workflow checks GitHub's synthetic
+merge commit `c8474870ba08ae917b12b4f23a8472344f615691`, whose tree matches head
+`81f813d` exactly. Its package is clean and unsigned. Subsequent documentation/test
+commits require their own completed run; final-head conclusions are linked through
+[PR #1 checks](https://github.com/Rhythm-Sanghi/AccessMaze/pull/1/checks).
+
+Open qualification gates: independent Windows/fresh-user/offline/upgrade/removal;
+actual human NVDA and zoom/accessibility evaluation; independent security and embedded
+binary redistribution review; signing/authenticity; overnight stability and the
+unexplained earlier WebView2 retention; reviewed performance budgets/representative
+hardware; release-owner master-spec scope acceptance. Human records are implemented,
+but this does not complete human verification. Follow [remaining actions](../releases/remaining-actions.md).
+Competition eligibility, actual team/tool disclosures and demo-video recording require
+the entrant. [Submission handoff](../hackyard/submission.md) contains reviewable copy.
+
+## Historical record before the c634573 continuation
+
+The following October 10 measurements and package claims describe their recorded
+commits. They are preserved for traceability and do not supersede the current summary.
+
+### Current implementation
 
 - Authorized browser journeys with keyboard or permitted pointer interaction,
   explicit completion assertions, recording and editable semantic steps.
@@ -18,7 +105,7 @@ qualification is incomplete.
 - SQLite history, partial results, interruption recovery, report exports, backups
   and retention controls. Windows Job objects own worker/browser descendants.
 
-## Verified application source
+### Verified application source
 
 The latest portable package uses clean source `746eaca94fae91a7749c1ce293ac721bc03f95a4`.
 Subsequent changes concern verification tools and documentation.
@@ -42,7 +129,7 @@ Replay focus evidence showed eight unsuccessful Tab presses before correction an
 one successful press afterward. This verifies the tested journey, not every keyboard
 path or WCAG conformance. NVDA has not been tested.
 
-## Portable package
+### Portable package
 
 Local archive: `dist/AccessMaze-hackyard-preview-746eaca.zip`.
 
@@ -59,7 +146,7 @@ These checks reused the development laptop's AppData and WebView2. They are not
 independent clean-machine or fresh-user tests. The archive is unsigned and is not
 published as a qualified release.
 
-## Performance and stability
+### Performance and stability
 
 Three sequential native startups reached connected UI in 4.746 / 4.028 / 3.720 s,
 with summed ready RSS of 448.97 / 446.24 / 441.50 MiB. All eight children exited after
@@ -72,7 +159,7 @@ An earlier 607.26-second fixed-engine worker run completed 11 journeys and
 children at cycle boundaries. This was not an overnight or native UI soak.
 See [performance procedures](../testing/readiness-benchmark.md).
 
-## Regressions and unsuccessful checks
+### Regressions and unsuccessful checks
 
 - Checked-state omission merged checked and unchecked discovery states. Control
   and accessibility-tree enum states are now captured; the Chromium regression passes.
@@ -89,7 +176,7 @@ See [performance procedures](../testing/readiness-benchmark.md).
 - An extraction diagnostic print failed under cp1252; a separate probe failed before
   launch on an environment-key lookup. Follow-up package and native checks passed.
 
-## Security, licensing and release blockers
+### Security, licensing and release blockers
 
 The [internal security review](../testing/security-review.md) records tested boundaries
 and remaining risks. It is not an independent audit. All 87 original license/notice
@@ -106,7 +193,7 @@ distribution rights, signing, completed remote CI, overnight stability and agree
 performance budgets remain open. Master-spec acceptance also remains incomplete.
 Follow [remaining actions](../releases/remaining-actions.md).
 
-## Repository publication checks
+### Repository publication checks
 
 After documentation/report cleanup, the unchanged application passed:
 
@@ -121,7 +208,7 @@ Generated reports, caches, runtimes and packages are excluded from the published
 Required license records remain tracked. Remote CI must be checked for the pushed SHA;
 local checks do not establish its result.
 
-## Reproducing verification
+### Reproducing verification
 
 Commands are in [testing strategy](../testing/strategy.md),
 [feature evidence](../hackyard/technical-evidence.md) and
@@ -133,3 +220,466 @@ The repository cleanup removes duplicate report snapshots and machine diagnostic
 the published tree. Source behavior, tests, license notices and commit history are retained.
 Disposable extraction/Temp directories from local testing remain on disk after guarded
 cleanup was rejected by execution policy. This does not affect the Git working tree.
+
+
+## Engineering continuation — baseline and CI repair
+
+Working branch: `engineering/browser-investigation`, baseline `c634573`.
+Repository-wide assessment and file/test milestones: [engineering-plan.md](engineering-plan.md).
+Fresh baseline commands: `uv run --project engine pytest engine/tests -q
+--junitxml=dist/engineering-baseline.xml` (112 passed, 140.921 s), `npm test`
+(9 passed, 3.99 s), `cargo test --locked --manifest-path
+apps/desktop/src-tauri/Cargo.toml` (1 passed).
+
+Actual GitHub [run 38071630094](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38071630094)
+failed on Linux (23 failures, 82 passed, 7 skipped). The demo unconditionally
+selected a repository browser cache after CI had installed browsers elsewhere;
+subsequent browser launches could not find Chromium. Windows was cancelled and
+packaging skipped. The repair uses one explicit install/test cache in CI, avoids
+selecting a nonexistent cache in the standalone demo, restores test environment
+state, and disables matrix fail-fast so both platforms report their own results.
+Action references are immutable SHAs resolved from official repositories; checkout
+and setup-node use their Node 24 v5 actions. Permissions remain contents/read.
+Affected real-browser demo regression: 1 passed in 15.42 s. Ruff and workflow
+Prettier validation passed after formatting. Remote verification of the repair is
+pending; no CI success is inferred from local tests.
+
+
+## Phase A — browser compatibility and failure meaning
+
+Added explicit restricted/authorized-application modes and opt-in embedded-frame
+network navigation at approved navigation origins. Authored steps can select an
+unambiguous named frame. Existing DNS, resource/navigation separation, redirect
+and effect-window checks remain in force. Restricted frames still fail closed;
+read-only resource origins cannot grant frame navigation. New UI controls use the
+existing permission panel and journey editor.
+
+Findings now include an explicit evidence category (accessibility, completion
+assertion, environment, policy, authorization, unavailable state, definition,
+transient execution or inconclusive). Outer execution-budget and preparation
+failures carry separate run failure categories. Ambiguous visible assertions are
+definition errors, rather than confirmed missing completion states.
+
+Commands: `pytest engine/tests/test_browser_capabilities.py
+engine/tests/test_network_policy.py engine/tests/test_hackyard_demo.py -q`
+with the documented local Playwright cache: **7 passed, 25.04 s**. Actual browser
+checks covered an approved cross-origin frame, one approved POST, refusal with
+resource-only approval, restricted frame requests and duplicate frame names.
+`npm run check`, `npm test` (**9 passed, 5.06 s**), Ruff, contract freshness and
+Git whitespace checks passed. Local baseline totals remain recorded separately.
+
+Limits: named-frame steps only; discovery remains on the primary page. Inline
+srcdoc/blank frame targets and complete cross-frame focus/AX verification are
+unsupported. Frame permission controls network navigation, not a hostile-site
+sandbox. Popups, WebSockets, service workers and downloads remain restricted.
+Cross-origin APIs/resources already supported by exact origin permissions retain
+the existing containment tests. No independent security or assistive-technology
+verification is claimed. New source has not yet been packaged or tested natively.
+
+
+## Phase B — discovery, replay and graph investigation
+
+Added intersecting named semantic scopes, stable IDs and ARIA description constraints
+with explicit ambiguity refusal and locator provenance. Discovery now offers tabs,
+menu items/checkable menu items, switches, options, tree items and custom comboboxes
+alongside the existing actions. Roving composites and active-descendant ownership
+use actual bounded keyboard navigation; unsupported native-select/container actions,
+ambiguous targets and unavailable states remain frontier entries. Navigation and
+interaction IDs are separate; full focus observations remain in the graph. Explicit
+state budgets supplement action/depth/time bounds for websites and controlled fixtures.
+
+Version-1 recipes retain supported approved discovery paths with permission/profile
+requirements and observation references. Controlled fixture recipes use observed
+prerequisites. External recipes require explicitly retained page text; withheld names
+are never reconstructed. All replay needs fresh authorization and runtime inputs.
+The replay panel can save a separate editable project. Target/environment changes and
+unmatched input signatures cannot claim matched-condition non-reproduction.
+
+Graph analysis records actual objective witnesses, blocking attempts, chronological
+prerequisites, shortest state paths, up to three observed alternatives per state and
+unknown frontiers. Search is bounded to 1,000 edges. Paths do not automatically become
+replay recipes or prove global unreachability. Comparison adds overall conservative
+verdicts and focus/control changes. A verified comparison defect was fixed: signatures
+now cover redacted saved literal inputs, so different plaintext no longer appears
+comparable. Discovery target identities are also retained or explicitly unmatchable.
+
+Acceptance: full `pytest engine/tests -q --junitxml=dist/phase-b-suite.xml`:
+**121 passed, 175.26 s**. After controlled-fixture recipe/state-bound additions,
+`pytest test_investigation.py test_exploration.py test_accessibility_semantics.py
+ test_browser_capabilities.py -q`: **15 passed, 43.61 s**. Final collision-safe step
+IDs and bounded alternatives: `pytest test_investigation.py test_reachability.py -q`:
+**8 passed, 17.81 s**. Actual Chromium checks cover roving tabs, active-descendant
+options, ARIA descriptions, duplicate scoped buttons, focus identity, retained/private
+recipes, real broken/corrected replay, input-signature mismatch and state exhaustion.
+`npm run check`, `npm test` (**9 passed, 5.42 s**), formatting, Ruff and contract checks
+passed. React replay regression verifies saving an editable draft does not execute it.
+Architecture/limits: [004-investigation-evidence.md](../architecture/004-investigation-evidence.md).
+
+Remote PR run [38073119309](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38073119309)
+at `6f2360d`: Linux and Windows check jobs completed successfully; packaging was still
+running when recorded. This does not verify the later Phase B source. Native/portable
+verification of the new UI remains pending. No new independent release gate is cleared.
+
+
+## Phase C — human investigation and versioned profile batches
+
+Added a collapsed, keyboard-operable manual investigation panel with planned,
+observed, inconclusive and tester-attested verified-human records. Exact context,
+action, expected/actual observations and attestation are required for observed or
+verified-human status. NVDA preparation always starts planned with no actual result.
+Manual records remain separate from automated findings/outcomes/retests; JSON/HTML
+exports label them explicitly. SQLite schema 4 preserves existing run JSON and adds
+FK-cascaded manual records. Plaintext retention/export and upgrade rollback limits
+are documented in [human-investigation.md](../testing/human-investigation.md).
+Actual NVDA evaluation remains **NOT RUN**.
+
+Profiles now use version-1 snapshots. `scripts/profile_batch.py` runs 1–8 reviewed
+profiles sequentially, with a maximum 1,800-second execution budget, fresh contexts,
+explicit repeated-effect authorization, private outputs and no automatic retry or
+discovery. Condition differences remain descriptive/inconclusive for repair claims.
+Layout emulation remains explicitly distinct from real browser/text zoom.
+See [profile-batches.md](../testing/profile-batches.md).
+
+Commands/results: human review, profiles, lifecycle and storage/report regressions:
+**15 passed, 14.82 s**. New batch/manual integration checks: **3 passed, 6.46 s**,
+including actual keyboard-versus-pointer execution and authorization before output.
+React: **10 passed, 4.41 s**, including unverified NVDA preparation and save without
+browser execution. `npm run check`, Prettier, Ruff and contracts passed.
+Actual CLI batch used `--seconds 120 --authorized --allow-effects`: two profiles in
+**5.467 s**, keyboard task blocked (3.548 s), pointer task completed (1.881 s),
+comparison `inconclusive-different-conditions`. Raw local evidence:
+`dist/Profile-batch-readiness/batch.json`; no credentials or generated results are
+added to the repository. Comparative benchmark work remains in progress; native UI
+and packaging verification for schema 4 remain pending.
+
+
+## Phase C — paired compatibility corpus
+
+Added sixteen actual browser cases and an optional locked Pa11y 10 benchmark tool,
+with recorded oracle outcomes, actual axe version/hash and timing, source/host
+provenance, scanner configurations and raw results. CI installs the optional tool,
+audits it separately, and uploads corpus artifacts on both operating systems.
+Branch pushes no longer duplicate pull-request pipelines; main pushes remain tested.
+See [comparative-corpus.md](../testing/comparative-corpus.md) for workload differences,
+reproduction and scope. No static scanner's lack of task execution is counted as a
+false negative. Accessibility Insights and assistive technology remain not run.
+
+Actual CI-style command: `pytest engine/tests/test_comparative_benchmark.py -q
+--junitxml=dist/corpus-regression.xml`, with `ACCESSMAZE_CORPUS_PA11Y=1` and
+`ACCESSMAZE_CORPUS_OUTPUT=dist/Corpus-CI-local`: **1 passed, 74.58 s**, all sixteen
+case outcomes correct, eight expected rules observed, eight working cases without
+unexpected confirmed findings and eight paired improvements. Raw local output is
+ignored by Git; remote CI artifacts provide downloadable evidence. Optional tool
+`npm audit --prefix benchmarks/pa11y --audit-level=moderate`: zero vulnerabilities.
+
+Remote run [38074436461](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38074436461)
+at `39609b0`: **Linux checks, Windows checks and Windows preview packaging all
+completed successfully**. This verifies that commit, not the later working tree.
+
+
+## Phase D — measured history loading
+
+Replaced project-summary N+1 reads with one SQLite aggregate, added bounded
+metadata-only history pages and lazy full-run inspection, and isolated history
+request state in a small hook with stale-response guards. Existing run retrieval
+and UI design remain intact. Keyboard pagination and useful empty states were added.
+
+Actual measurement and limitations: [history-performance.md](../testing/history-performance.md).
+Synthetic 776-run storage workload: 25 to 1 summary connections, 479.864 to
+283.906 ms warm summary medians, 35,389,000-byte full history versus 28,007-byte
+first page. These are development-host storage measurements, not executed browser
+results, native rendering measurements, peak memory or accepted release budgets.
+`pytest test_history.py test_storage_reports.py -q --junitxml=dist/history-regression.xml`:
+**7 passed, 2.11 s**. `npm run check` passed; React **12 passed** including out-of-order
+history responses and keyboard paging. Ruff, Prettier and contract checks passed.
+New history UI still requires native-package acceptance; polling remains periodic.
+
+
+## Phase D — confirmed backup and redaction defects
+
+Added regressions before fixing two internally reproduced defects. With an open
+SQLite reader and 26 MiB committed in the WAL, the old backup accepted a workspace
+above its 25 MiB limit. The check now uses logical database pages and rechecks the
+consistent snapshot before compression. Backup temporary storage receives private
+permissions; the manifest distinguishes archive format 3 from actual database
+schema 4 and explicitly warns about plaintext human notes.
+
+A real browser run with runtime input `a` corrupted executable hashes, state IDs
+and reproduction references through substring redaction. Generated structural
+references, host environment versions/hashes and audit engine metadata now remain
+intact; page names, descriptions and input values still undergo redaction. This
+fix protects evidence integrity, not a claim of encryption or hostile-site isolation.
+
+Before fixes: `pytest test_maintenance.py test_runtime_inputs.py -q`:
+**3 failed, 5 passed, 17.88 s**, including both reproduced defects and missing schema
+metadata. After fixes: `pytest test_maintenance.py test_runtime_inputs.py
+ test_investigation.py -q --junitxml=dist/security-after.xml`: **15 passed, 38.06 s**,
+including actual private login/upload, single-character input, retained/withheld
+replay, SQLite WAL and restored snapshot integrity. Two initial attempted commands
+named nonexistent privacy test files and ran no tests; these are not counted as
+verification. This is internal regression review, not an independent security audit.
+
+
+## Phase D — conditional polling and widget regressions
+
+`run.poll` now returns only a revision when evidence is unchanged, avoiding repeated
+full graph transfer and React replacement during approval waits. Changed runs use
+the existing complete snapshot; legacy records always return complete evidence.
+Recovery and unexpected failure advance revisions, and paused runs no longer write
+unchanged records every 100 ms. The actual worker/browser approval test demonstrates
+a response below 100 bytes versus a snapshot above 1,000 bytes, then observes
+cancellation and legacy recovery. No event-driven or CPU-performance claim is made.
+
+A genuine combobox false positive was reproduced: an active-descendant option in an
+externally controlled listbox was called keyboard-unreachable (**1 failed, 3.93 s**).
+Logical focus now requires the explicit owner relationship and document focus;
+a forged/unrelated ownership claim remains unreachable. A real menu/switch test
+also reproduced missing DOM checked states (**1 failed, 1.95 s**). Custom ARIA checks
+and native indeterminate checkboxes now retain boolean/mixed state alongside the
+existing computed AX evidence. Both final widget regressions: **2 passed, 2.45 s**.
+
+`pytest test_run_poll.py test_investigation.py test_worker.py test_lifecycle.py -q`:
+**23 passed, 45.20 s** (before the additional menu-state case). Poll test authoring
+initially omitted required journey fields/assertions; failed setup attempts were
+corrected, not counted as product defects. Actual zoom probe in headed and headless
+Chromium 153.0.8010.12 used `Control++`: viewport, DPR and visualViewport scale did
+not change. Raw `dist/Zoom-probe.json`; browser/text zoom remains manual and layout
+emulation remains clearly labeled. These probes do not establish all zoom APIs are
+impossible or verify accessibility under real zoom.
+
+
+Public/owned compatibility rerun: `python scripts/compatibility.py --public
+--output dist/Compatibility-engineering.json` completed all four paths without
+compromised origin coverage: owned 19-step application **6.893 s**, Selenium's
+official automation form **7.375 s**, W3C BAD before **1.891 s**, after **1.667 s**.
+Owned API received one POST and exactly 25 selected bytes. Before reported seven
+rule IDs; after reported two. These public demo totals are observations, not stable
+oracles or a certification. Existing exact origin permissions were preserved.
+React **12 passed, 30.54 s**; TypeScript/ESLint passed. Formatting errors caught in
+new test HTML and the checked-state TypeScript union were corrected before commit.
+
+
+## Delivery verification — October 11
+
+Clean `10a3fc6` full suite with the locked Pa11y probe:
+`pytest engine/tests -q --junitxml=dist/engineering-final-suite.xml`:
+**134 passed, 296.67 s**. Corpus source provenance is clean; sixteen cases,
+all requested scanners completed, **71.513 s**. Rust Job-object test passed;
+application npm audit, optional-tool npm audit and pip-audit reported no known
+vulnerabilities (editable local engine skipped by pip-audit).
+
+Portable build `AccessMaze-engineering-preview` completed from clean `10a3fc6`:
+627 components, 782 copied notices, 73 retained raw metadata flags and 754 exact
+full-Chromium credit sections. System-only PATH verification passed. Frozen startup
+0.767 s; accessible/broken/conditional/owned-SPA 3.050/9.226/4.755/5.812 s, expected
+0/1/0/0 findings. Native UI acceptance is **not passed**: it reproduced duplicate
+replay panels/landmarks and a disabled stale replay control. React siblings shared
+the same run-ID key. The comparison function itself completed, but its UI axe
+check failed `landmark-unique`. Keyboard/error/dialog checks passed. Failed native
+captures are retained locally; the earlier screenshots are preserved in Git.
+
+Remote run 38077376024 at `e6e8aa8` failed: Linux **1 failed, 123 passed, 7 skipped**;
+Windows failed the optional scanner and a timer-dependent stale-state test. Linux
+artifact stderr establishes `No usable sandbox` on the hosted runner. Windows
+artifacts retain two `net::ERR_ABORTED` initial scanner navigations; their root cause
+is not established. No automatic retry or successful scanner result is invented.
+The owned corpus now has an explicit optional-scanner-only `--pa11y-no-sandbox`
+setting for hosted Linux, recorded in configuration, plus browser stderr diagnostics.
+This does not change application origin/isolation policy. The stale-state test now
+releases an actual server response only after the proposal and waits for the page's
+acknowledgement, removing the load-time timer race. Its actual browser regression
+passed **1 test, 2.84 s**. Windows diagnostic calibration rerun: two real cases,
+**8.659 s**, correct outcomes and completed Pa11y. Remote rerun remains required.
+
+
+The native duplicate-panel defect was also reproduced in a full App component
+regression before the fix: switching saved runs left **three replay regions** where
+one was expected, with React duplicate-key warnings. Replay and human-panel keys
+now use distinct prefixes. The test inspects alternating saved runs four times and
+requires exactly one of each region and an enabled replay control. This is a UI
+component test, not fabricated browser execution; native acceptance is repeated on
+the rebuilt package. Native axe output identifying the duplicated replay landmark
+is retained in `dist/Native-duplicate-panels.json`. Initial test setup needed jsdom
+dialog-method shims and a complete finding fixture before reproducing the defect.
+
+
+After the key fix: React **13 passed, 5.19 s**; TypeScript/ESLint, formatting,
+Ruff and schema checks passed. The native package at `10a3fc6` remains a failed UI
+acceptance build; a later build must pass before its replacement is recommended.
+
+
+## Hosted Windows scanner permissions
+
+Run [38102629066](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38102629066)
+completed Ubuntu checks successfully; Windows recorded **1 failed, 133 passed,
+251.49 s** and packaging was skipped. Four optional Pa11y navigations were
+inconclusive. Raw artifact 11688945880 identifies sandbox executable access denied
+(0x5), followed by network-service failure and ERR_ABORTED. This establishes a
+browser-cache permission defect in the hosted scanner setup, not a successful scan.
+The workflow now grants read/execute to the Windows application-package SID only
+on its downloaded test-browser cache. It grants no write permission and does not
+change private evidence ACLs or application sandbox policy. This follows the
+[Puppeteer Windows sandbox procedure](https://pptr.dev/troubleshooting#chrome-reports-sandbox-errors-on-windows).
+The correction still needs an actual completed remote run. No retries or suppressed
+scanner assertions were introduced.
+
+
+## Current package and demonstration acceptance
+
+`python scripts/package_windows.py --name AccessMaze-investigation-preview` completed
+from clean `432dd5f`. `Test-AccessMazePortable.ps1`, `portable_smoke.py --complex`
+and `archive_preview.py` passed; a new Unicode/space extraction also passed frozen
+checks. Exact artifact/hash and measured durations are in the current summary.
+
+Actual packaged `desktop_features.py`, `desktop_comparison.py`, `desktop_readiness.py`,
+`desktop_website_smoke.py`, `desktop_cancel.py`, `desktop_crash.py` and new
+`desktop_investigation.py --output dist/Native-investigation-432dd5f` all passed.
+The last harness executes actual accessible/broken fixture journeys, checks paged
+metadata history, saves/exports a planned-only NVDA record separately from automated
+findings, switches stored runs four times and saves an editable draft without
+executing it. This is no claim of actual human or assistive-technology testing.
+Updated screenshots show the current actual UI. Raw native results remain local.
+
+`python scripts/hackyard_demo.py --output dist/Hackyard-investigation-432dd5f` completed
+with initial-page axe zero findings, broken task blocked at `validate`, corrected
+task completed and verified-improvement under unchanged conditions. The server
+received one actual multipart POST with 25 selected bytes. Scripted recorder replay
+completed; offline/reconnect retention assertion blocked after input loss. No
+results were hardcoded. The handoff includes reviewable submission copy, architecture,
+a five-minute video plan, fair tool comparison and all three technical contribution
+boundaries. Entrant recording, event timing/eligibility and actual disclosures remain
+required; no competition submission occurred.
+
+Fresh local `cargo audit --json` reported zero vulnerability advisories and retained
+one unmaintained and one unsound informational warning (proc-macro-error/glib).
+These are not silently converted to zero warnings or binary security clearance.
+Five distribution tests passed in 4.37 s. Ruff check/format covered 88 Python files;
+contracts and `git diff --check` passed. All local Markdown links resolved across
+39 source documents. Original legal evidence remains tracked; generated runtime,
+reports, extracted packages and raw diagnostics remain ignored.
+
+
+## Native sustained harness correction
+
+The first 600-second native attempt completed **164 fixture/UI cycles** but failed
+its final harness assertion: after `project.delete`, it called `run.history` for
+the deleted project, which correctly returned `Project not found`. No complete
+stability pass is claimed for that attempt. Raw progress and the exact original
+script are in `dist/Native-sustained-432dd5f`. The correction verifies absence via
+`project.list`, separates export timing from its 0.5-second observation delay and
+uses the absolute Windows close-helper path. A full 600-second repeat is required.
+
+During cleanup follow-up, another test host was accidentally launched before the
+first closed; a shell continuing after assertion failure launched a third. Closing
+only one host left shared WebView2 processes while the other windows were alive.
+After closing both additional exact owned hosts, all known children exited. This
+overlap confounds that shutdown observation and does not resolve the earlier
+`7628688` retention. It is not reported as a leak or a fixed application defect.
+No unrelated process was killed. The repeat runs one dedicated desktop only.
+
+Website/recorder and worker-crash harnesses now assign unique project names and
+delete only their exact owned synthetic project after successful verification.
+Both actual native reruns passed, including headed recorder and crash/restart;
+four Chromium children exited after the crash. Two exact synthetic IDs left by
+the failed `10a3fc6` feature test were also removed after verifying their names;
+raw failure evidence was preserved. Existing unrelated history remains untouched.
+
+
+The preview launcher now refuses an occupied loopback test port before spawning a
+second host. Actual attempt against the active dedicated desktop exited with
+`Test port 9224 is occupied; close the existing test desktop first`; no duplicate
+was launched. Formatting caught and corrected the new line wrapping. A free-port
+launch is repeated after the sustained test. This guard addresses the test-harness
+overlap, not the undiagnosed historical application retention.
+
+
+The corrected native attempt completed **170 cycles / 611.472 s including shutdown
+wait**, removed its own history, then failed the accumulated-child measurement.
+Raw `dist/Native-sustained-corrected-432dd5f/measurements.json` remains **failed**,
+not rewritten as a pass. Peak summed RSS 1,022.85 MiB, handles 5,866; idle summed
+RSS 564.93 → 574.05 MiB, handles 3,728 → 3,636. Each journey boundary had zero
+surviving Chromium; these resource samples are not controlled performance budgets.
+
+Follow-up showed reported survivor PIDs now belonged to unrelated Codex/Chrome
+process trees, with later creation times; others had exited. The harness had retained
+historical Process objects across hundreds of launches and used `psutil.wait_procs`,
+whose Windows wait path can wait on a replacement PID before identity comparison.
+Installed source inspection confirmed `Process.is_running()` checks PID plus creation
+time. The harness now uses that check, records observed child identities and separately
+records reused PIDs. No unrelated process is terminated. A third full interval
+validates this measurement correction; it does not change application lifecycle code.
+The historical `7628688` retention remains unresolved.
+
+Ordinary native launch from the Unicode/space extracted `432dd5f` package, without
+CDP and with System32-only PATH, started worker/WebView2 in the observation interval
+**3.884 s** and closed **all eight children**. This is process-start/shutdown evidence,
+not timed connected-UI or independent clean-machine verification. Read-only inspection
+of the actual existing native database returned schema 4, integrity `ok`, zero foreign
+key violations; unrelated records were preserved.
+
+Remote `81f813d` checks have now completed successfully: Ubuntu **127 passed,
+7 skipped, 195.04 s**; Windows **134 passed, 311.27 s**; React 13 on both; Rust
+1 passed. npm/Python advisories passed; cargo-audit retained two informational
+warnings. Windows packaging is still running, so this is not yet an all-jobs pass.
+
+
+## Adversarial protocol coverage
+
+Added a bounded deterministic malformed-frame corpus through the actual worker
+stdin/stdout process: invalid UTF-8, truncated/non-object JSON, 2,000 nested arrays,
+invalid version/ID/method/parameter types and a sensitive unknown field name. All
+28 invalid frames return errors, no supplied private marker appears on stdout/stderr,
+and the following health request succeeds. This extends risk-based parser/privacy
+coverage; it is not an exhaustive fuzzer or evidence of a new application vulnerability.
+`pytest engine/tests/test_worker.py -q --junitxml=dist/Protocol-adversarial-October11.xml`:
+**10 passed, 14.03 s**. Earlier 134-test full-suite totals remain tied to their exact
+commits; the final pushed suite includes this additional test. Engine code is unchanged.
+
+
+## Completed hosted package verification
+
+[Run 38103235350](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38103235350)
+completed **both check jobs and windows-preview successfully**. Workflow head is
+`81f813d`; checkout/package provenance is the synthetic PR merge commit
+`c8474870ba08ae917b12b4f23a8472344f615691`. Fetching `refs/pull/1/merge` and comparing
+trees against `81f813d` returned no differences. This distinction is retained rather
+than relabeling the package as a head-commit build.
+
+Hosted portable/complex smoke, archive CRC and manifest checks passed. Inner ZIP
+**389,879,391 bytes**, SHA-256
+`3e73fd6d3242417447976ca539628f2950d5c9b72cbe9a26ab21ab044becae1b`.
+[Artifact 11688539971](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38103235350/artifacts/11688539971)
+is retained for 14 days; outer Actions artifact digest is separate from the inner
+ZIP hash. This is hosted packaging evidence, not an independent interactive
+standard-user/offline/NVDA qualification. Later verification/test/docs commits
+require final-head CI; no queued run is reported as passed.
+
+
+## Completed native sustained verification
+
+`native_stability.py --pid 2480 --exe dist/AccessMaze-investigation-preview/AccessMaze.exe
+--seconds 600 --output dist/Native-sustained-identities-432dd5f` completed **157 cycles
+in 601.33 s**, including cleanup/shutdown. The exact exercised script and full raw
+measurements are preserved in that exclusive output directory. Fixture outcomes,
+cancellation, history counts, UI inspection and report export passed in each cycle.
+The owned project/history was deleted, and zero owned children survived close.
+Creation-time-aware tracking retained **781 identities** and excluded **six reused
+PIDs** without touching replacement processes. The console summary now omits the
+large identity array; complete raw evidence still retains it.
+
+Peak summed native/worker/browser RSS **1,025.90 MiB**, handles **5,565**; idle
+summed RSS **534.37 → 560.85 MiB** (range **534.37–700.33**), handles **3,655 → 3,664**.
+These count shared pages repeatedly and include uncontrolled laptop load. UI reloads
+between cycles; this is a long-lived host/worker workload, not uninterrupted single-
+document UI retention or an overnight/leak-clearance result. The old retention gate
+remains open. Earlier failed harness attempts remain recorded above.
+
+
+Final same-laptop System32-only-PATH native startup recheck passed three sequential
+launches: connected UI **3.054 / 1.851 / 1.688 s**, ready summed RSS
+**466.09 / 461.27 / 443.96 MiB**, children **8 / 9 / 8**; every tree closed.
+Existing AppData/cache and CDP overhead remain part of these measurements. Raw
+`dist/Native-startup-432dd5f.json`. The guarded launcher then succeeded on a free
+port, and all eight owned children closed. Actual native database integrity remains
+`ok`, schema 4, zero foreign-key violations, read-only inspection. No test port
+or owned desktop remains open.

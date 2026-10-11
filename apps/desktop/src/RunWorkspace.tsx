@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Run } from "../../../packages/contracts";
 import { request } from "./api";
+import TaskReachability from "./TaskReachability";
 
 export const activeRun = (run: Run | null) =>
   !!run &&
@@ -94,6 +95,7 @@ export default function RunWorkspace({
           <p className="muted">{run.outcome.limitation}</p>
         </section>
       )}
+      <TaskReachability run={run} />
       {run.approval && run.status === "awaiting_approval" && (
         <section className="run-gate" aria-labelledby="approval-heading">
           <h3 id="approval-heading">Approve one website action</h3>
@@ -468,7 +470,10 @@ export default function RunWorkspace({
               <p className="mono">
                 {f.rule} / {f.step_id}
               </p>
-              <p>{f.verification}</p>
+              <p>
+                {f.verification} /{" "}
+                {f.classification ?? "historical classification unavailable"}
+              </p>
               <dl>
                 <dt>Actual</dt>
                 <dd>

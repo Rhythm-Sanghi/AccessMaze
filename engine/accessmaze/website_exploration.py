@@ -1,51 +1,109 @@
 """Bounded semantic discovery. Every activation and root recovery needs fresh approval."""
 
 import asyncio
-import copy
+import json
+import re
 from uuid import uuid4
 
 import networkx as nx
 from playwright.async_api import Error as BrowserError
 
-from accessmaze.actions import CheckFailure, cancellable, perform
+from accessmaze.actions import CheckFailure, cancellable, perform, resolve_target
 from accessmaze.evidence import accessibility_tree, fingerprint
-from accessmaze.models import Step
+from accessmaze.models import Step, Target
+from accessmaze.state_identity import navigation_state_id
 from accessmaze.storage import now
 
 
 def state_key(observation):
-    """Ignore transient focus for coverage deduplication, but retain it in evidence."""
-    stable = copy.deepcopy(observation)
-    for control in stable.get("controls", []):
-        control.pop("focused", None)
-    for node in stable.get("ax_tree", {}).get("nodes", []):
-        node.pop("focused", None)
-    return fingerprint(stable)
+    return navigation_state_id(observation)
 
 
-async def candidates(page):
-    # Computed accessible names handle aria-labelledby and native labelled controls.
+def choice_key(normalized, choice):
+    return (
+        normalized,
+        json.dumps(
+            choice.get("target", {"role": choice["role"], "name": choice["name"]}), sort_keys=True
+        ),
+    )
+
+
+async def candidates(page, diagnostics=None):
+    diagnostics = diagnostics if diagnostics is not None else []
+    supported = {
+        "button",
+        "link",
+        "checkbox",
+        "radio",
+        "tab",
+        "menuitem",
+        "menuitemcheckbox",
+        "menuitemradio",
+        "option",
+        "switch",
+        "treeitem",
+        "combobox",
+    }
     names = sorted(
         {
             (node["role"], node["name"])
             for node in (await accessibility_tree(page))["nodes"]
-            if node["role"] in {"button", "link", "checkbox", "radio"} and node["name"]
+            if node["role"] in supported | {"listbox"} and node["name"]
         }
     )
     choices = []
     for role, name in names[:100]:
         locator = page.get_by_role(role, name=name, exact=True)
-        if await locator.count() == 1 and await locator.is_visible() and await locator.is_enabled():
+        count = await locator.count()
+        if role == "listbox":
+            diagnostics.append({"path": [name], "reason": "unsupported-container-action"})
+            continue
+        for index in range(min(count, 30)):
+            item = locator.nth(index)
+            if not await item.is_visible() or not await item.is_enabled():
+                diagnostics.append({"path": [name], "reason": "unavailable-state"})
+                continue
+            meta = await item.evaluate("""e => {
+              const parent=e.closest('[role=group],[role=dialog],[role=region],form,'+
+                '[role=tablist],[role=menu],[role=listbox],[role=radiogroup],[role=tree],[role=toolbar]');
+              const name=parent && (parent.getAttribute('aria-label') ||
+                (parent.getAttribute('aria-labelledby')||'').split(/\\s+/)
+                  .map(id=>document.getElementById(id)?.textContent||'').join(' ').trim());
+              return {id:e.id,scope:name ? {role:parent.getAttribute('role')||'form',name}:null,
+                native_select:e.tagName==='SELECT'};
+            }""")
+            if meta["native_select"]:
+                diagnostics.append(
+                    {"path": [name], "reason": "native-select-requires-authored-keys"}
+                )
+                continue
+            target = {"role": role, "name": name}
+            if re.fullmatch(r"[A-Za-z][A-Za-z0-9_:.\-]{0,159}", meta["id"] or ""):
+                target["element_id"] = meta["id"]
+            if meta["scope"] and len(meta["scope"]["name"]) <= 200:
+                target["scope"] = meta["scope"]
+            try:
+                resolved = await resolve_target(page, Target.model_validate(target))
+                unique = await resolved.count() == 1
+            except CheckFailure:
+                unique = False
+            if not unique:
+                diagnostics.append({"path": [name], "reason": "ambiguous-target"})
+                continue
             choices.append(
                 {
                     "id": str(uuid4()),
                     "role": role,
                     "name": name,
+                    "target": target,
                     "classification": "potentially-consequential",
                 }
             )
-        if len(choices) == 30:
-            break
+            if len(choices) == 30:
+                diagnostics.append({"path": [], "reason": "candidate-budget"})
+                return choices
+    if len(names) > 100:
+        diagnostics.append({"path": [], "reason": "candidate-budget"})
     return choices
 
 
@@ -83,10 +141,33 @@ async def explore_website(
             root = root or normalized
             if source not in graph:
                 graph.add_node(source, observation=observation, first_step="exploration-observed")
-            all_choices = await candidates(page)
+            if len(graph) >= journey.exploration.max_states:
+                progress["stop_reason"] = "state-budget"
+                for choice in await candidates(page):
+                    if choice_key(normalized, choice) not in attempted:
+                        frontier[choice_key(normalized, choice)] = {
+                            "state_id": source,
+                            "path": [
+                                privacy.token(choice["name"])
+                                if privacy.hide_text
+                                else choice["name"]
+                            ],
+                            "reason": "state-budget",
+                        }
+                progress["pending_branches"] = list(frontier.values())
+                break
+            diagnostics = []
+            all_choices = await candidates(page, diagnostics)
+            for diagnostic in diagnostics:
+                path = [privacy.token(n) if privacy.hide_text else n for n in diagnostic["path"]]
+                frontier[(normalized, diagnostic["reason"], json.dumps(path))] = {
+                    "state_id": source,
+                    "path": path,
+                    "reason": diagnostic["reason"],
+                }
             choices = []
             for choice in all_choices:
-                key = (normalized, choice["role"], choice["name"])
+                key = choice_key(normalized, choice)
                 if key in attempted:
                     continue
                 private_name = (
@@ -131,7 +212,16 @@ async def explore_website(
             result["approval"] = {
                 **proposal,
                 "choices": [
-                    {**c, "name": privacy.token(c["name"]) if privacy.hide_text else c["name"]}
+                    (
+                        {
+                            "id": c["id"],
+                            "role": c["role"],
+                            "name": privacy.token(c["name"]),
+                            "classification": c["classification"],
+                        }
+                        if privacy.hide_text
+                        else c
+                    )
                     for c in choices
                 ],
             }
@@ -153,15 +243,19 @@ async def explore_website(
                 break
             selected = next(c for c in choices if c["id"] == answer)
             recovery = selected["role"] == "navigation"
-            key = (normalized, selected["role"], selected["name"])
+            key = choice_key(normalized, selected)
             if not recovery:
                 attempted.add(key)
                 frontier.pop(key, None)
+            sequence = len(progress["actions"]) + 1
+            used_ids = {s.id for s in journey.steps} | {a["step_id"] for a in progress["actions"]}
+            while f"explore-{sequence}" in used_ids:
+                sequence += 1
             step = Step(
-                id=f"explore-{len(progress['actions']) + 1}",
+                id=f"explore-{sequence}",
                 action="navigate" if recovery else "activate",
                 effect=True,
-                target=None if recovery else {"role": selected["role"], "name": selected["name"]},
+                target=None if recovery else selected["target"],
             )
             entry = {
                 "step_id": step.id,
@@ -180,6 +274,14 @@ async def explore_website(
                 "status": "running",
                 "approval_id": proposal["id"],
             }
+            if not privacy.hide_text:
+                entry["replay_step"] = step.model_dump()
+            else:
+                entry["target"] = (
+                    {"role": selected["role"], "name": privacy.token(selected["name"])}
+                    if not recovery
+                    else None
+                )
             progress["actions"].append(entry)
             progress["pending_branches"] = list(frontier.values())
             result["status"] = "running"
@@ -239,6 +341,9 @@ async def explore_website(
                         "id": str(uuid4()),
                         "step_id": step.id,
                         "rule": failure.code,
+                        "target_identity": {"private": True}
+                        if privacy.hide_text
+                        else entry["target"],
                         "title": failure.actual,
                         "actual": failure.actual,
                         "expected": failure.expected,
@@ -267,7 +372,7 @@ async def explore_website(
             # Capture the final state's untested candidates even when no further action is allowed.
             observation = await privacy.observe(page)
             for choice in await candidates(page):
-                key = (state_key(observation), choice["role"], choice["name"])
+                key = choice_key(state_key(observation), choice)
                 if key not in attempted:
                     frontier[key] = {
                         "state_id": fingerprint(observation),

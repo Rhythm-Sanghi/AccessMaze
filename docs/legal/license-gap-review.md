@@ -118,3 +118,13 @@ Potential incompatibilities / remaining obligations:
 Final scope clarification: actual normal-edge Windows cargo tree has no ordinary dependency path for defmt-parser. It is classified as build-graph-only, with its notice retained conservatively. The other five missing-notice crate rows have ordinary graph paths, which can still include proc-macros/generated code and do not establish executable linkage. Their notices are preserved as required-attribution candidates; this review does not invent genuine runtime obligations from metadata alone. The final per-row basis/graph hash is in license-gap-review-final.json; the prior conservative classifications remain in earlier JSON for traceability.
 
 Covered native source delivery: all five resolved MPL crate source archives are now shipped offline, under MPL-2.0, linked from THIRD-PARTY-NOTICES.md. Cargo.lock archive hashes and all 66 compiled registry source files matched. See covered-source-verification.json. Tests reject changed archive hashes or compiler sources. Browser/Microsoft rights and preferred-source review (including axe), verified binary SBOM and independent legal qualification remain open.
+
+
+October 11 rebuild: clean application package `432dd5f` still inventories 627 components,
+782 copied notices and 73 raw metadata flags. Reclassification using its actual frozen
+TOC and current Vite module graph resolves the same 87 original rows with zero open
+rows (`dist/license-investigation-review.json`). That review records `source_dirty:true`
+because a new verification harness existed; the packaged application manifest separately
+records clean `432dd5f`. Five distribution regressions passed in 4.37 s. This rerun
+changes no legal conclusion. The optional Pa11y 10.0.0 comparison tool has its own
+LGPL-3.0-only declaration and lockfile; it is not part of the application bundle.

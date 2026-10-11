@@ -30,6 +30,14 @@ const roles: Role[] = [
   "dialog",
   "radio",
   "spinbutton",
+  "tab",
+  "menuitem",
+  "menuitemcheckbox",
+  "menuitemradio",
+  "option",
+  "switch",
+  "treeitem",
+  "listbox",
 ];
 const targeted = new Set<Action>([
   "assert_modal",
@@ -133,6 +141,120 @@ export default function JourneyEditor({
                 </label>
                 {targeted.has(step.action) && (
                   <>
+                    {journey.network?.embedded_frames && (
+                      <label>
+                        Embedded frame name (optional)
+                        <input
+                          aria-label={`Step ${index + 1} frame name`}
+                          value={step.target?.frame_name ?? ""}
+                          onChange={(e) =>
+                            update(index, {
+                              target: {
+                                ...step.target!,
+                                frame_name: e.target.value || null,
+                              },
+                            })
+                          }
+                        />
+                      </label>
+                    )}
+                    <details>
+                      <summary>Target context and provenance</summary>
+                      <label>
+                        Stable element ID
+                        <input
+                          aria-label={`Step ${index + 1} element ID`}
+                          value={step.target?.element_id ?? ""}
+                          onChange={(e) =>
+                            update(index, {
+                              target: {
+                                ...step.target!,
+                                element_id: e.target.value || null,
+                              },
+                            })
+                          }
+                        />
+                      </label>
+                      <label>
+                        Exact accessible description
+                        <input
+                          aria-label={`Step ${index + 1} description`}
+                          value={step.target?.description ?? ""}
+                          onChange={(e) =>
+                            update(index, {
+                              target: {
+                                ...step.target!,
+                                description: e.target.value || null,
+                              },
+                            })
+                          }
+                        />
+                      </label>
+                      <label>
+                        Scope role
+                        <select
+                          value={step.target?.scope?.role ?? ""}
+                          aria-label={`Step ${index + 1} scope role`}
+                          onChange={(e) =>
+                            update(index, {
+                              target: {
+                                ...step.target!,
+                                scope: e.target.value
+                                  ? {
+                                      role: e.target.value as NonNullable<
+                                        NonNullable<Step["target"]>["scope"]
+                                      >["role"],
+                                      name:
+                                        step.target?.scope?.name ||
+                                        "Scope name",
+                                    }
+                                  : null,
+                              },
+                            })
+                          }
+                        >
+                          <option value="">No scope</option>
+                          {[
+                            "form",
+                            "group",
+                            "dialog",
+                            "region",
+                            "tablist",
+                            "menu",
+                            "listbox",
+                            "radiogroup",
+                            "tree",
+                            "toolbar",
+                          ].map((role) => (
+                            <option key={role}>{role}</option>
+                          ))}
+                        </select>
+                      </label>
+                      {step.target?.scope && (
+                        <label>
+                          Scope name
+                          <input
+                            aria-label={`Step ${index + 1} scope name`}
+                            value={step.target.scope.name}
+                            onChange={(e) =>
+                              update(index, {
+                                target: {
+                                  ...step.target!,
+                                  scope: {
+                                    ...step.target!.scope!,
+                                    name: e.target.value,
+                                  },
+                                },
+                              })
+                            }
+                          />
+                        </label>
+                      )}
+                      <p className="muted">
+                        Constraints must all match. AccessMaze does not broaden
+                        a failed target or choose an ambiguous control.
+                      </p>
+                    </details>
                     <label>
                       Locator
                       <select
@@ -564,6 +686,24 @@ export default function JourneyEditor({
                   exploration: {
                     ...exploration,
                     max_depth: Number(e.target.value),
+                  },
+                })
+              }
+            />
+          </label>
+          <label>
+            Maximum observed states during discovery
+            <input
+              type="number"
+              min="2"
+              max="500"
+              value={exploration.max_states ?? 100}
+              onChange={(e) =>
+                onChange({
+                  ...journey,
+                  exploration: {
+                    ...exploration,
+                    max_states: Number(e.target.value),
                   },
                 })
               }

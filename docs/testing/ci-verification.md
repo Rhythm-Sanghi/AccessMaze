@@ -1,6 +1,6 @@
 # CI verification
 
-The `verify` workflow runs on pushes, pull requests and manual dispatches. Repository
+The `verify` workflow runs on main-branch pushes, pull requests and manual dispatches. Repository
 permissions are read-only; obsolete runs are cancelled and jobs have bounded timeouts.
 
 Windows and Ubuntu run locked Python/React tests with real Chromium, TypeScript/ESLint,
@@ -26,3 +26,12 @@ To verify a pushed commit:
 
 Hosted Windows CI does not replace fresh standard-user, offline, upgrade/removal or
 NVDA testing. Artifact storage does not provide code signing or legal clearance.
+
+
+October 11 actual remote failures are retained in engineering status. The optional
+owned-page Pa11y probe on Linux explicitly records `--no-sandbox` because the hosted
+runner denied usable namespaces; this is not an application setting. Windows grants
+only read/execute to the application-package SID on the downloaded test-browser cache,
+following [Puppeteer sandbox guidance](https://pptr.dev/troubleshooting#chrome-reports-sandbox-errors-on-windows).
+No credential/evidence path is granted and no scanner failure is automatically retried
+or represented as a clean scan. Verify actual final-head conclusions before reporting success.

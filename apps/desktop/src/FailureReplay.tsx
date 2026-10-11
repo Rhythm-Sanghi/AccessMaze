@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Journey, Run } from "../../../packages/contracts";
+import type { Journey, Project, Run } from "../../../packages/contracts";
 import { request } from "./api";
 import RunInputs, { emptyInputs } from "./RunInputs";
 import { activeRun } from "./RunWorkspace";
@@ -20,10 +20,12 @@ export default function FailureReplay({
   original,
   current,
   onStarted,
+  onAuthored,
 }: {
   original: Run;
   current: Run;
   onStarted: (run: Run) => void;
+  onAuthored: (project: Project) => void;
 }) {
   const [findingId, setFindingId] = useState(original.findings[0]?.id ?? "");
   const [draft, setDraft] = useState<Journey | null>(null);
@@ -32,7 +34,9 @@ export default function FailureReplay({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const finding = original.findings.find((f) => f.id === findingId);
-  const record = original.steps.find((s) => s.id === finding?.step_id);
+  const record =
+    original.steps.find((s) => s.id === finding?.step_id) ??
+    original.exploration?.actions.find((s) => s.step_id === finding?.step_id);
   const action = original.journey.steps.find((s) => s.id === finding?.step_id);
   const node = original.nodes.find((n) => n.id === record?.state_id);
   async function prepare() {
@@ -242,10 +246,9 @@ export default function FailureReplay({
             </pre>
           </details>
           <p>
-            Re-execute the original authored journey in a fresh isolated
-            browser. Discovery is disabled. Sites may have changed; effects are
-            not undone. Supply new inputs; historical values are never
-            recovered.
+            Re-execute the recorded path in a fresh isolated browser. Discovery
+            is disabled. Sites may have changed; effects are not undone. Supply
+            new inputs; historical values are never recovered.
           </p>
           <ol>
             {draft.steps.map((s) => (
@@ -256,6 +259,28 @@ export default function FailureReplay({
               </li>
             ))}
           </ol>
+          <button
+            disabled={busy || activeRun(current)}
+            onClick={() => {
+              setBusy(true);
+              setError("");
+              request<Project>("project.save", {
+                project: {
+                  name: `${draft.name} replay`.slice(0, 120),
+                  journey: draft,
+                },
+              })
+                .then(onAuthored)
+                .catch((e) => setError(String(e)))
+                .finally(() => setBusy(false));
+            }}
+          >
+            Save as an editable journey
+          </button>
+          <p className="muted">
+            Creates a separate project for editing prerequisites and assertions.
+            Editing does not establish that server state can be restored.
+          </p>
           <RunInputs
             journey={draft}
             inputs={inputs}

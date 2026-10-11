@@ -9,18 +9,20 @@ flowchart LR
   Browser --> Site[Authorized target / controlled fixture]
   Browser --> Observations[Focus / computed AX / axe / assertions]
   Observations --> SQLite[Private SQLite / masked fixture artifacts]
-  SQLite --> Investigation[Observed graph / reports / comparison]
-  UI --> Profiles[Reusable profile library / immutable run snapshots]
+  SQLite --> Investigation[Observed graph / task paths / reports / comparison]
+  UI --> Human[Separate planned or attested human records]
+  Human --> SQLite
+  UI --> Profiles[Versioned profiles / bounded serial batches / run snapshots]
   Profiles --> Worker
-  Investigation --> Replay[Historical finding / fresh approved browser replay]
+  Investigation --> Replay[Versioned recipe / editable draft / fresh approved replay]
   Replay --> Worker
   Worker --> Proposal[One bounded proposed external action]
   Proposal --> Person
 ```
 
-Rust owns the worker and Chromium descendants through a Windows Job object. One run
-is active at a time. Fresh browser contexts do not import personal cookies. No target
-receives desktop IPC. Origin policy is not an OS firewall or a hostile-target sandbox.
+Rust owns worker and Chromium descendants through a Windows Job object. Each worker
+permits one active run. Fresh browser contexts do not import personal cookies. Target
+pages never receive desktop IPC. Origin policy is not an OS firewall or a hostile-target sandbox.
 
 State identity normalizes bounded browser observations, omitting input values and URL
 queries. Focus and dynamic labels can split equivalent states; absent application internals

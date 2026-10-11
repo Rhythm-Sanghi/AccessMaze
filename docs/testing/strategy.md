@@ -62,3 +62,14 @@ remain unexecuted human/independent gates. Engineering status is authoritative.
 Generated test reports and machine diagnostics are local outputs, ignored by Git.
 Publish measured results and limitations in engineering status; keep source fixtures,
 tests and legally required audit records in the repository.
+
+
+The engineering continuation adds actual two-origin named-frame checks, scoped widget
+focus/state regressions, retained and withheld replay recipes, observed task paths,
+profile batches, separate human records and revision polling. The
+[paired corpus](comparative-corpus.md) executes actual tasks and separately records
+initial-page axe/Pa11y output; scanner failures remain inconclusive.
+`desktop_investigation.py --output dist/native-investigation-new` checks the packaged
+history, planned-only review/export and non-executing editable draft through native UI
+and IPC. `native_stability.py` and `extended_stability.py` measure distinct native
+and persistent-worker workloads; durations and source fingerprints belong in status.

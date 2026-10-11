@@ -161,7 +161,11 @@ class BrowserPolicy:
 
     async def route(self, route):
         request = route.request
-        if request.is_navigation_request() and request.frame.parent_frame is not None:
+        if (
+            request.is_navigation_request()
+            and request.frame.parent_frame is not None
+            and not self.journey.network.embedded_frames
+        ):
             self.blocked.add("Embedded frame navigation blocked")
             await route.abort("blockedbyclient")
             return

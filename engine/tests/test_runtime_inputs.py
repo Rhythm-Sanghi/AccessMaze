@@ -166,3 +166,30 @@ def test_short_runtime_values_do_not_corrupt_run_metadata(store, project, fixtur
     assert result["status"] == "completed_with_limitations"
     assert result["project_id"] == p["id"]
     assert all(step["status"] == "passed" for step in result["steps"])
+
+
+@pytest.mark.browser
+def test_short_secret_preserves_observation_references_and_versions(
+    store, project, fixtures, axe_path
+):
+    import hashlib
+    import re
+
+    journey = runtime_journey()
+    journey.steps.append(
+        Step(id="last-assert", action="assert_visible", target={"role": "button", "name": "Absent"})
+    )
+    p = project()
+    inputs = RunInputs(journey, {"values": {"applicant": "a"}})
+    result = asyncio.run(
+        execute(store, p["id"], journey, RunControl(), fixtures, axe_path, inputs=inputs)
+    )
+    assert result["environment"]["axe_sha256"] == hashlib.sha256(axe_path.read_bytes()).hexdigest()
+    assert "[redacted]" not in json.dumps(result["environment"])
+    for node in result["nodes"]:
+        assert re.fullmatch(r"[0-9a-f]{16}", node["navigation_state_id"])
+        assert node["interaction_state_id"] == node["id"]
+    finding = next(f for f in result["findings"] if f["step_id"] == "last-assert")
+    assert finding["reproduction"] == [s.id for s in journey.steps]
+    assert result["reachability"]["root_state_id"] in {n["id"] for n in result["nodes"]}
+    assert result["journey"]["steps"][1]["value"] == "[redacted]"

@@ -54,6 +54,10 @@ no unapproved write. Reproduce a stored authored failure with fresh input, corre
 owned target and replay again; inspect both traces. Cancel during approval/replay and
 crash the worker while a profile run is active. Record each result independently.
 
-Schema 3 migration is forward-only. Before upgrading a real store, retain a verified
-backup. Schema-2 previews refuse schema 3 rather than modifying it. A downgrade requires
-restoring the matching older backup into isolated storage; never downgrade the only copy.
+Current database schema is 4. Migration is forward-only. Before upgrading a real
+store, retain a verified backup; older previews must refuse newer schemas rather than
+modify them. A downgrade requires the matching older backup in isolated storage.
+Verify separate human records survive upgrade/export without becoming automated
+findings. Save an editable replay draft without executing it; check paged history,
+named-frame permission/refusal, scoped controls and fresh profile-batch authorization.
+Record planned NVDA checks as planned until a human actually performs them.

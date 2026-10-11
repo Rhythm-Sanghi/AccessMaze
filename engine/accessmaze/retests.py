@@ -10,6 +10,10 @@ def finding_identity(finding):
     # Private page-text tokens deliberately use different keys for different runs.
     if "[private text " in json.dumps(targets):
         return None
+    if finding.get("target_identity"):
+        if finding["target_identity"].get("private"):
+            return None
+        targets = [finding["target_identity"]]
     return (
         finding["step_id"],
         finding["rule"],
@@ -23,6 +27,7 @@ def compare_runs(previous, current):
         previous["project_id"] == current["project_id"]
         and previous["journey"] == current["journey"]
         and previous["id"] != current["id"]
+        and not previous.get("coverage_compromised", False)
         and not current.get("coverage_compromised", False)
         and previous.get("input_signature") == current.get("input_signature")
         and previous.get("environment", {}) == current.get("environment", {})
@@ -83,6 +88,8 @@ def compare_runs(previous, current):
                 "current_status": b.get("status", "not-reached"),
                 "previous_state_id": a.get("state_id"),
                 "current_state_id": b.get("state_id"),
+                "focus_change": focus_change(a, b, previous, current),
+                "control_change": control_change(a, b, previous, current),
             }
         )
     changes = [
@@ -111,7 +118,31 @@ def compare_runs(previous, current):
         )
     if current["status"] not in {"completed", "completed_with_limitations"}:
         warnings.append("Candidate execution did not complete; missing findings are not resolved.")
+    added_confirmed = any(
+        f["verification"] == "confirmed-automated"
+        and any(a["finding_id"] == f["id"] for a in added)
+        for f in current["findings"]
+    )
+    prior_outcome, current_outcome = task_outcome(previous), task_outcome(current)
+    insufficient = (
+        bool(warnings) or not comparable or any(r["verdict"] == "inconclusive" for r in records)
+    )
+    verdict = (
+        "inconclusive-different-conditions"
+        if not comparable
+        else (
+            "verified-regression"
+            if added_confirmed
+            or (prior_outcome["status"] == "completed" and current_outcome["status"] == "blocked")
+            else "inconclusive-insufficient-evidence"
+            if insufficient
+            else "verified-improvement"
+            if any(r["verdict"] == "passed-retest" for r in records)
+            else "no-observed-change"
+        )
+    )
     return {
+        "verdict": verdict,
         "previous_id": previous["id"],
         "current_id": current["id"],
         "comparable": comparable,
@@ -139,3 +170,29 @@ def compare_runs(previous, current):
         ),
         "limitation": "A passed retest verifies only this configuration and execution.",
     }
+
+
+def focus_change(before, after, previous, current):
+    a = before.get("interaction", {}).get("focus_history")
+    b = after.get("interaction", {}).get("focus_history")
+    if a is None or b is None:
+        return "unavailable"
+    if "[private text " in json.dumps([a, b]):
+        return "private-unmatchable"
+    return "unchanged" if a == b else "changed"
+
+
+def control_change(before, after, previous, current):
+    def observation(run, step):
+        return next(
+            (n["observation"] for n in run.get("nodes", []) if n["id"] == step.get("state_id")),
+            None,
+        )
+
+    a, b = observation(previous, before), observation(current, after)
+    if a is None or b is None:
+        return "unavailable"
+    if a.get("text_withheld") or b.get("text_withheld"):
+        return "private-unmatchable"
+    # State IDs include focus; compare concrete control snapshots independently.
+    return "unchanged" if a.get("controls") == b.get("controls") else "changed"

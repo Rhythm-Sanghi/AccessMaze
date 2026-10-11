@@ -32,9 +32,10 @@ def save(path, data):
 
 async def demonstrate(output):
     output.mkdir(parents=True, exist_ok=False)
-    os.environ.setdefault(
-        "PLAYWRIGHT_BROWSERS_PATH", str(ROOT / ".accessmaze/browsers")
-    )
+    if (ROOT / ".accessmaze/browsers").is_dir():
+        os.environ.setdefault(
+            "PLAYWRIGHT_BROWSERS_PATH", str(ROOT / ".accessmaze/browsers")
+        )
     fixtures = FixtureServer()
     try:
         with CompatibilityApp() as app:

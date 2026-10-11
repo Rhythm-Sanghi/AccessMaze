@@ -1,12 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Journey, Project, Run } from "../../../packages/contracts";
+import type {
+  Journey,
+  Project,
+  Run,
+  RunPoll,
+} from "../../../packages/contracts";
 import { desktopAvailable, download, request } from "./api";
 import FailureReplay from "./FailureReplay";
+import HumanReviewPanel from "./HumanReviewPanel";
 import JourneyEditor from "./JourneyEditor";
 import RunInputs, { emptyInputs, type Inputs } from "./RunInputs";
 import RecorderPanel from "./RecorderPanel";
 import Projects from "./Projects";
 import RunHistory from "./RunHistory";
+import { useRunHistory } from "./useRunHistory";
 import Reports from "./Reports";
 import Settings from "./Settings";
 import RunWorkspace, { activeRun } from "./RunWorkspace";
@@ -28,7 +35,7 @@ export default function App() {
   const [name, setName] = useState("Untitled investigation");
   const [run, setRun] = useState<Run | null>(null);
   const [replaySource, setReplaySource] = useState<Run | null>(null);
-  const [history, setHistory] = useState<Run[]>([]);
+  const { history, loadHistory, clearHistory } = useRunHistory();
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -82,19 +89,25 @@ export default function App() {
   useEffect(() => {
     if (!activeRun(run)) return;
     let disposed = false;
+    let revision = run?.revision ?? -1;
     let timer: ReturnType<typeof setTimeout>;
     async function poll() {
       try {
-        const current = await request<Run>("run.get", { id: run!.id });
+        const update = await request<RunPoll>("run.poll", {
+          id: run!.id,
+          after_revision: revision,
+        });
         if (disposed) return;
+        if (!update.changed) {
+          timer = setTimeout(poll, 600);
+          return;
+        }
+        revision = update.revision ?? -1;
+        const current = update.run;
         setRun(current);
         if (activeRun(current)) timer = setTimeout(poll, 600);
         else {
-          setHistory(
-            await request<Run[]>("run.list", {
-              project_id: current.project_id,
-            }),
-          );
+          await loadHistory(current.project_id);
           setMessage(`Analysis ${current.status.replaceAll("_", " ")}`);
         }
       } catch (e) {
@@ -135,9 +148,9 @@ export default function App() {
     setRun(null);
     setReplaySource(null);
     setPage("journey");
-    void perform(async () =>
-      setHistory(await request<Run[]>("run.list", { project_id: project.id })),
-    );
+    void perform(async () => {
+      await loadHistory(project.id);
+    });
   }
   function create(kind: string) {
     setInputs(emptyInputs());
@@ -166,7 +179,7 @@ export default function App() {
     );
     setRun(null);
     setReplaySource(null);
-    setHistory([]);
+    clearHistory();
     setAuthorized(false);
     setEffects(false);
     setPage("journey");
@@ -523,9 +536,14 @@ export default function App() {
             run &&
             (replaySource ?? run).findings.length > 0 && (
               <FailureReplay
-                key={(replaySource ?? run).id}
+                key={`replay-${(replaySource ?? run).id}`}
                 original={replaySource ?? run}
                 current={run}
+                onAuthored={(project) => {
+                  choose(project);
+                  setPage("journey");
+                  void refresh();
+                }}
                 onStarted={(next) => {
                   setInputs(emptyInputs());
                   setReplaySource(replaySource ?? run);
@@ -533,15 +551,27 @@ export default function App() {
                 }}
               />
             )}
+          {page === "analysis" && run && (
+            <HumanReviewPanel key={`human-${run.id}`} run={run} />
+          )}
           {(page === "analysis" || page === "reports") && (
             <RunHistory
               history={history}
               run={run}
-              onSelect={(r) => {
-                setRun(r);
-                setReplaySource(null);
-                setPage("analysis");
+              loading={busy}
+              onPage={(offset) => {
+                if (selected)
+                  void perform(async () => {
+                    await loadHistory(selected.id, offset);
+                  });
               }}
+              onSelect={(id) =>
+                void perform(async () => {
+                  setRun(await request<Run>("run.get", { id }));
+                  setReplaySource(null);
+                  setPage("analysis");
+                })
+              }
             />
           )}
           {page === "reports" && (
@@ -558,12 +588,14 @@ export default function App() {
               onPrune={async () => {
                 await refresh();
                 if (selected) {
-                  const remaining = await request<Run[]>("run.list", {
-                    project_id: selected.id,
-                  });
-                  setHistory(remaining);
-                  if (run && !remaining.some((r) => r.id === run.id))
-                    setRun(null);
+                  await loadHistory(selected.id);
+                  if (run) {
+                    try {
+                      await request<Run>("run.get", { id: run.id });
+                    } catch {
+                      setRun(null);
+                    }
+                  }
                   setReplaySource(null);
                 }
               }}
@@ -598,7 +630,7 @@ export default function App() {
                   setJourney(null);
                   setRun(null);
                   setReplaySource(null);
-                  setHistory([]);
+                  clearHistory();
                 }
                 setConfirmation(null);
                 await refresh();

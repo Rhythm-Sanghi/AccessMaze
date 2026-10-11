@@ -10,7 +10,9 @@ personal browser profiles or enter production secrets or unrelated personal data
 - Private/reserved addresses need explicit authorization. Configured host DNS answers
   are pinned for the browser lifetime. Exact navigation/API and read-only resource
   origins are separate permissions. Response interception checks HTTP redirects.
-  Popups/embedded frames, service workers/downloads and WebSockets are disabled.
+  Embedded frames are denied by default; explicit authorized-application permission
+  enables named frames only under allowed navigation origins. Popups, service workers,
+  downloads and WebSockets remain disabled.
 - This is not a strong security sandbox. DNS rebinding, WebSocket/WebRTC traffic and
   browser vulnerabilities require additional containment before hostile-target use.
 - Activations and Enter/Space require an effect declaration. Every run requires target
@@ -34,6 +36,9 @@ personal browser profiles or enter production secrets or unrelated personal data
   evidence can persist unrelated personal data. Authored labels and target URLs are saved.
 - HTML reports escape target content and disable scripts. CSV neutralizes formula prefixes.
 - Artifact lookups require a run-owned filename and validated UUID directory.
+- Human investigation notes are intentionally retained as entered and can contain
+  plaintext sensitive information. Review notes and exports before sharing. Backup
+  limits include committed SQLite WAL content and the completed database snapshot.
 - Deleting a project cascades saved runs and removes artifact directories. Secure erasure
   of SSD blocks, SQLite WAL history and backups is not guaranteed.
 

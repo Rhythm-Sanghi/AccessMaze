@@ -1,4 +1,6 @@
 import asyncio
+import json
+import time
 
 from playwright.async_api import Error as BrowserError
 
@@ -7,7 +9,7 @@ from accessmaze.network import canonical_origin
 DEEP_FOCUS = """e => {
   let active=document.activeElement;
   while(active?.shadowRoot?.activeElement) active=active.shadowRoot.activeElement;
-  return e === active;
+  return document.hasFocus() && e === active;
 }"""
 
 
@@ -41,6 +43,42 @@ class CheckFailure(Exception):
         super().__init__(actual)
 
 
+async def resolve_target(surface, target):
+    """Intersect explicit constraints; never broaden a failed locator or pick a duplicate."""
+    root = surface
+    if target.scope:
+        root = surface.get_by_role(target.scope.role, name=target.scope.name, exact=True)
+        if await root.count() != 1:
+            raise CheckFailure(
+                "target-ambiguous", "Semantic scope absent or ambiguous", "One named scope"
+            )
+    locator = (
+        root.get_by_label(target.name, exact=True)
+        if target.by == "label"
+        else root.get_by_role(target.role, name=target.name, exact=True)
+    )
+    if target.element_id:
+        locator = locator.and_(surface.locator(f"[id={json.dumps(target.element_id)}]"))
+    if target.description:
+        indices = await locator.evaluate_all(
+            """(elements, description) => elements
+          .map((e,i)=>({i,description:
+            (e.getAttribute('aria-describedby')||'').split(/\\s+/)
+              .map(id=>e.ownerDocument.getElementById(id)?.textContent||'').join(' ').trim() ||
+              e.getAttribute('aria-description') || ''}))
+          .filter(e=>e.description===description).map(e=>e.i)""",
+            target.description,
+        )
+        if len(indices) != 1:
+            raise CheckFailure(
+                "target-ambiguous",
+                "Accessible description absent or ambiguous",
+                "One described semantic target",
+            )
+        locator = locator.nth(indices[0])
+    return locator
+
+
 async def keyboard_reach(page, locator, budget):
     await locator.wait_for(state="visible")
     if await locator.count() != 1:
@@ -49,8 +87,13 @@ async def keyboard_reach(page, locator, budget):
             "Target is absent or has multiple matches",
             "Exactly one visible semantic target",
         )
-    trace = {"tab_presses": 0, "focus_history": []}
-    page.context._accessmaze_interaction = trace
+    browser_page = page if hasattr(page, "keyboard") else page.page
+    trace = {
+        **getattr(browser_page.context, "_accessmaze_interaction", {}),
+        "tab_presses": 0,
+        "focus_history": [],
+    }
+    browser_page.context._accessmaze_interaction = trace
     if not await locator.is_enabled():
         raise CheckFailure(
             "target-disabled",
@@ -62,6 +105,26 @@ async def keyboard_reach(page, locator, budget):
             trace["focus_history"].append(await focus_description(page))
         if await locator.evaluate(DEEP_FOCUS):
             return
+        composite = await locator.evaluate("""target => {
+          const active=document.activeElement;
+          const selector='[role=tablist],[role=menu],[role=menubar],[role=radiogroup],'+
+            '[role=listbox],[role=tree],[role=toolbar]';
+          const owner=target.closest(selector);
+          if (!document.hasFocus() || !owner || !active) return null;
+          const controlledIds=((active.getAttribute('aria-controls')||'')+' '+
+            (active.getAttribute('aria-owns')||'')).split(/\\s+/);
+          const externalOwner=active.matches('[role=combobox],[role=textbox],input,textarea') &&
+            owner.id && controlledIds.includes(owner.id);
+          if (!(owner===active || owner.contains(active) || externalOwner)) return null;
+          if (target.id && active.getAttribute('aria-activedescendant')===target.id)
+            return 'logical-focus';
+          const role=owner.getAttribute('role');
+          return owner.getAttribute('aria-orientation')==='vertical' ||
+            ['menu','listbox','tree'].includes(role) ? 'ArrowDown' : 'ArrowRight';
+        }""")
+        if composite == "logical-focus":
+            trace["logical_focus"] = True
+            return
         if index == budget:
             break
         same_radio_group = await locator.evaluate("""target => {
@@ -71,11 +134,11 @@ async def keyboard_reach(page, locator, budget):
             active?.matches('input[type=radio]') && active.name===target.name &&
             active.form===target.form && active.getRootNode()===target.getRootNode();
         }""")
-        if same_radio_group:
-            await page.keyboard.press("ArrowRight")
+        if same_radio_group or composite:
+            await browser_page.keyboard.press(composite or "ArrowRight")
             trace["arrow_presses"] = trace.get("arrow_presses", 0) + 1
         else:
-            await page.keyboard.press("Tab")
+            await browser_page.keyboard.press("Tab")
             trace["tab_presses"] += 1
     raise CheckFailure(
         "keyboard-unreachable",
@@ -104,24 +167,46 @@ async def perform(page, context, step, journey, url, axe_path):
 
 
 async def _perform(page, context, step, journey, url, axe_path):
+    surface = page
+    if step.target and step.target.frame_name:
+        matches = [frame for frame in page.frames if frame.name == step.target.frame_name]
+        if len(matches) != 1 or matches[0] == page.main_frame:
+            raise CheckFailure(
+                "target-ambiguous", "Named frame absent or ambiguous", "One named embedded frame"
+            )
+        surface = matches[0]
+        policy = getattr(context, "_accessmaze_policy", None)
+        if surface.url == "about:blank":
+            await surface.wait_for_url(lambda value: value != "about:blank")
+        try:
+            origin = canonical_origin(surface.url)
+        except ValueError:
+            origin = None
+        if not journey.network.embedded_frames or not policy or origin not in policy.navigation:
+            raise CheckFailure(
+                "frame-unavailable",
+                "Frame is outside the authorized navigation origins",
+                "Explicit frame permission and an approved HTTP(S) document",
+            )
     inputs = getattr(context, "_accessmaze_inputs", None)
     value = inputs.value(step) if inputs and step.action in {"fill", "assert_value"} else step.value
     policy = getattr(context, "_accessmaze_policy", None)
     secure_input = (
-        page.url.startswith("https://")
-        or (policy and canonical_origin(page.url) in policy.local_origins)
-        if page.url != "about:blank"
+        surface.url.startswith("https://")
+        or (policy and canonical_origin(surface.url) in policy.local_origins)
+        if surface.url != "about:blank"
         else False
     )
-    locator = (
-        (
-            page.get_by_label(step.target.name, exact=True)
-            if step.target.by == "label"
-            else page.get_by_role(step.target.role, name=step.target.name, exact=True)
-        )
-        if step.target
-        else None
-    )
+    locator = await resolve_target(surface, step.target) if step.target else None
+    if step.target:
+        context._accessmaze_interaction["locator_provenance"] = {
+            "by": step.target.by,
+            "scoped": bool(step.target.scope),
+            "element_id": bool(step.target.element_id),
+            "description": bool(step.target.description),
+            "frame": bool(step.target.frame_name),
+            "fallback": "none",
+        }
     match step.action:
         case "navigate":
             response = await page.goto(url, wait_until="domcontentloaded")
@@ -156,7 +241,7 @@ async def _perform(page, context, step, journey, url, axe_path):
                     "Synthetic non-secret input only",
                 )
             if journey.profile.keyboard_only:
-                await keyboard_reach(page, locator, journey.tab_budget)
+                await keyboard_reach(surface, locator, journey.tab_budget)
                 await page.keyboard.press("ControlOrMeta+A")
                 await page.keyboard.insert_text(value)
             else:
@@ -180,9 +265,14 @@ async def _perform(page, context, step, journey, url, axe_path):
             await field.set_input_files(inputs.files[step.value_from])
         case "activate":
             if journey.profile.keyboard_only:
-                await keyboard_reach(page, locator, journey.tab_budget)
+                await keyboard_reach(surface, locator, journey.tab_budget)
                 await page.keyboard.press(
-                    "Space" if step.target.role in {"checkbox", "radio"} else "Enter"
+                    "Space"
+                    if step.target.role
+                    in {"checkbox", "radio", "switch", "menuitemcheckbox", "menuitemradio"}
+                    else "ArrowDown"
+                    if step.target.role == "combobox"
+                    else "Enter"
                 )
             else:
                 await locator.click()
@@ -193,7 +283,7 @@ async def _perform(page, context, step, journey, url, axe_path):
                 await locator.wait_for(state="visible")
             except BrowserError as exc:
                 raise CheckFailure(
-                    "completion-assertion",
+                    "target-ambiguous" if await locator.count() > 1 else "completion-assertion",
                     "Expected state was not visible in time",
                     f"Visible {step.target.role}: {step.target.name}",
                 ) from exc
@@ -292,6 +382,7 @@ async def _perform(page, context, step, journey, url, axe_path):
         case "wait":
             await asyncio.sleep(int(step.value) / 1000)
         case "audit":
+            audit_started = time.perf_counter()
             if not axe_path.is_file():
                 raise CheckFailure(
                     "audit-unavailable",
@@ -316,11 +407,13 @@ async def _perform(page, context, step, journey, url, axe_path):
                     )
             finally:
                 await session.detach()
-            return await page.evaluate("""async () => {
+            result = await page.evaluate("""async () => {
               const r=await axe.run(document, {resultTypes:['violations','incomplete']});
-              return {violations:r.violations.map(v=>({id:v.id,impact:v.impact,
+              return {engine:r.testEngine,violations:r.violations.map(v=>({id:v.id,impact:v.impact,
                 description:v.description,helpUrl:v.helpUrl,
                 targets:v.nodes.slice(0,20).map(n=>n.target)})),
                 incomplete:r.incomplete.map(v=>({id:v.id,description:v.description}))};
             }""")
+            result["duration_seconds"] = round(time.perf_counter() - audit_started, 6)
+            return result
     return None
