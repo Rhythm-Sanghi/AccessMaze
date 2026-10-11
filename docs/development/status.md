@@ -72,6 +72,23 @@ The follow-up source and its final hosted conclusions are separately tracked by
 The failed `91e0e7f` run does not verify the correction; later results require their
 own completed checks and exact source/artifact provenance.
 
+The ordering fix is not sufficient to qualify recorder shutdown. Final-main
+[run 38111832499](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38111832499)
+at `1dab8aa` passed Linux (**128 passed, 7 skipped, 195.47 s**) but failed Windows
+(**134 passed, 1 failed, 363.40 s**); packaging was skipped. The same slow-navigation
+test found the recorder thread alive after its ten-second join. This is an unresolved
+hosted Windows lifecycle defect despite the successful correction PR/local runs.
+The next diagnostic records monotonic browser-close and driver-exit stages through
+the actual Playwright APIs. Windows CI now executes the existing cancellation test
+five times before the full suite, stopping on the first failure; it is not an automatic
+retry. The three-second bound, thread termination and connection-order assertions
+remain unchanged. No further application fix is claimed before the stalled stage
+is identified and independently exercised by a completed hosted run.
+Local diagnostic check: `pytest engine/tests/test_recorder.py -q
+--junitxml=dist/Recorder-cleanup-diagnostics.xml` through uv: **4 passed, 10.81 s**;
+Prettier, Ruff lint/format and `git diff --check` passed. Application code is unchanged
+in this diagnostic step.
+
 ## Current verified implementation
 
 The original investigation acceptance package uses clean source
