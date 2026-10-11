@@ -131,6 +131,40 @@ journeys, strict repair comparison and recorded-draft replay; the controlled ser
 observed one approved POST and a 25-byte upload. No screenshots or prior evidence
 were overwritten by these resumed checks.
 
+[PR #3](https://github.com/Rhythm-Sanghi/AccessMaze/pull/3) merged at
+`cea218b2325d43af124a81db35973ba73f36097b`, preserving the three diagnostic/evidence
+commits. Local `main` fast-forwarded without discarding `2d8000b`; the merged tree
+matches reviewed head `7f9b603` exactly. No branches, tags or other edits were deleted.
+[Final PR run 38113635962](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38113635962)
+completed all three jobs successfully: Windows **135 Python passes, 372.80 s**, five
+separate cancellation passes, **13 React passes** and **1 Rust pass**; Ubuntu
+**128 passes, 7 skips, 194.92 s**. Quality/contracts/build/advisory checks passed with
+the two existing Cargo warnings. The earlier diagnostic run `38112976146` was cancelled
+by the documentation push after its Python tests passed; it is not a green full run.
+
+Hosted packaging/frozen runtime/System32-PATH/complex smoke/manifest/ZIP CRC checks
+passed. Clean synthetic source `838e0fb9be91141d4f6fe337980c0c919eae2217` was fetched
+and verified tree-identical to `7f9b603`. Inner ZIP: **389,882,771 bytes, 1,707 files**,
+SHA-256 `669d56af9851da0021f6bb92d4907df1ed719f57214227008ef12de2cac5158f`.
+[Artifact 11693082697](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38113635962/artifacts/11693082697)
+is an unsigned 14-day preview; the distinct outer Actions digest is
+`2de65fa5a6bf6f3c1271a3c72ced4052a02345a2d88890a0fb8461ce8413cd3f`.
+Frozen startup was **0.493 s**; accessible/broken/conditional/owned-SPA runs took
+**2.156/7.337/12.062/19.993 s**, with expected findings **0/1/0/0**. A hosted runner
+with development tools does not establish independent consumer-machine acceptance.
+The [main-branch workflow](https://github.com/Rhythm-Sanghi/AccessMaze/actions?query=branch%3Amain)
+must have its own completed conclusions; the PR run is recorded separately.
+
+The recorder stall remains unresolved. An
+[upstream Windows profile-cleanup report](https://github.com/microsoft/playwright/issues/42109)
+is an unconfirmed lead, not AccessMaze's established cause. Read-only inspection of
+nine leftover local profiles found four relevant cache directories; all four were
+readable with inherited permissions enabled. No profile or permission was changed.
+Raw inspection: `dist/Resumed-temp-profile-inspection.json`. If the shutdown failure
+recurs, retain the browser-close/driver-exit timestamps and inspect that runner's
+profile/process state before choosing a fix. No dependency patch, test weakening,
+lifecycle resolution or release qualification is claimed by these passing repetitions.
+
 ## Current verified implementation
 
 The original investigation acceptance package uses clean source
