@@ -74,9 +74,9 @@ own completed checks and exact source/artifact provenance.
 
 ## Current verified implementation
 
-The latest locally built application package uses clean source
-`432dd5f385aaecbfebb8b36fae28cc439ac1019b`. Subsequent changes currently concern
-CI browser permissions, verification harnesses and documentation.
+The original investigation acceptance package uses clean source
+`432dd5f385aaecbfebb8b36fae28cc439ac1019b`. The later recorder correction is
+packaged from clean `1a2809bd5293b47def41d3682e5ee88c926fa39d`, as recorded below.
 
 - Authorized journeys, exact navigation/API versus resource origins, DNS/redirect
   checks, run-only credentials/uploads and private evidence remain in place.
@@ -124,13 +124,37 @@ proof of no memory leak. The separate native sustained run passed as recorded be
 
 ## Current portable artifact
 
-Local archive `dist/AccessMaze-investigation-preview-432dd5f.zip`: **390,039,679 bytes**,
+Earlier local archive `dist/AccessMaze-investigation-preview-432dd5f.zip`: **390,039,679 bytes**,
 **1,707 ZIP entries**. SHA-256:
 `cfb33a28ca777acb801279e666560ec9abc7bddc49e075e9aff05905dc25449c`.
 Source is clean `432dd5f`. Bundled Python 3.13.9, Playwright 1.63.0 and Chromium
 153.0.8010.12 executed; no developer runtime was needed on PATH. A new Unicode/space
 extraction passed frozen checks. These reuse this laptop's Windows/AppData/WebView2
 and are not independent fresh-user or clean-machine results. The package is unsigned.
+
+The latest local directory package is `dist/AccessMaze-recorder-1a2809b`, with
+manifest source `1a2809bd5293b47def41d3682e5ee88c926fa39d`, dirty=false. Its
+portable manifest/System32-PATH check and frozen complex smoke passed:
+startup **0.611 s**; accessible/broken/conditional/owned-SPA **2.477 / 4.410 /
+3.164 / 6.679 s**, expected findings **0 / 1 / 0 / 0**. Actual native website
+approval, headed recorder and completion capture passed through that frozen worker;
+one approved synthetic POST, owned project removed, zero of eight children after
+close. Raw `dist/Recorder-fix-portable.json`, `dist/Recorder-fix-complex.json` and
+`dist/Recorder-fix-native/`; baseline screenshots/local JSON were preserved/restored.
+An interrupted packaging attempt before the clean commit was not used as evidence.
+
+[Correction PR run 38108860709](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38108860709)
+completed all three jobs successfully: Windows **135 passed, 381.47 s**; Ubuntu
+**128 passed, 7 skipped, 169.87 s**; React 13 on each; Rust 1. Quality/advisory
+checks passed with the two documented Cargo warnings. Hosted package source is
+synthetic merge `43338ffd1932567b2b17a7d23a47168274466feb`; direct fetch/tree
+comparison against `1a2809b` returned no differences. Inner ZIP **389,883,227 bytes**,
+SHA-256 `f9e8e8ef0e5c98557c4ebe8e90f3cf529c0c68b899c6c7f8bb866caf4cfbb916`.
+[Artifact 11691339217](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38108860709/artifacts/11691339217)
+is unsigned with 14-day retention. PR #2 is confirmed merged at `1a2809b`.
+Later documentation commits require their own completed checks; current final-main
+conclusions are recorded in [main Actions runs](https://github.com/Rhythm-Sanghi/AccessMaze/actions?query=branch%3Amain)
+and the [PR #2 verification record](https://github.com/Rhythm-Sanghi/AccessMaze/pull/2).
 
 ## CI and release gates
 
