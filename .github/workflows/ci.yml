@@ -72,6 +72,30 @@ jobs:
             uv run --project engine pytest engine/tests/test_recorder.py::test_headed_recorder_worker_lifecycle_on_windows engine/tests/test_recorder.py::test_recorder_stop_cancels_slow_initial_navigation -q -s --junitxml="dist/recorder-stability/after-$attempt.xml"
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
+      - name: Inspect remaining Windows recorder processes and profile permissions
+        if: always() && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path dist/recorder-stability -Force | Out-Null
+          $profiles = @(Get-ChildItem -LiteralPath $env:TEMP -Directory -Filter 'playwright_chromiumdev_profile-*')
+          $reports = @(foreach ($profile in ($profiles | Sort-Object CreationTime -Descending | Select-Object -First 20)) {
+            $cache = Join-Path $profile.FullName 'Default/Shared Dictionary/cache'
+            $entry = [ordered]@{ profile = $profile.Name; cache_exists = Test-Path -LiteralPath $cache }
+            if ($entry.cache_exists) {
+              try {
+                $entry.cache_acl = (Get-Acl -LiteralPath $cache -ErrorAction Stop).AccessToString
+                $null = Get-ChildItem -LiteralPath $cache -Force -ErrorAction Stop | Select-Object -First 1
+                $entry.cache_readable = $true
+              } catch {
+                $entry.cache_readable = $false
+                $entry.error_category = $_.CategoryInfo.Category.ToString()
+                $entry.error_type = $_.Exception.GetType().FullName
+              }
+            }
+            [pscustomobject]$entry
+          })
+          $processes = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe' OR Name='node.exe'" | Select-Object ProcessId, ParentProcessId, CreationDate)
+          [ordered]@{ scope = 'Read-only process/profile metadata; no file contents or permission changes'; profile_count = $profiles.Count; inspection_limit = 20; profiles = $reports; processes = $processes } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath dist/recorder-stability/profile-diagnostics.json -Encoding utf8
       - if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -82,6 +106,7 @@ jobs:
             dist/compatibility-corpus/*.stdout
             dist/compatibility-corpus/*.stderr
             dist/recorder-stability/*.xml
+            dist/recorder-stability/*.json
           if-no-files-found: warn
           retention-days: 14
       - run: uv run --project engine python scripts/contracts.py --check

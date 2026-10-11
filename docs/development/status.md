@@ -110,6 +110,15 @@ sequence, and JUnit reports are retained with the compatibility evidence. Prior
 failures occurred within the full workload despite passing startup repetitions;
 the additional bounded sequence exercises shutdown after accumulated browser work.
 It does not change application behavior or make the intermittent defect resolved.
+The post-test Windows diagnostic also records surviving Chromium/Node process
+identities and metadata/readability/ACLs for up to 20 newest temporary Chromium
+profiles. It reads no file contents and changes no permissions. This allows a future
+process-exit/profile-cleanup log to be checked against actual filesystem evidence;
+no ACL cause is claimed before that evidence exists.
+Executing the exact read-only PowerShell probe locally inspected nine remaining
+profiles: four had the cache directory and all four were readable; none was denied.
+The current laptop still does not reproduce the suspected ACL problem. Actionlint
+1.7.7, Prettier and `git diff --check` passed for the workflow changes.
 
 PR #1 was squash-merged as `91e0e7fada546ed9129ca25b211675d9b4fdc3d8` after
 rechecking its unchanged head `05a34a5`, completed green CI and fresh local checks.
