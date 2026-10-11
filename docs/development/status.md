@@ -6,6 +6,65 @@ at clean `c634573`; preserve the earlier milestone history below.
 
 ## Repository review and post-merge recorder correction
 
+### Completed context ownership correction and current qualification limit
+
+[PR #4](https://github.com/Rhythm-Sanghi/AccessMaze/pull/4) merged as
+`b549d8f5fffac1608b2b9f833d05d074909ee319`, preserving all five correction/evidence
+commits. Local `main` fast-forwarded cleanly; its tree matched reviewed head
+`d3c165c` exactly. Original branches and the PR #1 provenance tag remain intact.
+No tracked files were deleted or moved. The fresh 217-file inventory found no
+generated candidates, missing Markdown targets, duplicate PNGs or unignored files;
+the limited private-key/GitHub/AWS pattern scan found no matches.
+
+[Final PR run 38129795146](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38129795146)
+completed **all three jobs successfully**. Windows: **135 Python tests, 343.32 s**,
+**13 React tests**, **one Rust test, 0.03 s**; Ubuntu: **128 Python tests, seven
+skips, 209.50 s**, **13 React tests**. Type/lint/format/build/contracts and npm/Python
+advisory checks passed; Cargo retained its two existing allowed warnings. These
+results belong to this exact run, not the earlier cancelled or failed runs below.
+
+Five startup lifecycle/cancellation pairs and all **30 post-suite pairs** passed.
+The downloaded [Windows evidence artifact](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38129795146/artifacts/11698013437)
+matched SHA-256 `544adb070cf8a1e7672aea61546c6219a8043f75efa6bbb480e86dafa1d7887c`.
+Its 30 JUnit reports contain **60 passes, zero failures/errors/skips**, summed
+JUnit time **138.873 s**. The read-only probe found **zero temporary Chromium
+profiles and no chrome.exe/node.exe processes**. Actual Node debug timestamps
+showed **60 completed temporary-directory cleanup intervals, 22–53 ms**, with
+none unfinished. Downloaded ZIP, original profile JSON, parsed summary and timing
+summary are retained under ignored `dist/Recorder-hosted-*38129795146*` paths.
+This is a bounded workload, not an overnight result or a cause for earlier stalls.
+
+Hosted frozen-runtime integrity, System32-only PATH, complex SPA/upload smoke and
+ZIP CRC checks passed. Startup **0.529 s**; accessible/broken/conditional/owned-SPA
+runs **2.428 / 2.969 / 3.469 / 6.566 s**, finding counts **0 / 1 / 0 / 0**.
+The [unsigned preview artifact](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38129795146/artifacts/11699511503)
+contains an inner ZIP of **389,883,672 bytes, 1,707 files**, SHA-256
+`8626b9fa24767258d6d586ca50b6be560a05aa46d4c179e6dc1c51c655e05f68`.
+Outer Actions artifact digest is separately
+`11dbbfdbdb2d10cde9cf4fab7ffa1d2d9564f50a25c86c997c9f6d6b5df90c23`.
+Package source is clean synthetic merge `face47c6c1f2d4ab7f898ed839a5234fcb50e831`,
+fetched and verified tree-identical to `d3c165c`. Retention is 14 days. Hosted package
+execution does not substitute for independent fresh-user Windows verification.
+
+The historical recorder timing failure **remains an unresolved qualification
+blocker**. Context ownership is corrected, but diagnostic logging is not an
+application fix and these passes do not explain the failed `0952bf1` lifecycle run.
+Failed and passing jobs used Windows Server 2025 image `windows-2025-vs2026`,
+version `20260925.250.1`; an image change does not explain the result. Earlier failed
+runners' live process/file-lock/profile state was not captured. Further root-cause
+work requires reproducing the stall on a controlled Windows host and retaining
+live process/file-lock evidence alongside the stage logs and read-only ACL probe.
+Use Python 3.13, locked Playwright 1.63.0/Chromium 153.0.8010.12 and the same full
+suite plus post-suite pairs. Do not clear the gate or relax shutdown assertions
+without an evidenced cause and regression-backed correction. The available laptop
+and later hosted sequence did not reproduce it. Human NVDA, independent security/
+Windows, distribution/legal, signing and overnight gates also remain open.
+
+The documentation-only main commit recording these results needs its own completed
+[main-branch workflow](https://github.com/Rhythm-Sanghi/AccessMaze/actions?query=branch%3Amain).
+The [PR verification record](https://github.com/Rhythm-Sanghi/AccessMaze/pull/4)
+retains exact final-main SHA/run conclusions separately from this PR's package source.
+
 ### Interrupted-navigation context cleanup
 
 Final-main [run 38115447841](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38115447841)
@@ -81,7 +140,7 @@ at `0952bf1` failed Windows: **134 passed, 1 failed, 364.35 s**. Ubuntu passed
 repetitions and the full-suite slow-navigation regression passed. This time the
 ordinary headed recorder lifecycle test found the thread alive after its unchanged
 eight-second join. Explicit context cleanup is therefore insufficient to establish
-reliable shutdown; PR #4 remains unmerged. The previous superseded run at `d9a3656`
+reliable shutdown; PR #4 was kept unmerged at this stage. The previous superseded run at `d9a3656`
 passed Windows Python (**135 tests, 390.47 s**) but was cancelled during Rust checks
 by the documentation push, so it is not an all-jobs pass.
 
@@ -93,8 +152,8 @@ failure; no credentials or real user pages are used. Windows CI repeats both tes
 five times, stopping on first failure. This is diagnostic coverage, not another
 application fix or automatic retry. Local `pytest engine/tests/test_recorder.py -q
 --junitxml=dist/Context-cleanup-lifecycle-diagnostics.xml`: **4 passed, 14.39 s**.
-Ruff lint/format passed. The hosted recorder lifecycle defect remains a delivery
-blocker regardless of the successful local package and demo checks.
+Ruff lint/format passed. The hosted recorder lifecycle defect remained a delivery
+blocker at this stage despite the successful local package and demo checks.
 
 The diagnostic observer then passed **30 local lifecycle/cancellation pairs** in
 separate pytest processes: **60 passed, zero failures/errors/skips**, summed JUnit
