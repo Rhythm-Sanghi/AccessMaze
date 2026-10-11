@@ -110,8 +110,13 @@ async def keyboard_reach(page, locator, budget):
           const selector='[role=tablist],[role=menu],[role=menubar],[role=radiogroup],'+
             '[role=listbox],[role=tree],[role=toolbar]';
           const owner=target.closest(selector);
-          if (!owner || !(owner===active || owner.contains(active))) return null;
-          if (target.id && active?.getAttribute('aria-activedescendant')===target.id)
+          if (!document.hasFocus() || !owner || !active) return null;
+          const controlledIds=((active.getAttribute('aria-controls')||'')+' '+
+            (active.getAttribute('aria-owns')||'')).split(/\\s+/);
+          const externalOwner=active.matches('[role=combobox],[role=textbox],input,textarea') &&
+            owner.id && controlledIds.includes(owner.id);
+          if (!(owner===active || owner.contains(active) || externalOwner)) return null;
+          if (target.id && active.getAttribute('aria-activedescendant')===target.id)
             return 'logical-focus';
           const role=owner.getAttribute('role');
           return owner.getAttribute('aria-orientation')==='vertical' ||

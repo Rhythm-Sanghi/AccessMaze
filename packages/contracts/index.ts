@@ -153,7 +153,7 @@ export interface Observation {
     visible: boolean;
     invalid: string | null;
     populated: boolean;
-    checked?: boolean | null;
+    checked?: boolean | "mixed" | null;
     expanded?: string | null;
     selected?: string | null;
     focused: boolean;
@@ -162,7 +162,11 @@ export interface Observation {
   online: boolean;
   reduced_motion: boolean;
 }
+export type RunPoll =
+  | { changed: false; revision: number }
+  | { changed: true; revision: number | null; run: Run };
 export interface Run {
+  revision?: number;
   failure?: { classification: string; reason: string };
   replay?: { source_id: string; finding_id: string; verdict?: string };
   outcome?: TaskOutcome;
@@ -302,6 +306,7 @@ export type Method =
   | "run.start"
   | "run.replay.prepare"
   | "run.get"
+  | "run.poll"
   | "run.list"
   | "run.history"
   | "run.cancel"

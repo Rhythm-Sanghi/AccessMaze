@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Journey, Project, Run } from "../../../packages/contracts";
+import type {
+  Journey,
+  Project,
+  Run,
+  RunPoll,
+} from "../../../packages/contracts";
 import { desktopAvailable, download, request } from "./api";
 import FailureReplay from "./FailureReplay";
 import HumanReviewPanel from "./HumanReviewPanel";
@@ -84,11 +89,21 @@ export default function App() {
   useEffect(() => {
     if (!activeRun(run)) return;
     let disposed = false;
+    let revision = run?.revision ?? -1;
     let timer: ReturnType<typeof setTimeout>;
     async function poll() {
       try {
-        const current = await request<Run>("run.get", { id: run!.id });
+        const update = await request<RunPoll>("run.poll", {
+          id: run!.id,
+          after_revision: revision,
+        });
         if (disposed) return;
+        if (!update.changed) {
+          timer = setTimeout(poll, 600);
+          return;
+        }
+        revision = update.revision ?? -1;
+        const current = update.run;
         setRun(current);
         if (activeRun(current)) timer = setTimeout(poll, 600);
         else {

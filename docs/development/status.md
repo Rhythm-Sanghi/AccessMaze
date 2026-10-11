@@ -331,3 +331,42 @@ including actual private login/upload, single-character input, retained/withheld
 replay, SQLite WAL and restored snapshot integrity. Two initial attempted commands
 named nonexistent privacy test files and ran no tests; these are not counted as
 verification. This is internal regression review, not an independent security audit.
+
+
+## Phase D — conditional polling and widget regressions
+
+`run.poll` now returns only a revision when evidence is unchanged, avoiding repeated
+full graph transfer and React replacement during approval waits. Changed runs use
+the existing complete snapshot; legacy records always return complete evidence.
+Recovery and unexpected failure advance revisions, and paused runs no longer write
+unchanged records every 100 ms. The actual worker/browser approval test demonstrates
+a response below 100 bytes versus a snapshot above 1,000 bytes, then observes
+cancellation and legacy recovery. No event-driven or CPU-performance claim is made.
+
+A genuine combobox false positive was reproduced: an active-descendant option in an
+externally controlled listbox was called keyboard-unreachable (**1 failed, 3.93 s**).
+Logical focus now requires the explicit owner relationship and document focus;
+a forged/unrelated ownership claim remains unreachable. A real menu/switch test
+also reproduced missing DOM checked states (**1 failed, 1.95 s**). Custom ARIA checks
+and native indeterminate checkboxes now retain boolean/mixed state alongside the
+existing computed AX evidence. Both final widget regressions: **2 passed, 2.45 s**.
+
+`pytest test_run_poll.py test_investigation.py test_worker.py test_lifecycle.py -q`:
+**23 passed, 45.20 s** (before the additional menu-state case). Poll test authoring
+initially omitted required journey fields/assertions; failed setup attempts were
+corrected, not counted as product defects. Actual zoom probe in headed and headless
+Chromium 153.0.8010.12 used `Control++`: viewport, DPR and visualViewport scale did
+not change. Raw `dist/Zoom-probe.json`; browser/text zoom remains manual and layout
+emulation remains clearly labeled. These probes do not establish all zoom APIs are
+impossible or verify accessibility under real zoom.
+
+
+Public/owned compatibility rerun: `python scripts/compatibility.py --public
+--output dist/Compatibility-engineering.json` completed all four paths without
+compromised origin coverage: owned 19-step application **6.893 s**, Selenium's
+official automation form **7.375 s**, W3C BAD before **1.891 s**, after **1.667 s**.
+Owned API received one POST and exactly 25 selected bytes. Before reported seven
+rule IDs; after reported two. These public demo totals are observations, not stable
+oracles or a certification. Existing exact origin permissions were preserved.
+React **12 passed, 30.54 s**; TypeScript/ESLint passed. Formatting errors caught in
+new test HTML and the checked-state TypeScript union were corrected before commit.

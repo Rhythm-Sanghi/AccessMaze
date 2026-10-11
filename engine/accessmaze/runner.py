@@ -130,6 +130,7 @@ async def execute(
     blocked = set()
 
     def save():
+        result["revision"] = result.get("revision", 0) + 1
         for finding in result["findings"]:
             finding["classification"] = classify_failure(
                 finding["rule"], blocked=bool(blocked), verification=finding["verification"]
@@ -231,8 +232,9 @@ async def execute(
                 ):
                     for index, step in enumerate(journey.steps):
                         while control.pause.is_set() and not control.cancel.is_set():
-                            result["status"] = "paused"
-                            save()
+                            if result["status"] != "paused":
+                                result["status"] = "paused"
+                                save()
                             await asyncio.sleep(0.1)
                         if control.cancel.is_set():
                             raise asyncio.CancelledError

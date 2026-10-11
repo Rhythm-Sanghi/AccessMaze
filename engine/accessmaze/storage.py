@@ -162,6 +162,7 @@ class Store:
             for row in rows:
                 result = json.loads(row["result"])
                 result.update(status="interrupted", error="Worker stopped before run completion")
+                result["revision"] = result.get("revision", 0) + 1
                 result["finished_at"] = now()
                 for step in result.get("steps", []):
                     if step["status"] == "running":
@@ -291,6 +292,15 @@ class Store:
                     json.dumps(result, ensure_ascii=False),
                 ),
             )
+
+    def run_revision(self, run_id):
+        with self.connect() as db:
+            row = db.execute(
+                "SELECT json_extract(result,'$.revision') FROM runs WHERE id=?", (run_id,)
+            ).fetchone()
+        if row is None:
+            raise ValueError("Run not found")
+        return row[0]
 
     def run(self, run_id):
         with self.connect() as db:

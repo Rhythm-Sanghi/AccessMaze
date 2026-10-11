@@ -332,3 +332,108 @@ def test_controlled_fixture_failure_replay_uses_observed_prerequisite_path(
         assert replayed["replay"]["verdict"] == "observed-again"
 
     asyncio.run(exercise())
+
+
+@pytest.mark.browser
+def test_external_active_descendant_combobox_option_is_keyboard_reachable(axe_path):
+    async def exercise():
+        async with async_playwright() as pw:
+            browser = await pw.chromium.launch()
+            try:
+                page = await browser.new_page()
+                await page.set_content("""<label for="combo">Destination</label>
+<input id="combo" role="combobox" aria-controls="places" aria-expanded="true"
+ aria-activedescendant="london" aria-autocomplete="list">
+<div id="places" role="listbox" aria-label="Places">
+<div role="option" id="london" aria-selected="false">London</div></div>
+<script>combo.onkeydown=e=>{if(e.key==='Enter'){
+ e.preventDefault(); combo.value='London';
+ document.querySelector('#london').setAttribute('aria-selected','true');
+}}</script>""")
+                await page.get_by_role("combobox").focus()
+                journey = template()
+                journey.tab_budget = 2
+                await perform(
+                    page,
+                    page.context,
+                    Step(
+                        id="choose",
+                        action="activate",
+                        effect=True,
+                        target={"role": "option", "name": "London"},
+                    ),
+                    journey,
+                    "",
+                    axe_path,
+                )
+                assert await page.get_by_role("combobox").input_value() == "London"
+                assert page.context._accessmaze_interaction["logical_focus"]
+                observed = await observe(page)
+                assert (
+                    next(c for c in observed["controls"] if c["name"] == "London")["selected"]
+                    == "true"
+                )
+                # An unrelated active-descendant claim must not bypass reachability.
+                await page.get_by_role("combobox").evaluate("e=>e.removeAttribute('aria-controls')")
+                with pytest.raises(CheckFailure) as failure:
+                    await perform(
+                        page,
+                        page.context,
+                        Step(
+                            id="unowned",
+                            action="activate",
+                            effect=True,
+                            target={"role": "option", "name": "London"},
+                        ),
+                        journey,
+                        "",
+                        axe_path,
+                    )
+                assert failure.value.code == "keyboard-unreachable"
+            finally:
+                await browser.close()
+
+    asyncio.run(exercise())
+
+
+@pytest.mark.browser
+def test_menu_switch_and_mixed_checkbox_preserve_checked_evidence(axe_path):
+    async def exercise():
+        async with async_playwright() as pw:
+            browser = await pw.chromium.launch()
+            try:
+                page = await browser.new_page()
+                await page.set_content("""<div role="menu" aria-label="Settings">
+<button role="menuitem" id="first">First</button>
+<button role="menuitemcheckbox" id="alerts" aria-checked="false" tabindex="-1"
+ onclick="this.setAttribute('aria-checked','true')">Alerts</button></div>
+<button role="switch" aria-checked="false"
+ onclick="this.setAttribute('aria-checked','true')">Updates</button>
+<label><input id="mixed" type="checkbox">All options</label>
+<script>mixed.indeterminate=true;
+ document.querySelector('[role=menu]').onkeydown=e=>{if(e.key==='ArrowDown'){
+ e.preventDefault();alerts.focus()}};</script>""")
+                await page.get_by_role("menuitem").focus()
+                for role, name in [("menuitemcheckbox", "Alerts"), ("switch", "Updates")]:
+                    await perform(
+                        page,
+                        page.context,
+                        Step(
+                            id=name,
+                            action="activate",
+                            effect=True,
+                            target={"role": role, "name": name},
+                        ),
+                        template(),
+                        "",
+                        axe_path,
+                    )
+                observation = await observe(page)
+                states = {c["name"]: c["checked"] for c in observation["controls"]}
+                assert states["Alerts"] is True
+                assert states["Updates"] is True
+                assert states["All options"] == "mixed"
+            finally:
+                await browser.close()
+
+    asyncio.run(exercise())

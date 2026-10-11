@@ -202,7 +202,18 @@ class Worker:
             return self.store.history(
                 params["project_id"], params.get("limit", 50), params.get("offset", 0)
             )
-        if method == "run.get":
+        if method in {"run.get", "run.poll"}:
+            if method == "run.poll":
+                UUID(params["id"])
+                if set(params) - {"id", "after_revision"}:
+                    raise ValueError("Unknown run poll field")
+                revision = params.get("after_revision", -1)
+                if type(revision) is not int or not -1 <= revision <= 2**53 - 1:
+                    raise ValueError("Run revision must be a bounded integer")
+                current = self.store.run_revision(params["id"])
+                # Legacy records without a revision always return a full snapshot.
+                if current is not None and current == revision:
+                    return {"changed": False, "revision": current}
             run = self.store.run(params["id"])
             if params["id"] == self.active and self.control and self.control.pending():
                 # Raw proposed names exist only in this response, not SQLite/reports.
@@ -217,7 +228,11 @@ class Worker:
                 run["replay"]["verdict"] = replay_verdict(
                     original, run, run["replay"]["finding_id"]
                 )
-            return run
+            return (
+                {"changed": True, "revision": run.get("revision"), "run": run}
+                if method == "run.poll"
+                else run
+            )
         if method == "run.approve":
             if params["id"] != self.active or not self.control:
                 raise ValueError("This run is no longer active")
@@ -285,6 +300,7 @@ class Worker:
                     try:
                         result = self.store.run(run_id)
                         result.update(status="failed", error=message)
+                        result["revision"] = result.get("revision", 0) + 1
                         self.store.save_run(result)
                     except Exception:
                         internal_error("failure persistence")

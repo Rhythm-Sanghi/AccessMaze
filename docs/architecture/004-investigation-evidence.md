@@ -24,7 +24,9 @@ no automatic reset/repetition of external writes. Controlled fixtures retain bou
 breadth-first traversal and observed prerequisite paths. Action, depth, wall-clock and
 state bounds all leave unknown frontiers, never inferred global inaccessibility.
 Supported roving composites use bounded arrows; `aria-activedescendant` can establish
-logical focus within its current owner. This does not cover arbitrary custom widget
+logical focus within its current owner, including an externally controlled listbox
+when a focused input/combobox explicitly names that owner through `aria-controls`
+or `aria-owns`. An unrelated active-descendant claim does not establish reachability. This does not cover arbitrary custom widget
 key protocols. Native select choices require authored keys; listbox containers are
 not treated as activatable options.
 
@@ -53,3 +55,12 @@ and control changes are descriptive; no difference alone proves a regression.
 Changed replay targets/environments and changed input signatures cannot establish a
 matched-condition repair. Non-reproduction is never a general claim that a defect is
 fixed. Older evidence lacking new identities may need manual target review.
+
+
+Run snapshots have a monotonic execution revision. `run.poll` returns a small
+unchanged response when the supplied revision matches SQLite; otherwise it returns
+the same full evidence and transient approval overlay as `run.get`. Legacy records
+without revisions always return full snapshots. Recovery and unexpected execution
+failure advance revisions. Paused runs save only the transition into pause, avoiding
+repeated unchanged writes. Polling remains periodic, not event-driven; the change
+reduces transport and React updates without adding subscriptions or global state.

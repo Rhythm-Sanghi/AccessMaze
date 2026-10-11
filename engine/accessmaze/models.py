@@ -332,6 +332,7 @@ class Request(StrictModel):
         "run.start",
         "run.replay.prepare",
         "run.get",
+        "run.poll",
         "run.list",
         "run.history",
         "run.cancel",

@@ -200,7 +200,11 @@ async def observe_document(page):
           (e.labels ? [...e.labels].map(l=>l.textContent).join(' ') : '')
           || (['BUTTON','A'].includes(e.tagName) || e.hasAttribute('role') ? e.textContent : '')
           || '').trim().slice(0,160),
-        checked:e.matches('input[type=checkbox],input[type=radio]') ? e.checked : null,
+        checked:e.matches('input[type=checkbox],input[type=radio]')
+          ? (e.indeterminate ? 'mixed' : e.checked)
+          : e.getAttribute('aria-checked')==='mixed' ? 'mixed'
+          : ['true','false'].includes(e.getAttribute('aria-checked'))
+            ? e.getAttribute('aria-checked')==='true' : null,
         expanded:['true','false'].includes(e.getAttribute('aria-expanded'))
           ? e.getAttribute('aria-expanded') : null,
         selected:['true','false'].includes(e.getAttribute('aria-selected'))
