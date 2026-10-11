@@ -96,6 +96,21 @@ application fix or automatic retry. Local `pytest engine/tests/test_recorder.py 
 Ruff lint/format passed. The hosted recorder lifecycle defect remains a delivery
 blocker regardless of the successful local package and demo checks.
 
+The diagnostic observer then passed **30 local lifecycle/cancellation pairs** in
+separate pytest processes: **60 passed, zero failures/errors/skips**, summed JUnit
+test time **145.914 s**. Reports `dist/Context-lifecycle-pair-*.xml` and summary
+`dist/Context-lifecycle-pairs.json` retain the actual measurements; this is not an
+overnight result. The diagnostic hosted run at `eeb0802` passed its initial pairs
+and full Python step without reproducing the stall, then was superseded during
+Rust checks by the next diagnostic coverage change; no all-jobs pass is claimed.
+
+Windows CI now also runs **30 lifecycle/cancellation pairs after the full browser
+suite**, stopping on first failure. Process logs are visible for this owned-page
+sequence, and JUnit reports are retained with the compatibility evidence. Prior
+failures occurred within the full workload despite passing startup repetitions;
+the additional bounded sequence exercises shutdown after accumulated browser work.
+It does not change application behavior or make the intermittent defect resolved.
+
 PR #1 was squash-merged as `91e0e7fada546ed9129ca25b211675d9b4fdc3d8` after
 rechecking its unchanged head `05a34a5`, completed green CI and fresh local checks.
 Tag `pr-1-reviewed-2026-10-11` preserves all eleven original PR commits and the

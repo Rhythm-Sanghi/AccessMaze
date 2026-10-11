@@ -63,6 +63,15 @@ jobs:
           ACCESSMAZE_CORPUS_OUTPUT: ${{ github.workspace }}/dist/compatibility-corpus
           ACCESSMAZE_CORPUS_PA11Y: "1"
           ACCESSMAZE_CORPUS_PA11Y_NO_SANDBOX: ${{ runner.os == 'Linux' && '1' || '0' }}
+      - name: Verify recorder shutdown after the full browser workload
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          for ($attempt = 1; $attempt -le 30; $attempt++) {
+            Write-Output "Post-suite recorder lifecycle pair $attempt of 30"
+            uv run --project engine pytest engine/tests/test_recorder.py::test_headed_recorder_worker_lifecycle_on_windows engine/tests/test_recorder.py::test_recorder_stop_cancels_slow_initial_navigation -q -s --junitxml="dist/recorder-stability/after-$attempt.xml"
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
       - if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -72,6 +81,7 @@ jobs:
             dist/compatibility-corpus/*.html
             dist/compatibility-corpus/*.stdout
             dist/compatibility-corpus/*.stderr
+            dist/recorder-stability/*.xml
           if-no-files-found: warn
           retention-days: 14
       - run: uv run --project engine python scripts/contracts.py --check

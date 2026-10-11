@@ -45,3 +45,9 @@ tests enable Playwright browser-process diagnostics to distinguish process exit 
 temporary-profile cleanup; this logging is not enabled in the application. A passing
 run does not explain the intermittent shutdown stalls recorded
 in engineering status.
+
+Windows follows the full browser suite with 30 more lifecycle/cancellation pairs,
+stopping on first failure. This bounded sequence exercises accumulated workload;
+`-s` retains actual browser-process exit/profile-cleanup logs for the owned synthetic
+targets, and its JUnit files are included in the compatibility evidence artifact.
+It is not an overnight stability gate or a retry policy.
