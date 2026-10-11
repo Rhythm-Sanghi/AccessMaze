@@ -50,12 +50,12 @@ jobs:
       - run: npm run build
       - run: uv run --project engine ruff check engine scripts
       - run: uv run --project engine ruff format --check engine scripts
-      - name: Verify repeated visible recorder cancellation
+      - name: Verify repeated visible recorder lifecycle and cancellation
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           for ($attempt = 1; $attempt -le 5; $attempt++) {
-            uv run --project engine pytest engine/tests/test_recorder.py::test_recorder_stop_cancels_slow_initial_navigation -q
+            uv run --project engine pytest engine/tests/test_recorder.py::test_headed_recorder_worker_lifecycle_on_windows engine/tests/test_recorder.py::test_recorder_stop_cancels_slow_initial_navigation -q
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
       - run: uv run --project engine pytest engine/tests -q

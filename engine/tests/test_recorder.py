@@ -93,69 +93,12 @@ def test_recording_requires_separate_manual_effect_authorization(tmp_path):
         worker.close()
 
 
-@pytest.mark.browser
-def test_headed_recorder_worker_lifecycle_on_windows(tmp_path):
-    import sys
+@pytest.fixture
+def recorder_cleanup(monkeypatch):
     import time
 
-    import psutil
-
-    if sys.platform != "win32":
-        pytest.skip("Actual headed Windows browser test; Linux CI has no desktop session")
-    worker = Worker(tmp_path, Path.cwd())
-    try:
-        p = worker.store.save_project(ProjectInput(name="Manual recording", journey=template()))
-        started = worker.dispatch(
-            Request(
-                version=1,
-                id="1",
-                method="recorder.start",
-                params={"project_id": p["id"], "authorized": True, "allow_effects": True},
-            )
-        )
-        for _ in range(100):
-            current = worker.dispatch(
-                Request(version=1, id="2", method="recorder.get", params={"id": started["id"]})
-            )
-            if current["status"] != "preparing":
-                break
-            time.sleep(0.05)
-        assert current["status"] == "recording", current
-        children = [
-            p for p in psutil.Process().children(recursive=True) if "chrome" in p.name().lower()
-        ]
-        assert children
-        with pytest.raises(ValueError, match="recording"):
-            worker.dispatch(
-                Request(
-                    version=1,
-                    id="3",
-                    method="run.start",
-                    params={"project_id": p["id"], "authorized": True, "allow_effects": True},
-                )
-            )
-        worker.dispatch(
-            Request(version=1, id="4", method="recorder.stop", params={"id": started["id"]})
-        )
-        worker.recorder.thread.join(timeout=8)
-        assert not worker.recorder.thread.is_alive()
-        assert worker.recorder.recording.status == "stopped"
-        assert not any(p.is_running() for p in children)
-    finally:
-        worker.close()
-
-
-@pytest.mark.browser
-def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
-    import sys
-    import threading
-    import time
-    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-
-    from accessmaze.recorder import Recorder
-
-    if sys.platform != "win32":
-        pytest.skip("Actual visible Windows recorder")
+    # Browser-process logs only for these owned synthetic recorder tests.
+    monkeypatch.setenv("DEBUG", "pw:browser")
     browsers = []
     connected_at_driver_exit = []
     contexts_at_browser_close = []
@@ -218,6 +161,78 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
                 event("driver exit finished")
 
     monkeypatch.setattr("accessmaze.recorder.async_playwright", ObservedPlaywright)
+    return cleanup_events, contexts_at_browser_close, connected_at_driver_exit, event
+
+
+@pytest.mark.browser
+def test_headed_recorder_worker_lifecycle_on_windows(tmp_path, recorder_cleanup):
+    import sys
+    import time
+
+    import psutil
+
+    if sys.platform != "win32":
+        pytest.skip("Actual headed Windows browser test; Linux CI has no desktop session")
+    cleanup_events, contexts_at_browser_close, connected_at_driver_exit, event = recorder_cleanup
+    worker = Worker(tmp_path, Path.cwd())
+    try:
+        p = worker.store.save_project(ProjectInput(name="Manual recording", journey=template()))
+        started = worker.dispatch(
+            Request(
+                version=1,
+                id="1",
+                method="recorder.start",
+                params={"project_id": p["id"], "authorized": True, "allow_effects": True},
+            )
+        )
+        for _ in range(100):
+            current = worker.dispatch(
+                Request(version=1, id="2", method="recorder.get", params={"id": started["id"]})
+            )
+            if current["status"] != "preparing":
+                break
+            time.sleep(0.05)
+        assert current["status"] == "recording", current
+        children = [
+            p for p in psutil.Process().children(recursive=True) if "chrome" in p.name().lower()
+        ]
+        assert children
+        with pytest.raises(ValueError, match="recording"):
+            worker.dispatch(
+                Request(
+                    version=1,
+                    id="3",
+                    method="run.start",
+                    params={"project_id": p["id"], "authorized": True, "allow_effects": True},
+                )
+            )
+        event("stop requested")
+        worker.dispatch(
+            Request(version=1, id="4", method="recorder.stop", params={"id": started["id"]})
+        )
+        worker.recorder.thread.join(timeout=8)
+        event("join returned")
+        assert not worker.recorder.thread.is_alive(), cleanup_events
+        assert worker.recorder.recording.status == "stopped"
+        assert contexts_at_browser_close == [0], cleanup_events
+        assert connected_at_driver_exit == [False], cleanup_events
+        assert not any(p.is_running() for p in children)
+    finally:
+        worker.close()
+
+
+@pytest.mark.browser
+def test_recorder_stop_cancels_slow_initial_navigation(recorder_cleanup):
+    import sys
+    import threading
+    import time
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    from accessmaze.recorder import Recorder
+
+    if sys.platform != "win32":
+        pytest.skip("Actual visible Windows recorder")
+    cleanup_events, contexts_at_browser_close, connected_at_driver_exit, event = recorder_cleanup
     requested = threading.Event()
     release = threading.Event()
 

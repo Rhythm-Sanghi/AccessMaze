@@ -75,6 +75,27 @@ server observed one approved POST and a 25-byte upload. These results do not cla
 NVDA verification or accessibility certification. Hosted final-head and post-merge
 results remain necessary before reporting successful delivery.
 
+[Final-head run 38127805981](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38127805981)
+at `0952bf1` failed Windows: **134 passed, 1 failed, 364.35 s**. Ubuntu passed
+**128 tests, 7 skipped, 195.19 s**; packaging was skipped. All five slow-navigation
+repetitions and the full-suite slow-navigation regression passed. This time the
+ordinary headed recorder lifecycle test found the thread alive after its unchanged
+eight-second join. Explicit context cleanup is therefore insufficient to establish
+reliable shutdown; PR #4 remains unmerged. The previous superseded run at `d9a3656`
+passed Windows Python (**135 tests, 390.47 s**) but was cancelled during Rust checks
+by the documentation push, so it is not an all-jobs pass.
+
+Both real headed tests now share the actual Playwright cleanup observer and retain
+their original shutdown bounds. The ordinary lifecycle test records context/browser/
+driver stages too. `DEBUG=pw:browser` is enabled only for these owned synthetic tests
+to distinguish Chromium process exit from temporary-profile cleanup in a future
+failure; no credentials or real user pages are used. Windows CI repeats both tests
+five times, stopping on first failure. This is diagnostic coverage, not another
+application fix or automatic retry. Local `pytest engine/tests/test_recorder.py -q
+--junitxml=dist/Context-cleanup-lifecycle-diagnostics.xml`: **4 passed, 14.39 s**.
+Ruff lint/format passed. The hosted recorder lifecycle defect remains a delivery
+blocker regardless of the successful local package and demo checks.
+
 PR #1 was squash-merged as `91e0e7fada546ed9129ca25b211675d9b4fdc3d8` after
 rechecking its unchanged head `05a34a5`, completed green CI and fresh local checks.
 Tag `pr-1-reviewed-2026-10-11` preserves all eleven original PR commits and the

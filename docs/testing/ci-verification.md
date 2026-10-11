@@ -36,9 +36,12 @@ following [Puppeteer sandbox guidance](https://pptr.dev/troubleshooting#chrome-r
 No credential/evidence path is granted and no scanner failure is automatically retried
 or represented as a clean scan. Verify actual final-head conclusions before reporting success.
 
-Windows also executes the existing visible-recorder slow-navigation cancellation
-test five separate times before the full suite, stopping at the first failure.
+Windows also executes the existing visible-recorder lifecycle and slow-navigation
+cancellation tests five separate times before the full suite, stopping at the first failure.
 These are repeated executions, not retries that can hide a failure. The regression
-retains the three-second stop bound and reports browser-close/driver-exit timestamps
-on failure. A passing run does not explain the intermittent shutdown stalls recorded
+retains the three-second cancellation and eight-second lifecycle join bounds and
+reports context/browser-close/driver-exit timestamps on failure. Both owned synthetic
+tests enable Playwright browser-process diagnostics to distinguish process exit from
+temporary-profile cleanup; this logging is not enabled in the application. A passing
+run does not explain the intermittent shutdown stalls recorded
 in engineering status.
