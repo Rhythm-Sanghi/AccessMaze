@@ -191,6 +191,7 @@ class Recorder:
                         browser = await cancellable(
                             pw.chromium.launch(headless=False, args=policy.launch_args), recording
                         )
+                        context = None
                         try:
                             context = await browser.new_context(
                                 service_workers="block", accept_downloads=False
@@ -223,8 +224,12 @@ class Recorder:
                                     await cancellable(recording.capture_completion(page), recording)
                                 await asyncio.sleep(0.1)
                         finally:
-                            # Close Chromium while its driver connection is still usable.
-                            await browser.close()
+                            try:
+                                if context is not None:
+                                    await context.close()
+                            finally:
+                                # Keep the driver alive through context and browser cleanup.
+                                await browser.close()
             except TimeoutError:
                 recording.warnings.add("Recording reached its time bound")
             except asyncio.CancelledError:

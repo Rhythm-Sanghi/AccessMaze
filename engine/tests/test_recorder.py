@@ -158,6 +158,7 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
         pytest.skip("Actual visible Windows recorder")
     browsers = []
     connected_at_driver_exit = []
+    contexts_at_browser_close = []
     cleanup_events = []
 
     def event(stage):
@@ -176,8 +177,24 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
                 browser = await original_launch(**options)
                 browsers.append(browser)
                 original_close = browser.close
+                original_new_context = browser.new_context
+
+                async def new_context(**options):
+                    context = await original_new_context(**options)
+                    original_context_close = context.close
+
+                    async def close_context(**kwargs):
+                        event("context.close started")
+                        try:
+                            return await original_context_close(**kwargs)
+                        finally:
+                            event("context.close finished")
+
+                    monkeypatch.setattr(context, "close", close_context)
+                    return context
 
                 async def close(**kwargs):
+                    contexts_at_browser_close.append(len(browser.contexts))
                     event("browser.close started")
                     try:
                         return await original_close(**kwargs)
@@ -185,6 +202,7 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
                         event("browser.close finished")
 
                 monkeypatch.setattr(browser, "close", close)
+                monkeypatch.setattr(browser, "new_context", new_context)
                 return browser
 
             monkeypatch.setattr(browser_type, "launch", launch)
@@ -234,6 +252,7 @@ def test_recorder_stop_cancels_slow_initial_navigation(monkeypatch):
         assert not recorder.thread.is_alive(), cleanup_events
         assert recorder.recording.status == "stopped"
         assert connected_at_driver_exit == [False], "Browser outlived its driver scope"
+        assert contexts_at_browser_close == [0], "Recorder context was not closed first"
         assert time.monotonic() - started < 3, cleanup_events
     finally:
         release.set()

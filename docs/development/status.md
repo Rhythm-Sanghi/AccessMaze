@@ -6,6 +6,40 @@ at clean `c634573`; preserve the earlier milestone history below.
 
 ## Repository review and post-merge recorder correction
 
+### Interrupted-navigation context cleanup
+
+Final-main [run 38115447841](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38115447841)
+at `473eb93` failed Windows: **134 passed, 1 failed, 363.25 s**. Ubuntu passed
+**128 tests, 7 skipped, 202.59 s**; packaging was skipped. All five separate Windows
+cancellation executions passed before the full-suite failure. Diagnostic timestamps
+show cancellation reached `browser.close()` after **29 ms**, but that call had not
+returned after the ten-second thread join. Driver shutdown had not started. The
+successful PR #3 run does not resolve this subsequent main-branch failure.
+
+The recorder created an explicit context but left it open until browser shutdown.
+[Playwright's browser-close documentation](https://playwright.dev/python/docs/api/class-browser#browser-close)
+recommends closing explicitly created contexts first. A real headed Chromium
+regression observed **one open context at browser close** and failed before the
+change (`pytest engine/tests/test_recorder.py::test_recorder_stop_cancels_slow_initial_navigation
+-q`: **1 failed, 4.22 s**). This establishes the ownership-order defect, not the
+internal cause of the intermittent hosted stall.
+
+Recorder cleanup now closes its context before the browser, retaining browser
+cleanup in a nested `finally` if context cleanup raises. Both remain within the
+live Playwright driver scope. Origin restrictions and cancellation limits are
+unchanged. The test observes actual context/browser/driver calls, requires zero
+contexts at browser close and retains the three-second stop bound. Context-close
+timestamps distinguish a future context stall from a browser/driver stall.
+
+Initial local verification: `uv run --project engine pytest
+engine/tests/test_recorder.py -q`: **4 passed, 9.43 s**. After adding context-stage
+instrumentation, the same suite passed **4 tests in 15.89 s**, with JUnit output
+`dist/Context-cleanup-recorder.xml`; the full suite was running concurrently. Ruff
+lint/format, contract validation and `git diff --check` passed. Further local and
+hosted results must be recorded before
+treating this candidate as a verified correction. This is an internal review;
+independent Windows, NVDA, signing, legal and overnight gates remain open.
+
 PR #1 was squash-merged as `91e0e7fada546ed9129ca25b211675d9b4fdc3d8` after
 rechecking its unchanged head `05a34a5`, completed green CI and fresh local checks.
 Tag `pr-1-reviewed-2026-10-11` preserves all eleven original PR commits and the
