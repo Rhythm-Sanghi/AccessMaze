@@ -259,7 +259,7 @@ def run_tool(command, environment, timeout):
         raise
 
 
-async def benchmark(output, *, pa11y=False, only=None):
+async def benchmark(output, *, pa11y=False, only=None, pa11y_no_sandbox=False):
     output.mkdir(parents=True, exist_ok=False)
     private_directory(output)
     store = Store(output / "workspace")
@@ -289,7 +289,9 @@ async def benchmark(output, *, pa11y=False, only=None):
                 {
                     "chromeLaunchConfig": {
                         "executablePath": executable,
-                        "args": ["--no-proxy-server"],
+                        "args": ["--no-proxy-server"]
+                        + (["--no-sandbox"] if pa11y_no_sandbox else []),
+                        "dumpio": True,
                     },
                     "viewport": {"width": 1280, "height": 800},
                     "standard": "WCAG2AA",
@@ -467,6 +469,11 @@ def main():
         help="Run pinned Pa11y 10 with the existing full Chromium",
     )
     parser.add_argument(
+        "--pa11y-no-sandbox",
+        action="store_true",
+        help="Explicitly disable only the optional scanner sandbox for this owned loopback corpus",
+    )
+    parser.add_argument(
         "--only", nargs="+", choices=sorted({c["name"] for c in corpus()})
     )
     args = parser.parse_args()
@@ -474,7 +481,14 @@ def main():
         os.environ.setdefault(
             "PLAYWRIGHT_BROWSERS_PATH", str(ROOT / ".accessmaze/browsers")
         )
-    result = asyncio.run(benchmark(args.output, pa11y=args.pa11y, only=args.only))
+    result = asyncio.run(
+        benchmark(
+            args.output,
+            pa11y=args.pa11y,
+            only=args.only,
+            pa11y_no_sandbox=args.pa11y_no_sandbox,
+        )
+    )
     print(
         json.dumps(
             {

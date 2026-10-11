@@ -108,31 +108,53 @@ def test_cancel_waiting_for_approval_keeps_partial_results(store, fixtures, axe_
 
 
 def test_changed_state_refuses_previously_approved_action(store, fixtures, axe_path):
+    import threading
+
+    changed = threading.Event()
+
+    def release_change(handler):
+        assert changed.wait(30), "Test never released the title change"
+        return 200, {"Content-Type": "text/plain"}, "change"
+
     async def exercise():
-        with website(
-            {
-                "/": (
-                    200,
-                    {"Content-Type": "text/html"},
-                    """<h1>Base</h1>
+        try:
+            with website(
+                {
+                    "/": (
+                        200,
+                        {"Content-Type": "text/html"},
+                        """<h1>Base</h1>
 <button onclick="fetch('/write',{method:'POST'})">Continue</button>
-<script>setTimeout(()=>document.title='Changed after proposal',1000)</script>""",
-                ),
-                "/write": (200, {}, "bad"),
-            }
-        ) as (target, hits):
-            journey = journey_for(target)
-            p = store.save_project(ProjectInput(name="Stale state", journey=journey))
-            control = RunControl()
-            task = asyncio.create_task(
-                execute(store, p["id"], journey, control, fixtures, axe_path)
-            )
-            proposal = await wait_for_proposal(control)
-            await asyncio.sleep(1.2)
-            control.approve(proposal["id"], proposal["choices"][0]["id"])
-            result = await asyncio.wait_for(task, 5)
-            assert result["exploration"]["stop_reason"] == "state-changed-before-action"
-            assert ("POST", "/write") not in hits
+<script>fetch('/change').then(r=>r.text()).then(()=>{
+ document.title='Changed after proposal';fetch('/changed');});</script>""",
+                    ),
+                    "/change": (200, {}, release_change),
+                    "/changed": (200, {}, "observed"),
+                    "/write": (200, {}, "bad"),
+                }
+            ) as (target, hits):
+                journey = journey_for(target)
+                p = store.save_project(ProjectInput(name="Stale state", journey=journey))
+                control = RunControl()
+                task = asyncio.create_task(
+                    execute(store, p["id"], journey, control, fixtures, axe_path)
+                )
+                proposal = await wait_for_proposal(control)
+                # Trigger only after the proposal, and wait for the page's acknowledgement.
+                # A timer from document load can fire before slow CI finishes preparing it.
+                changed.set()
+                for _ in range(200):
+                    if ("GET", "/changed") in hits:
+                        break
+                    await asyncio.sleep(0.05)
+                else:
+                    pytest.fail("Browser did not acknowledge the controlled state change")
+                control.approve(proposal["id"], proposal["choices"][0]["id"])
+                result = await asyncio.wait_for(task, 10)
+                assert result["exploration"]["stop_reason"] == "state-changed-before-action"
+                assert ("POST", "/write") not in hits
+        finally:
+            changed.set()
 
     asyncio.run(exercise())
 

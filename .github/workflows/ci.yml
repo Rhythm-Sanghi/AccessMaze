@@ -44,6 +44,7 @@ jobs:
         env:
           ACCESSMAZE_CORPUS_OUTPUT: ${{ github.workspace }}/dist/compatibility-corpus
           ACCESSMAZE_CORPUS_PA11Y: "1"
+          ACCESSMAZE_CORPUS_PA11Y_NO_SANDBOX: ${{ runner.os == 'Linux' && '1' || '0' }}
       - if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

@@ -536,7 +536,7 @@ export default function App() {
             run &&
             (replaySource ?? run).findings.length > 0 && (
               <FailureReplay
-                key={(replaySource ?? run).id}
+                key={`replay-${(replaySource ?? run).id}`}
                 original={replaySource ?? run}
                 current={run}
                 onAuthored={(project) => {
@@ -552,7 +552,7 @@ export default function App() {
               />
             )}
           {page === "analysis" && run && (
-            <HumanReviewPanel key={run.id} run={run} />
+            <HumanReviewPanel key={`human-${run.id}`} run={run} />
           )}
           {(page === "analysis" || page === "reports") && (
             <RunHistory

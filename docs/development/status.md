@@ -370,3 +370,52 @@ rule IDs; after reported two. These public demo totals are observations, not sta
 oracles or a certification. Existing exact origin permissions were preserved.
 React **12 passed, 30.54 s**; TypeScript/ESLint passed. Formatting errors caught in
 new test HTML and the checked-state TypeScript union were corrected before commit.
+
+
+## Delivery verification — October 11
+
+Clean `10a3fc6` full suite with the locked Pa11y probe:
+`pytest engine/tests -q --junitxml=dist/engineering-final-suite.xml`:
+**134 passed, 296.67 s**. Corpus source provenance is clean; sixteen cases,
+all requested scanners completed, **71.513 s**. Rust Job-object test passed;
+application npm audit, optional-tool npm audit and pip-audit reported no known
+vulnerabilities (editable local engine skipped by pip-audit).
+
+Portable build `AccessMaze-engineering-preview` completed from clean `10a3fc6`:
+627 components, 782 copied notices, 73 retained raw metadata flags and 754 exact
+full-Chromium credit sections. System-only PATH verification passed. Frozen startup
+0.767 s; accessible/broken/conditional/owned-SPA 3.050/9.226/4.755/5.812 s, expected
+0/1/0/0 findings. Native UI acceptance is **not passed**: it reproduced duplicate
+replay panels/landmarks and a disabled stale replay control. React siblings shared
+the same run-ID key. The comparison function itself completed, but its UI axe
+check failed `landmark-unique`. Keyboard/error/dialog checks passed. Failed native
+captures are retained locally; the earlier screenshots are preserved in Git.
+
+Remote run 38077376024 at `e6e8aa8` failed: Linux **1 failed, 123 passed, 7 skipped**;
+Windows failed the optional scanner and a timer-dependent stale-state test. Linux
+artifact stderr establishes `No usable sandbox` on the hosted runner. Windows
+artifacts retain two `net::ERR_ABORTED` initial scanner navigations; their root cause
+is not established. No automatic retry or successful scanner result is invented.
+The owned corpus now has an explicit optional-scanner-only `--pa11y-no-sandbox`
+setting for hosted Linux, recorded in configuration, plus browser stderr diagnostics.
+This does not change application origin/isolation policy. The stale-state test now
+releases an actual server response only after the proposal and waits for the page's
+acknowledgement, removing the load-time timer race. Its actual browser regression
+passed **1 test, 2.84 s**. Windows diagnostic calibration rerun: two real cases,
+**8.659 s**, correct outcomes and completed Pa11y. Remote rerun remains required.
+
+
+The native duplicate-panel defect was also reproduced in a full App component
+regression before the fix: switching saved runs left **three replay regions** where
+one was expected, with React duplicate-key warnings. Replay and human-panel keys
+now use distinct prefixes. The test inspects alternating saved runs four times and
+requires exactly one of each region and an enabled replay control. This is a UI
+component test, not fabricated browser execution; native acceptance is repeated on
+the rebuilt package. Native axe output identifying the duplicated replay landmark
+is retained in `dist/Native-duplicate-panels.json`. Initial test setup needed jsdom
+dialog-method shims and a complete finding fixture before reproducing the defect.
+
+
+After the key fix: React **13 passed, 5.19 s**; TypeScript/ESLint, formatting,
+Ruff and schema checks passed. The native package at `10a3fc6` remains a failed UI
+acceptance build; a later build must pass before its replacement is recommended.

@@ -62,3 +62,20 @@ Pa11y 10.0.0, Python 3.13.9, NetworkX 3.7, Windows 11 build 26220.
 Raw local records: `dist/Corpus-CI-local`; JUnit: `dist/corpus-regression.xml`.
 The source was a dirty working tree based on `109d90e`; final clean-commit CI
 verification remains a separate check. No NVDA or independent evaluation occurred.
+
+
+## Hosted runner constraints and failed attempts
+
+Remote run 38077376024 retained actual scanner stderr in its artifacts. Linux's
+Chromium launch failed because its sandbox was unavailable on the hosted image.
+The corpus accepts an explicit `--pa11y-no-sandbox` option, used only by the Linux
+CI corpus environment. It applies to the separate scanner against owned loopback
+HTML; it never changes AccessMaze website permissions. The generated configuration
+records the launch arguments and browser stderr. Do not use this setting as evidence
+of a hostile-site security boundary. Windows also retained two aborted initial
+scanner navigations; the cause is not established. Scanner failures remain
+inconclusive and fail the regression. No automatic retry hides them.
+
+A subsequent clean local full-suite corpus at `10a3fc6` completed all sixteen probes
+in 71.513 seconds with no inconclusive scanner results. Local Windows success does
+not establish Linux launch success or remove the earlier hosted failures.

@@ -16,13 +16,25 @@ def test_paired_corpus_records_actual_task_and_initial_scanner_results(tmp_path)
     # not download tools. Each recorded result states which probes actually ran.
     pa11y = os.environ.get("ACCESSMAZE_CORPUS_PA11Y") == "1"
     output = Path(os.environ.get("ACCESSMAZE_CORPUS_OUTPUT", str(tmp_path / "corpus")))
-    result = asyncio.run(module.benchmark(output, pa11y=pa11y))
+    result = asyncio.run(
+        module.benchmark(
+            output,
+            pa11y=pa11y,
+            pa11y_no_sandbox=os.environ.get("ACCESSMAZE_CORPUS_PA11Y_NO_SANDBOX") == "1",
+        )
+    )
     assert len(result["results"]) == 16
     for case in result["results"]:
         assert case["task_assessment"] == "correct", case
         assert not case["unexpected_confirmed_findings"], case
         if pa11y:
-            assert case["initial_pa11y"]["status"] == "completed"
+            assert case["initial_pa11y"]["status"] == "completed", {
+                "case": case["case"],
+                "scanner": case["initial_pa11y"],
+                "stderr": (output / (case["case"] + "-pa11y.stderr")).read_text(encoding="utf-8")[
+                    -4000:
+                ],
+            }
         else:
             assert case["initial_pa11y"] is None
         assert case["initial_axe"]["engine"]["name"] == "axe-core"
