@@ -419,3 +419,19 @@ dialog-method shims and a complete finding fixture before reproducing the defect
 After the key fix: React **13 passed, 5.19 s**; TypeScript/ESLint, formatting,
 Ruff and schema checks passed. The native package at `10a3fc6` remains a failed UI
 acceptance build; a later build must pass before its replacement is recommended.
+
+
+## Hosted Windows scanner permissions
+
+Run [38102629066](https://github.com/Rhythm-Sanghi/AccessMaze/actions/runs/38102629066)
+completed Ubuntu checks successfully; Windows recorded **1 failed, 133 passed,
+251.49 s** and packaging was skipped. Four optional Pa11y navigations were
+inconclusive. Raw artifact 11688945880 identifies sandbox executable access denied
+(0x5), followed by network-service failure and ERR_ABORTED. This establishes a
+browser-cache permission defect in the hosted scanner setup, not a successful scan.
+The workflow now grants read/execute to the Windows application-package SID only
+on its downloaded test-browser cache. It grants no write permission and does not
+change private evidence ACLs or application sandbox policy. This follows the
+[Puppeteer Windows sandbox procedure](https://pptr.dev/troubleshooting#chrome-reports-sandbox-errors-on-windows).
+The correction still needs an actual completed remote run. No retries or suppressed
+scanner assertions were introduced.

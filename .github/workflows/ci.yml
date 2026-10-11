@@ -34,6 +34,16 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: "true"
       - run: uv sync --project engine --locked --python 3.13
       - run: uv run --project engine playwright install --with-deps chromium
+      - name: Permit Windows Chromium sandbox to read the test browser
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $browserCache = Join-Path $env:GITHUB_WORKSPACE '.accessmaze/browsers'
+          if (-not (Test-Path -LiteralPath $browserCache -PathType Container)) {
+            throw 'Downloaded test browser cache is missing'
+          }
+          icacls $browserCache /grant '*S-1-15-2-1:(OI)(CI)(RX)' /T /Q
+          if ($LASTEXITCODE -ne 0) { throw 'Chromium sandbox read permission failed' }
       - run: npm run check
       - run: npm run format:check
       - run: npm test
