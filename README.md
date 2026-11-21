@@ -1,12 +1,10 @@
 # AccessMaze
 
-AccessMaze runs authored browser journeys under concrete interaction and environment
-constraints, and records whether the task reached its completion assertion.
-It is a local-first desktop application built with Tauri 2, React, TypeScript,
-Python, Playwright and SQLite. No account, cloud analysis or paid service is required.
+AccessMaze is a Windows desktop app for testing whether someone can finish a task on a website under specific constraints. Record a journey, replay it using only the keyboard or with a simulated connection loss, then inspect the step where it stalled and the evidence from the run.
 
-**Status: readiness preview; release qualification is incomplete.** See [engineering status](docs/development/status.md)
-for actual verification and remaining release gates.
+![AccessMaze showing a keyboard blocker and the recorded browser evidence](docs/development/screenshots/keyboard-blocker.png)
+
+**Readiness preview.** See the [engineering status](docs/development/status.md) for tested environments and remaining release checks.
 
 ## Current functionality
 
@@ -126,8 +124,6 @@ Page text stays private by default; computed browser semantics do not establish
 screen-reader behavior or WCAG conformance.
 
 ## Actual desktop screenshots
-
-![Keyboard blocker with observed evidence](docs/development/screenshots/keyboard-blocker.png)
 
 ![Dark theme analysis workspace](docs/development/screenshots/dark-analysis.png)
 
